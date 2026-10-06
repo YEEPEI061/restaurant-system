@@ -1,0 +1,512 @@
+<app-header></app-header>
+
+<main class="register-page">
+
+  <!-- Background Effects -->
+  <div class="background-effects">
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
+  </div>
+
+
+  <!-- Main Registration Card -->
+  <section class="register-container">
+
+
+    <!-- =====================================================
+         LEFT: GUEST ATELIER PANEL
+         ===================================================== -->
+
+    <div class="visual-panel">
+
+      <div class="pattern"></div>
+
+      <div class="visual-content">
+
+        <!-- Introduction -->
+        <div class="visual-introduction">
+
+          <span class="eyebrow">
+            GUEST ATELIER
+          </span>
+
+          <h2>
+            Join Aurelia.
+          </h2>
+
+          <p>
+            Curated reservations, seasonal dining,
+            and memorable experiences await.
+          </p>
+
+        </div>
+
+
+        <!-- Restaurant Image -->
+        <div class="restaurant-image-wrapper">
+
+          <div class="restaurant-image">
+
+            <img
+              src="/images/aurelia-restaurant.png"
+              alt="Aurelia French Restaurant"
+            />
+
+            <div class="image-overlay"></div>
+
+            <div class="image-caption">
+
+              <span>
+                Aurelia
+              </span>
+
+              <span>
+                French Dining
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RIGHT: REGISTRATION FORM
+         ===================================================== -->
+
+    <div class="form-panel">
+
+      <div class="form-content">
+
+
+        <!-- Form Header -->
+        <div class="form-header">
+
+          <div class="portal-label">
+
+            <span class="label-dot"></span>
+
+            <span>
+              GUEST MEMBER PORTAL
+            </span>
+
+          </div>
+
+          <h1>
+            Create Account
+          </h1>
+
+          <p>
+            Enter your details to create your Aurelia
+            guest account.
+          </p>
+
+        </div>
+
+
+        <!-- Social Registration -->
+        <div class="social-login">
+
+          <button
+            type="button"
+            class="social-button"
+            (click)="socialRegister('Google')"
+          >
+
+            <span class="google-icon">
+              G
+            </span>
+
+            <span>
+              Google
+            </span>
+
+          </button>
+
+
+          <button
+            type="button"
+            class="social-button"
+            (click)="socialRegister('Apple')"
+          >
+
+            <span class="apple-icon">
+              ●
+            </span>
+
+            <span>
+              Apple ID
+            </span>
+
+          </button>
+
+        </div>
+
+
+        <!-- Divider -->
+        <div class="divider">
+
+          <span></span>
+
+          <p>
+            or with credentials
+          </p>
+
+          <span></span>
+
+        </div>
+
+
+        <!-- Registration Form -->
+        <form
+          class="register-form"
+          (ngSubmit)="createAccount()"
+        >
+
+
+          <!-- First + Last Name -->
+          <div class="name-row">
+
+            <!-- First Name -->
+            <div class="form-group">
+
+              <label for="firstName">
+                First Name
+              </label>
+
+              <div class="input-wrapper">
+
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  [(ngModel)]="firstName"
+                  placeholder="e.g. Amelia"
+                  autocomplete="given-name"
+                  required
+                />
+
+                <span class="material-symbols-outlined input-icon">
+                  person
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <!-- Last Name -->
+            <div class="form-group">
+
+              <label for="lastName">
+                Last Name
+              </label>
+
+              <div class="input-wrapper">
+
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  [(ngModel)]="lastName"
+                  placeholder="e.g. Laurent"
+                  autocomplete="family-name"
+                  required
+                />
+
+                <span class="material-symbols-outlined input-icon">
+                  person
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- Email -->
+          <div class="form-group">
+
+            <label for="email">
+              Email Address
+            </label>
+
+            <div class="input-wrapper">
+
+              <input
+                id="email"
+                name="email"
+                type="email"
+                [(ngModel)]="email"
+                placeholder="guest&#64;aurelia.com"
+                autocomplete="email"
+                required
+              />
+
+              <span class="material-symbols-outlined input-icon">
+                mail
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- Phone -->
+          <div class="form-group">
+
+            <div class="label-row">
+
+              <label for="phone">
+                Phone Number
+              </label>
+
+              <span class="optional-label">
+                Optional
+              </span>
+
+            </div>
+
+            <div class="input-wrapper">
+
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                [(ngModel)]="phone"
+                placeholder="+60 12 345 6789"
+                autocomplete="tel"
+              />
+
+              <span class="material-symbols-outlined input-icon">
+                smartphone
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- Password -->
+          <div class="form-group">
+
+            <div class="label-row">
+
+              <label for="password">
+                Create Password
+              </label>
+
+              <span class="password-hint">
+                Min. 8 characters
+              </span>
+
+            </div>
+
+            <div class="input-wrapper">
+
+              <input
+                id="password"
+                name="password"
+                [(ngModel)]="password"
+                [type]="showPassword ? 'text' : 'password'"
+                placeholder="••••••••"
+                minlength="8"
+                autocomplete="new-password"
+                required
+              />
+
+              <button
+                type="button"
+                class="password-toggle"
+                aria-label="Toggle password visibility"
+                (click)="togglePassword()"
+              >
+
+                <span class="material-symbols-outlined">
+                  {{ showPassword ? 'visibility_off' : 'visibility' }}
+                </span>
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- Confirm Password -->
+          <div class="form-group">
+
+            <div class="label-row">
+
+              <label for="confirmPassword">
+                Confirm Password
+              </label>
+
+              <span class="password-hint">
+                Match password
+              </span>
+
+            </div>
+
+            <div class="input-wrapper">
+
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                [(ngModel)]="confirmPassword"
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                placeholder="Re-enter password"
+                minlength="8"
+                autocomplete="new-password"
+                required
+              />
+
+              <button
+                type="button"
+                class="password-toggle"
+                aria-label="Toggle confirm password visibility"
+                (click)="toggleConfirmPassword()"
+              >
+
+                <span class="material-symbols-outlined">
+                  {{ showConfirmPassword ? 'visibility_off' : 'visibility' }}
+                </span>
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- Terms -->
+          <div class="terms-section">
+
+            <label class="terms-label">
+
+              <input
+                type="checkbox"
+                name="agreeToTerms"
+                [(ngModel)]="agreeToTerms"
+                required
+              />
+
+              <span class="custom-checkbox">
+
+                <span class="material-symbols-outlined">
+                  check
+                </span>
+
+              </span>
+
+              <span class="terms-text">
+
+                I agree to the
+                <a routerLink="/terms">
+                  Terms of Service
+                </a>
+                &amp;
+                <a routerLink="/privacy">
+                  Privacy Policy
+                </a>
+
+              </span>
+
+            </label>
+
+          </div>
+
+
+          <!-- Create Account -->
+          <div class="submit-area">
+
+            <button
+              type="submit"
+              class="submit-button"
+              [disabled]="isCreatingAccount"
+            >
+
+              @if (isCreatingAccount) {
+
+                <span class="loading-spinner"></span>
+
+                <span>
+                  Creating Account...
+                </span>
+
+              } @else if (accountCreated) {
+
+                <span class="material-symbols-outlined">
+                  check_circle
+                </span>
+
+                <span>
+                  Account Created
+                </span>
+
+              } @else {
+
+                <span>
+                  Create Account
+                </span>
+
+                <span class="material-symbols-outlined">
+                  arrow_forward
+                </span>
+
+              }
+
+            </button>
+
+          </div>
+
+        </form>
+
+
+        <!-- Success Message -->
+        @if (accountCreated) {
+
+          <div class="success-alert">
+
+            <span class="material-symbols-outlined">
+              verified
+            </span>
+
+            <span>
+              Account created successfully. Welcome to Aurelia.
+            </span>
+
+          </div>
+
+        }
+
+
+        <!-- Already Have Account -->
+        <div class="login-link">
+
+          <p>
+            Already have an account?
+
+            <a routerLink="/guest-login">
+              Sign In
+            </a>
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<app-footer></app-footer>

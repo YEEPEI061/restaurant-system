@@ -1,0 +1,331 @@
+<app-header></app-header>
+
+<main class="login-page">
+
+  <!-- Background atmosphere -->
+  <div class="background-effects">
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
+  </div>
+
+
+  <!-- Main Login Container -->
+  <section class="login-container">
+
+    <!-- =====================================================
+         LEFT OPERATIONS PANEL
+         ===================================================== -->
+
+    <div class="operations-panel">
+
+      <div class="operations-pattern"></div>
+
+      <div class="operations-content">
+
+        <!-- Operations Introduction -->
+        <div class="operations-introduction">
+
+          <span class="eyebrow">
+            RESTAURANT OPERATIONS
+          </span>
+
+          <h2>
+            Operational Hub.
+          </h2>
+
+          <p class="operations-description">
+            Unified hearth, dispatch, and sommelier controls
+            synchronized across restaurant terminals.
+          </p>
+
+        </div>
+
+
+        <!-- Operations Features -->
+        <div class="operations-features">
+
+          <!-- Floor Dispatch -->
+          <div class="operation-card">
+
+            <span class="material-symbols-outlined operation-icon">
+              grid_view
+            </span>
+
+            <div class="operation-content">
+
+              <h3>
+                Floor Dispatch
+              </h3>
+
+              <p>
+                Live seating topology, table merge,
+                and real-time turnover.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- Service 86 -->
+          <div class="operation-card">
+
+            <span class="material-symbols-outlined operation-icon">
+              restaurant_menu
+            </span>
+
+            <div class="operation-content">
+
+              <h3>
+                Service 86 List
+              </h3>
+
+              <p>
+                Hearth and cellar inventory adjustments
+                synced in real-time.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- Bespoke Bookings -->
+          <div class="operation-card">
+
+            <span class="material-symbols-outlined operation-icon">
+              calendar_clock
+            </span>
+
+            <div class="operation-content">
+
+              <h3>
+                Bespoke Bookings
+              </h3>
+
+              <p>
+                Pacing controls, VIP histories,
+                and culinary modifications.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Service Status -->
+        <div class="service-status">
+
+          <div class="status-left">
+
+            <span class="status-dot"></span>
+
+            <span>
+              Service Active
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RIGHT LOGIN PANEL
+         ===================================================== -->
+
+    <div class="form-panel">
+
+      <div class="form-content">
+
+        <!-- Form Header -->
+        <div class="form-header">
+
+          <div class="form-eyebrow">
+
+            <span class="eyebrow-dot"></span>
+
+            <span>
+              STAFF &amp; OPERATIONAL ACCESS
+            </span>
+
+          </div>
+
+          <h1>
+            Staff Sign In
+          </h1>
+
+          <p>
+            Enter your credentials to access floor plans
+            and management controls.
+          </p>
+
+        </div>
+
+
+        <!-- Login Form -->
+        <form
+          class="login-form"
+          (ngSubmit)="signIn()"
+        >
+
+          <!-- Staff Identifier -->
+          <div class="form-group">
+
+            <label for="staffIdentifier">
+              Work Email or Staff ID
+            </label>
+
+            <div class="input-wrapper">
+
+              <span class="material-symbols-outlined input-icon">
+                badge
+              </span>
+
+              <input
+                id="staffIdentifier"
+                name="staffIdentifier"
+                type="text"
+                [(ngModel)]="staffIdentifier"
+                placeholder="e.g. staff&#64;aurelia.com or AU-8841"
+                autocomplete="username"
+                required
+              />
+
+            </div>
+
+          </div>
+
+
+          <!-- Password -->
+          <div class="form-group">
+
+            <label for="password">
+              Password / Secure PIN
+            </label>
+
+            <div class="input-wrapper">
+
+              <span class="material-symbols-outlined input-icon">
+                lock
+              </span>
+
+              <input
+                id="password"
+                name="password"
+                [(ngModel)]="password"
+                [type]="showPassword ? 'text' : 'password'"
+                placeholder="Enter password or numeric PIN"
+                autocomplete="current-password"
+                required
+              />
+
+              <button
+                type="button"
+                class="password-toggle"
+                aria-label="Toggle password visibility"
+                (click)="togglePassword()"
+              >
+
+                <span class="material-symbols-outlined">
+                  {{ showPassword ? 'visibility_off' : 'visibility' }}
+                </span>
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- Submit Button -->
+          <div class="submit-area">
+
+            <button
+              type="submit"
+              class="submit-button"
+              [disabled]="isSigningIn"
+            >
+
+              @if (isSigningIn) {
+
+                <span class="loading-spinner"></span>
+
+                <span>
+                  Authenticating...
+                </span>
+
+              } @else if (isAuthenticated) {
+
+                <span class="material-symbols-outlined">
+                  check_circle
+                </span>
+
+                <span>
+                  Authenticated
+                </span>
+
+              } @else {
+
+                <span>
+                  Sign In to Console
+                </span>
+
+                <span class="material-symbols-outlined">
+                  arrow_forward
+                </span>
+
+              }
+
+            </button>
+
+          </div>
+
+        </form>
+
+
+        <!-- Authentication Success -->
+        @if (isAuthenticated) {
+
+          <div class="auth-alert">
+
+            <span class="material-symbols-outlined">
+              verified
+            </span>
+
+            <span>
+              Authorized. Redirecting to Service &amp; Floor Operations...
+            </span>
+
+          </div>
+
+        }
+
+
+        <!-- Guest Login -->
+        <div class="guest-link">
+
+          <p>
+            Are you a dining guest?
+
+            <a routerLink="/guest-login">
+              Guest Sign In &amp; Booking
+            </a>
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<app-footer></app-footer>

@@ -1,0 +1,51 @@
+<header class="site-header">
+    <div class="header-inner">
+  
+      <div class="brand-area">
+  
+        <a class="brand" routerLink="/">
+          AURELIA
+          <span class="brand-tag">RESTAURANT</span>
+        </a>
+  
+        <nav class="main-nav">
+          <a routerLink="/menu">Our Menu</a>
+          <a routerLink="/reservations">Reservations</a>
+          <a routerLink="/private-events">Private Events</a>
+          <a routerLink="/story">Our Story</a>
+        </nav>
+  
+      </div>
+  
+      <div class="header-actions">
+  
+        <div class="portal-switcher">
+
+          <a
+            routerLink="/guest-login"
+            [class.portal-active]="isGuestLogin()"
+          >
+            GUEST
+          </a>
+        
+          <a
+            routerLink="/admin-login"
+            [class.portal-active]="isAdminLogin()"
+          >
+            STAFF
+          </a>
+        
+        </div>
+  
+        <a class="reserve-button" routerLink="/reservations">
+          Reserve a Table
+        </a>
+  
+        <div class="profile-icon">
+          <span class="material-symbols-outlined">person</span>
+        </div>
+  
+      </div>
+  
+    </div>
+  </header>

@@ -1,0 +1,280 @@
+<app-header></app-header>
+  
+  
+  <main class="login-page">
+  
+    <!-- Background atmosphere -->
+    <div class="background-effects">
+      <div class="glow glow-one"></div>
+      <div class="glow glow-two"></div>
+    </div>
+  
+  
+    <!-- Main Login Container -->
+    <section class="login-container">
+  
+      <!-- Left Visual Panel -->
+      <div class="visual-panel">
+  
+        <div class="pattern"></div>
+  
+        <div class="visual-content">
+  
+          <div class="visual-introduction">
+            <span class="eyebrow">
+              TABLE &amp; DINING ACCESS
+            </span>
+  
+            <h2>
+              Return to your table.
+            </h2>
+  
+            <p>
+              Access your reservations, dining preferences, and
+              personalised experiences at Aurelia.
+            </p>
+          </div>
+  
+  
+          <!-- Restaurant Image -->
+          <div class="restaurant-image-wrapper">
+  
+            <div class="restaurant-image">
+                <img
+                src="/images/aurelia-restaurant.png"
+                alt="Aurelia French Restaurant"
+                />
+              
+              <div class="image-overlay"></div>
+  
+              <div class="image-caption">
+                <span>Aurelia</span>
+                <span>French Dining</span>
+              </div>
+            </div>
+  
+          </div>
+  
+  
+          <!-- Bottom information -->
+          <div class="service-note">
+            <span class="service-dot"></span>
+  
+            <span>
+              Dinner service daily from 17:30
+            </span>
+          </div>
+  
+        </div>
+      </div>
+  
+  
+      <!-- Right Login Panel -->
+      <div class="form-panel">
+  
+        <div class="form-content">
+  
+          <!-- Form Header -->
+          <div class="form-header">
+  
+            <div class="portal-label">
+              <span class="label-dot"></span>
+  
+              <span>
+                Guest Member Portal
+              </span>
+            </div>
+  
+            <h1>
+              Sign In
+            </h1>
+  
+            <p>
+              Enter your credentials to manage your bookings
+              and dining preferences.
+            </p>
+  
+          </div>
+  
+  
+          <!-- Social Login -->
+          <div class="social-login">
+  
+            <button
+              type="button"
+              class="social-button"
+              (click)="socialLogin('Google')"
+            >
+              <span class="google-icon">G</span>
+              <span>Google</span>
+            </button>
+  
+  
+            <button
+              type="button"
+              class="social-button"
+              (click)="socialLogin('Apple')"
+            >
+              <span class="apple-icon">●</span>
+              <span>Apple ID</span>
+            </button>
+  
+          </div>
+  
+  
+          <!-- Divider -->
+          <div class="divider">
+            <span></span>
+  
+            <p>or with email</p>
+  
+            <span></span>
+          </div>
+  
+  
+          <!-- Login Form -->
+          <form
+            class="login-form"
+            (ngSubmit)="signIn()"
+          >
+  
+            <!-- Email -->
+            <div class="form-group">
+  
+              <label for="email">
+                Email Address
+              </label>
+  
+              <div class="input-wrapper">
+  
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  [(ngModel)]="email"
+                  placeholder="guest@aurelia.com"
+                  required
+                  autocomplete="email"
+                />
+  
+                <span class="material-symbols-outlined input-icon">
+                  mail
+                </span>
+  
+              </div>
+  
+            </div>
+  
+  
+            <!-- Password -->
+            <div class="form-group">
+  
+              <div class="password-label-row">
+  
+                <label for="password">
+                  Password
+                </label>
+  
+                <a
+                  routerLink="/forgot-password"
+                  class="forgot-link"
+                >
+                  Forgot password?
+                </a>
+  
+              </div>
+  
+  
+              <div class="input-wrapper">
+  
+                <input
+                  id="password"
+                  name="password"
+                  [(ngModel)]="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  placeholder="••••••••••••"
+                  required
+                  autocomplete="current-password"
+                />
+  
+                <button
+                  type="button"
+                  class="password-toggle"
+                  aria-label="Toggle password visibility"
+                  (click)="togglePassword()"
+                >
+                  <span class="material-symbols-outlined">
+                    {{ showPassword ? 'visibility_off' : 'visibility' }}
+                  </span>
+                </button>
+  
+              </div>
+  
+            </div>
+  
+  
+            <!-- Submit -->
+            <div class="submit-area">
+  
+              <button
+                type="submit"
+                class="submit-button"
+                [disabled]="isSigningIn"
+              >
+  
+                <span>
+                  {{ isSigningIn ? 'Verifying...' : 'Sign In' }}
+                </span>
+  
+                <span class="material-symbols-outlined">
+                  arrow_forward
+                </span>
+  
+              </button>
+  
+            </div>
+  
+          </form>
+  
+  
+          <!-- Register -->
+          <div class="register-section">
+  
+            <p>
+              Don't have an account?
+  
+              <a routerLink="/register">
+                Sign up
+              </a>
+            </p>
+  
+          </div>
+  
+  
+          <!-- Admin Portal -->
+          <div class="admin-link-section">
+  
+            <a
+              routerLink="/admin-login"
+              class="admin-link"
+            >
+              <span class="material-symbols-outlined">
+                badge
+              </span>
+  
+              <span>
+                Staff or Manager? Sign in to Admin Portal
+              </span>
+            </a>
+  
+          </div>
+  
+        </div>
+  
+      </div>
+  
+    </section>
+  
+  </main>
+  
+<app-footer></app-footer>
