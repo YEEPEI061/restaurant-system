@@ -1,0 +1,10 @@
+{
+  "name": "restaurant-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack Restaurant Management and Reservation System",
+  "scripts": {
+    "backend": "npm --prefix backend start",
+    "frontend": "npm --prefix frontend start"
+  }
+}

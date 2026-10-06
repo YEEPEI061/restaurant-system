@@ -1,0 +1,29 @@
+services:
+  backend:
+    build: ./backend
+    container_name: restaurant-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/restaurant_system
+    depends_on:
+      - mongodb
+
+  frontend:
+    build: ./frontend
+    container_name: restaurant-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+  mongodb:
+    image: mongo:8
+    container_name: restaurant-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
