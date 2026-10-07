@@ -1,0 +1,740 @@
+<app-header></app-header>
+
+<main class="menu-page">
+
+  <!-- HERO -->
+  <section class="menu-hero">
+
+    <div class="hero-container">
+
+      <div class="hero-grid">
+
+        <div class="hero-content">
+
+          <div class="hero-eyebrow">
+            <span class="hero-dot"></span>
+
+            <span>
+              Seasonal Culinary Release — Edition 14
+            </span>
+          </div>
+
+          <h1>
+            Nordic Foraged Flora Meets
+            <br class="desktop-break">
+            Hokkaido Coastline Hearth.
+          </h1>
+
+          <p class="hero-description">
+            A sensorial progression guided by seasonal ingredients,
+            regenerative agriculture, natural fermentation, and
+            low-temperature wood-fire cooking.
+          </p>
+
+          <div class="tasting-options">
+
+            <!-- FIVE COURSE -->
+            <div class="tasting-card">
+
+              <div class="tasting-card-top">
+
+                <div>
+                  <span class="small-label">
+                    Expression I
+                  </span>
+
+                  <h3>
+                    Five Course Prelude
+                  </h3>
+                </div>
+
+                <span class="price">
+                  RM 125
+                </span>
+
+              </div>
+
+              <p>
+                Raw fjord scallop, koji-cured maitake,
+                charred dry-aged Wagyu, and sea buckthorn granita.
+              </p>
+
+              <div class="tasting-card-bottom">
+
+                <span>
+                  Cellar Pairing: +RM 75
+                </span>
+
+                <button
+                  type="button"
+                  (click)="selectTastingMenu('5-course')"
+                >
+                  Select
+
+                  <span class="material-symbols-outlined">
+                    arrow_forward
+                  </span>
+                </button>
+
+              </div>
+
+            </div>
+
+            <!-- SEVEN COURSE -->
+            <div class="tasting-card featured">
+
+              <div class="featured-glow"></div>
+
+              <div class="tasting-card-top">
+
+                <div>
+                  <span class="small-label">
+                    Grand Overture
+                  </span>
+
+                  <h3>
+                    Seven Course Odyssey
+                  </h3>
+                </div>
+
+                <span class="price">
+                  RM 175
+                </span>
+
+              </div>
+
+              <p>
+                Includes hearth-steamed king crab,
+                pine needle broth infusion, and seasonal
+                chef selections.
+              </p>
+
+              <div class="tasting-card-bottom">
+
+                <span>
+                  Prestige Pairing: +RM 115
+                </span>
+
+                <button
+                  type="button"
+                  (click)="selectTastingMenu('7-course')"
+                >
+                  Select
+
+                  <span class="material-symbols-outlined">
+                    arrow_forward
+                  </span>
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- HERO IMAGE -->
+        <div class="hero-image-area">
+
+          <div class="hero-image">
+
+            <img
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgM581hN7i2clOQstiscM9rTdfcLhcMLdtmOmcgILTFzO8gNWn7C4Pp5yVKEG4iCw4mGCYkaP3_Q6_lymaOpzeWx8dHEcDqE3tnV9h7CgnD5mveotTEsie4SIjlxFKsmqhJl9S0tUPf921RGeMIVKKH4g2eKJ9msEiJDGbK0XlX7WS4ZOJ3i9wmvBXEVUK0WRq7pflPRmbPBeVO3yffxmQaasWZ3e2Jj7Bb7Ex5zxoMzzJEwPkSqNN"
+              alt="Aurelia signature dish"
+            >
+
+            <div class="hero-image-overlay"></div>
+
+            <div class="hero-image-caption">
+
+              <div>
+                <span>
+                  Course IV Signature
+                </span>
+
+                <strong>
+                  Koji Wood-Smoked Venison
+                </strong>
+              </div>
+
+              <small>
+                Limited Hearth Fire
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- FILTER BAR -->
+  <section class="menu-filter-bar">
+
+    <div class="filter-container">
+
+      <div class="filter-main-row">
+
+        <nav class="category-nav">
+
+          @for (category of categories; track category.value) {
+
+            <button
+              type="button"
+              [class.active]="activeCategory === category.value"
+              (click)="selectCategory(category.value)"
+            >
+              {{ category.label }}
+            </button>
+
+          }
+
+        </nav>
+
+
+        <div class="menu-tools">
+
+          <div class="search-wrapper">
+
+            <span class="material-symbols-outlined">
+              search
+            </span>
+
+            <input
+              type="text"
+              [(ngModel)]="searchQuery"
+              placeholder="Search botanical, provenance..."
+            >
+
+          </div>
+
+          <button
+            type="button"
+            class="tasting-button"
+            (click)="openTastingDrawer()"
+          >
+
+            <span class="material-symbols-outlined">
+              restaurant_menu
+            </span>
+
+            <span class="tasting-button-text">
+              Tasting List
+            </span>
+
+            <span class="tasting-count">
+              {{ tastingList.length }}
+            </span>
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- DIETARY FILTERS -->
+      <div class="dietary-row">
+
+        <div class="dietary-filters">
+
+          <span class="dietary-label">
+            Dietary Filter:
+          </span>
+
+          @for (filter of dietaryFilters; track filter.value) {
+
+            <button
+              type="button"
+              class="filter-chip"
+              [class.active]="isFilterActive(filter.value)"
+              (click)="toggleDietaryFilter(filter.value)"
+            >
+              @if (filter.value === 'SPECIAL') {
+                <span class="material-symbols-outlined">
+                  star
+                </span>
+              }
+
+              {{ filter.label }}
+            </button>
+
+          }
+
+        </div>
+
+        <span class="results-indicator">
+          Showing {{ filteredItems.length }}
+          Curated
+          {{ filteredItems.length === 1 ? 'Preparation' : 'Preparations' }}
+        </span>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- MENU GRID -->
+  <section class="menu-grid-section">
+
+    <div class="menu-grid">
+
+      @for (item of filteredItems; track item.name) {
+
+        <article class="dish-card">
+
+          <div>
+
+            <!-- IMAGE -->
+            <div class="dish-image">
+
+              <img
+                [src]="item.image"
+                [alt]="item.name"
+              >
+
+              <div class="dish-badges">
+
+                @for (badge of item.badges; track badge) {
+
+                  <span>
+                    {{ badge }}
+                  </span>
+
+                }
+
+              </div>
+
+              @if (item.special) {
+
+                <span class="dish-special">
+                  @if (item.special === 'Signature') {
+                    <span class="material-symbols-outlined">
+                      local_fire_department
+                    </span>
+                  }
+
+                  {{ item.special }}
+                </span>
+
+              }
+
+            </div>
+
+
+            <!-- CONTENT -->
+            <div class="dish-content">
+
+              <div class="dish-heading">
+
+                <h3>
+                  {{ item.name }}
+                </h3>
+
+                <span class="dish-price">
+                  RM {{ item.price }}
+                </span>
+
+              </div>
+
+              <p class="dish-description">
+                {{ item.description }}
+              </p>
+
+
+              <div class="dish-information">
+
+                <div>
+                  <span class="material-symbols-outlined">
+                    explore
+                  </span>
+
+                  <span>
+                    Provenance: {{ item.provenance }}
+                  </span>
+                </div>
+
+                <div>
+                  <span class="material-symbols-outlined">
+                    local_cafe
+                  </span>
+
+                  <span>
+                    Pairing: {{ item.pairing }}
+                  </span>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- CARD ACTIONS -->
+          <div class="dish-actions">
+
+            <button
+              type="button"
+              class="allergen-button"
+              (click)="openDietaryModal(item)"
+            >
+              Allergen Spec
+            </button>
+
+            <button
+              type="button"
+              class="add-button"
+              (click)="addToTasting(item)"
+            >
+
+              <span class="material-symbols-outlined">
+                add
+              </span>
+
+              Add to Tasting
+
+            </button>
+
+          </div>
+
+        </article>
+
+      }
+
+      @if (filteredItems.length === 0) {
+
+        <div class="no-results">
+
+          <span class="material-symbols-outlined">
+            search_off
+          </span>
+
+          <h3>
+            No preparations found
+          </h3>
+
+          <p>
+            Try another search term or adjust your filters.
+          </p>
+
+        </div>
+
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- PHILOSOPHY STRIP -->
+  <section class="philosophy-section">
+
+    <div class="philosophy-grid">
+
+      <div class="philosophy-item">
+
+        <span class="material-symbols-outlined">
+          local_fire_department
+        </span>
+
+        <div>
+          <h4>
+            Unadulterated Fire
+          </h4>
+
+          <p>
+            We sear and steam using seasoned Danish
+            beechwood and Japanese white binchotan charcoal.
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="philosophy-item">
+
+        <span class="material-symbols-outlined">
+          eco
+        </span>
+
+        <div>
+          <h4>
+            Zero Wastage Ferment
+          </h4>
+
+          <p>
+            Fish bones become stocks and sauces while
+            vegetable trimmings transform into fermented broths
+            and umami-rich seasonings.
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="philosophy-item">
+
+        <span class="material-symbols-outlined">
+          local_cafe
+        </span>
+
+        <div>
+          <h4>
+            Seasonal Beverage Atelier
+          </h4>
+
+          <p>
+            Our beverage program focuses on botanical infusions,
+            fermented fruits, specialty teas, and seasonal
+            non-alcoholic pairings.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ALLERGEN MODAL -->
+  @if (isDietaryModalOpen && selectedDish) {
+
+    <div
+      class="modal-backdrop"
+      (click)="closeDietaryModal()"
+    >
+
+      <div
+        class="dietary-modal"
+        (click)="$event.stopPropagation()"
+      >
+
+        <div class="modal-header">
+
+          <div>
+
+            <span class="modal-eyebrow">
+              Kitchen Dossier & Allergens
+            </span>
+
+            <h2>
+              {{ selectedDish.name }}
+            </h2>
+
+          </div>
+
+          <button
+            type="button"
+            class="modal-close"
+            (click)="closeDietaryModal()"
+          >
+            <span class="material-symbols-outlined">
+              close
+            </span>
+          </button>
+
+        </div>
+
+
+        <div class="modal-content">
+
+          <div>
+            <span class="modal-label">
+              Full Ingredient Makeup:
+            </span>
+
+            <p>
+              {{ selectedDish.ingredients }}
+            </p>
+          </div>
+
+
+          <div class="modal-section">
+
+            <span class="modal-label">
+              Dietary Attributes:
+            </span>
+
+            <p class="modal-badges">
+              {{ selectedDish.dietary.join(', ') }}
+            </p>
+
+          </div>
+
+
+          <div class="allergen-warning">
+
+            <span class="modal-label warning-label">
+
+              <span class="material-symbols-outlined">
+                warning
+              </span>
+
+              Strict Allergen Advisory:
+
+            </span>
+
+            <p>
+              {{ selectedDish.advisory }}
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            (click)="closeDietaryModal()"
+          >
+            Understood
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- TASTING DRAWER -->
+  @if (isTastingDrawerOpen) {
+
+    <div
+      class="drawer-backdrop"
+      (click)="closeTastingDrawer()"
+    ></div>
+
+    <aside class="tasting-drawer">
+
+      <div>
+
+        <div class="drawer-header">
+
+          <div>
+
+            <span>
+              Personalized Suite
+            </span>
+
+            <h3>
+              Your Tasting List
+            </h3>
+
+          </div>
+
+          <button
+            type="button"
+            (click)="closeTastingDrawer()"
+          >
+            <span class="material-symbols-outlined">
+              close
+            </span>
+          </button>
+
+        </div>
+
+
+        <div class="tasting-items">
+
+          @if (tastingList.length === 0) {
+
+            <p class="empty-tasting">
+              Your curation tray is empty.
+              Tap "Add to Tasting" on any dish to construct
+              your customized sequence.
+            </p>
+
+          }
+
+
+          @for (item of tastingList; track item.id) {
+
+            <div class="tasting-item">
+
+              <div>
+
+                <p>
+                  {{ item.name }}
+                </p>
+
+                <span>
+                  RM {{ item.price }}
+                </span>
+
+              </div>
+
+              <button
+                type="button"
+                (click)="removeFromTasting(item.id)"
+              >
+
+                <span class="material-symbols-outlined">
+                  delete
+                </span>
+
+              </button>
+
+            </div>
+
+          }
+
+        </div>
+
+      </div>
+
+
+      <div class="drawer-summary">
+
+        <div class="drawer-total">
+
+          <span>
+            Estimated Menu Subtotal:
+          </span>
+
+          <strong>
+            RM {{ tastingTotal }}
+          </strong>
+
+        </div>
+
+        <p>
+          Your selection will be synchronized with
+          our restaurant team upon table confirmation.
+        </p>
+
+        <a
+          routerLink="/reservations"
+          (click)="closeTastingDrawer()"
+        >
+          Proceed to Reserve Table
+
+          <span class="material-symbols-outlined">
+            arrow_forward
+          </span>
+        </a>
+
+      </div>
+
+    </aside>
+
+  }
+
+</main>
+
+<app-footer></app-footer>
