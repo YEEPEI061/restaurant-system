@@ -41,8 +41,36 @@
           Reserve a Table
         </a>
   
-        <div class="profile-icon">
-          <span class="material-symbols-outlined">person</span>
+        <div class="profile-menu">
+          <button
+            type="button"
+            class="profile-icon"
+            (click)="toggleProfileMenu()"
+            aria-label="Open profile menu"
+            [attr.aria-expanded]="isProfileMenuOpen"
+          >
+            <span class="material-symbols-outlined">person</span>
+          </button>
+        
+          @if (isProfileMenuOpen) {
+            <div class="profile-dropdown">
+              <a
+                routerLink="/my-reservations"
+                (click)="closeProfileMenu()"
+              >
+                <span class="material-symbols-outlined">calendar_month</span>
+                My Reservations
+              </a>
+        
+              <a
+                routerLink="/guest-login"
+                (click)="closeProfileMenu()"
+              >
+                <span class="material-symbols-outlined">logout</span>
+                Guest Login
+              </a>
+            </div>
+          }
         </div>
   
       </div>

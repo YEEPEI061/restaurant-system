@@ -1,0 +1,589 @@
+<app-header></app-header>
+
+<main class="reservation-page">
+  <div class="reservation-container">
+
+    <!-- Page heading: same style as Reservations page -->
+    <div class="page-heading">
+      <div class="heading-copy">
+        <div class="eyebrow">
+          <span>AURELIA GUEST PORTAL</span>
+          <span class="eyebrow-dot"></span>
+          <span>GEORGE TOWN, PENANG</span>
+        </div>
+
+        <h1>Your Reservations &amp; Dining History</h1>
+
+        <p>
+          Keep track of your upcoming tables, revisit past dining
+          experiences, and manage your reservations in one place.
+        </p>
+      </div>
+
+      
+    </div>
+
+    <!-- Tabs and search -->
+    <section class="controls-ribbon">
+
+      <div class="reservation-tabs">
+        <button
+          type="button"
+          class="tab-button"
+          [class.active]="activeTab === 'upcoming'"
+          (click)="setActiveTab('upcoming')"
+        >
+          Upcoming
+          <span class="tab-count">{{ upcomingCount }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="tab-button"
+          [class.active]="activeTab === 'past'"
+          (click)="setActiveTab('past')"
+        >
+          Past Experiences
+          <span class="tab-count">{{ pastCount }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="tab-button"
+          [class.active]="activeTab === 'cancelled'"
+          (click)="setActiveTab('cancelled')"
+        >
+          Cancelled
+          <span class="tab-count">{{ cancelledCount }}</span>
+        </button>
+      </div>
+
+      <div class="search-controls">
+        <div class="search-box">
+          <span class="material-symbols-outlined">search</span>
+
+          <input
+            type="search"
+            name="reservationSearch"
+            [(ngModel)]="searchTerm"
+            placeholder="Search reservation reference..."
+            aria-label="Search reservations"
+          />
+        </div>
+
+        <button
+          type="button"
+          class="sort-button"
+          (click)="toggleSort()"
+          [attr.aria-label]="sortNewestFirst ? 'Sort oldest first' : 'Sort newest first'"
+        >
+          <span class="material-symbols-outlined">swap_vert</span>
+          <span>{{ sortNewestFirst ? 'Newest first' : 'Oldest first' }}</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Upcoming reservations -->
+    @if (activeTab === 'upcoming') {
+      <section class="reservation-list">
+
+        @for (
+          reservation of filteredReservations;
+          track reservation.reference;
+          let i = $index
+        ) {
+          <article class="reservation-card">
+
+            <!-- Priority header -->
+            <div class="reservation-card-topline">
+              <div class="reference-label">
+                <span>UPCOMING SEATING</span>
+                <span class="reference-divider">•</span>
+                <strong>REF. {{ reservation.reference }}</strong>
+              </div>
+
+              <span class="status-badge confirmed">
+                <span class="status-dot"></span>
+                {{ reservation.status }}
+              </span>
+            </div>
+
+            <!-- Reservation hero -->
+            <div class="reservation-hero">
+
+              <div class="reservation-image">
+                <img
+                  src="/images/aurelia-dining.png"
+                  alt="Aurelia restaurant dining room"
+                  [class.second-image]="i > 0"
+                />
+
+                <div class="image-label">
+                  {{ reservation.area }} · {{ reservation.tableLabel }}
+                </div>
+              </div>
+
+              <div class="reservation-overview">
+                <div class="overview-topline">
+                  <span class="experience-badge">
+                    {{ reservation.menu }}
+                  </span>
+
+                  <div class="estimated-total">
+                    <span>ESTIMATED TOTAL</span>
+                    <strong>
+                      RM {{ getTotalForReservation(reservation) }}
+                    </strong>
+                  </div>
+                </div>
+
+                <h2>
+                  {{ reservation.dateLabel }} at {{ reservation.time }}
+                </h2>
+
+                <p class="reservation-description">
+                  {{ reservation.menuDescription }}
+                  · {{ reservation.area }}
+                </p>
+
+                <div class="metrics-grid">
+
+                  <div class="metric">
+                    <span>PARTY SIZE</span>
+                    <strong>{{ reservation.guests }} Guests</strong>
+                    <small>Table for {{ reservation.guests }}</small>
+                  </div>
+
+                  <div class="metric">
+                    <span>ARRIVAL WINDOW</span>
+                    <strong>{{ reservation.arrivalWindow }}</strong>
+                    <small>Please arrive on time</small>
+                  </div>
+
+                  <div class="metric">
+                    <span>DEPOSIT</span>
+                    <strong class="green-text">
+                      RM {{ reservation.deposit.toFixed(2) }}
+                    </strong>
+                    <small>Subject to booking policy</small>
+                  </div>
+
+                  <div class="metric">
+                    <span>BALANCE ESTIMATE</span>
+                    <strong>
+                      RM {{ getBalanceForReservation(reservation) }}
+                    </strong>
+                    <small>Estimated remaining amount</small>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Details section -->
+            <div class="reservation-details">
+
+              <div class="course-column">
+                <div class="section-title-row">
+                  <h3>
+                    <span class="material-symbols-outlined">restaurant</span>
+                    Dining Selections
+                  </h3>
+
+                  <span class="section-caption">YOUR PREFERENCES</span>
+                </div>
+
+                <div class="course-list">
+                  @for (course of reservation.courses; track course.name) {
+                    <div class="course-item">
+                      <div class="course-number">
+                        {{ $index + 1 < 10 ? '0' + ($index + 1) : $index + 1 }}
+                      </div>
+
+                      <div class="course-copy">
+                        <strong>{{ course.name }}</strong>
+                        <span>{{ course.description }}</span>
+                      </div>
+
+                      <strong class="course-price">
+                        RM {{ course.price.toFixed(2) }}
+                      </strong>
+                    </div>
+                  }
+                </div>
+
+                <div class="special-requests">
+                  <span class="material-symbols-outlined">
+                    verified_user
+                  </span>
+
+                  <div>
+                    <strong>SPECIAL REQUESTS</strong>
+                    <span class="dietary-badge">
+                      {{ reservation.dietaryLabel }}
+                    </span>
+                    <p>{{ reservation.notes }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Deposit and cancellation information -->
+              <aside class="payment-column">
+                <div class="payment-heading">
+                  <h3>Deposit &amp; Payment Summary</h3>
+                  <span class="payment-status">
+                    {{ reservation.paymentLabel }}
+                  </span>
+                </div>
+
+                <div class="policy-notice">
+                  <span class="material-symbols-outlined">
+                    event_available
+                  </span>
+
+                  <div>
+                    <strong>Need to change your plans?</strong>
+                    <p>
+                      Contact the restaurant to confirm the applicable
+                      cancellation deadline and deposit refund policy.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="payment-breakdown">
+                  @for (course of reservation.courses; track course.name) {
+                    <div class="payment-row">
+                      <span>{{ course.name }}</span>
+                      <strong>RM {{ course.price.toFixed(2) }}</strong>
+                    </div>
+                  }
+
+                  <div class="payment-row deposit-payment">
+                    <span>
+                      <span class="material-symbols-outlined">
+                        check_circle
+                      </span>
+                      Deposit estimate
+                    </span>
+
+                    <strong>
+                      − RM {{ reservation.deposit.toFixed(2) }}
+                    </strong>
+                  </div>
+
+                  <div class="payment-divider"></div>
+
+                  <div class="balance-row">
+                    <span>ESTIMATED BALANCE</span>
+                    <strong>
+                      RM {{ getBalanceForReservation(reservation) }}
+                    </strong>
+                  </div>
+                </div>
+
+                <p class="payment-disclaimer">
+                  These are sample figures for the frontend prototype.
+                  Final charges and refunds require backend confirmation.
+                </p>
+              </aside>
+            </div>
+
+            <!-- Bottom actions -->
+            <div class="reservation-actions">
+              <p class="action-note">
+                <span class="material-symbols-outlined">info</span>
+                Changes are subject to restaurant policy and availability.
+              </p>
+
+              <div class="action-buttons">
+                <button
+                  type="button"
+                  class="button button-cancel"
+                  (click)="openCancelModal(reservation)"
+                >
+                  <span class="material-symbols-outlined">close</span>
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  class="button button-primary"
+                  (click)="modifyReservation(reservation)"
+                >
+                  <span class="material-symbols-outlined">edit_note</span>
+                  Modify Details
+                </button>
+              </div>
+            </div>
+
+          </article>
+        }
+
+        @if (filteredReservations.length === 0) {
+          <div class="empty-state">
+            <span class="material-symbols-outlined">event_busy</span>
+            <h3>No reservations found</h3>
+            <p>
+              Try another search term or reserve a table for your next visit.
+            </p>
+
+            <button
+              type="button"
+              class="button button-primary"
+              (click)="reserveAnotherTable()"
+            >
+              Reserve a Table
+            </button>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- Past reservations -->
+    @if (activeTab === 'past') {
+      <section class="past-section">
+        <div class="section-heading">
+          <div>
+            <span class="step-label">YOUR DINING HISTORY</span>
+            <h2>Past Dining Experiences</h2>
+            <p>
+              Revisit previous menus and access your receipt information.
+            </p>
+          </div>
+        </div>
+
+        <div class="past-table">
+
+          <div class="past-table-header">
+            <span>DATE &amp; SEATING</span>
+            <span>EXPERIENCE &amp; MENU</span>
+            <span>PARTY &amp; AREA</span>
+            <span class="align-right">TOTAL SETTLED</span>
+            <span class="align-right">ACTIONS</span>
+          </div>
+
+          @for (
+            reservation of filteredReservations;
+            track reservation.reference
+          ) {
+            <div class="past-row">
+
+              <div class="past-cell date-cell">
+                <strong>{{ reservation.dateLabel }}</strong>
+                <span>
+                  {{ reservation.time }} · {{ reservation.reference }}
+                </span>
+              </div>
+
+              <div class="past-cell">
+                <strong>{{ reservation.menu }}</strong>
+                <span class="completed-label">
+                  <span class="material-symbols-outlined">done_all</span>
+                  Completed seating
+                </span>
+              </div>
+
+              <div class="past-cell">
+                <strong>{{ reservation.guests }} Guests</strong>
+                <span>{{ reservation.area }}</span>
+              </div>
+
+              <div class="past-cell amount-cell">
+                <strong>
+                  RM {{ getTotalForReservation(reservation) }}
+                </strong>
+                <span>{{ reservation.paymentLabel }}</span>
+              </div>
+
+              <div class="past-actions">
+                <button
+                  type="button"
+                  class="button button-light"
+                  (click)="downloadReceipt(reservation)"
+                >
+                  Receipt
+                </button>
+
+                <button
+                  type="button"
+                  class="button button-rebook"
+                  (click)="rebookReservation(reservation)"
+                >
+                  Re-book
+                </button>
+              </div>
+
+            </div>
+          }
+
+          @if (filteredReservations.length === 0) {
+            <div class="empty-state compact-empty">
+              <span class="material-symbols-outlined">history</span>
+              <h3>No past reservations found</h3>
+              <p>Your completed dining experiences will appear here.</p>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Cancelled reservations -->
+    @if (activeTab === 'cancelled') {
+      <section class="cancelled-section">
+        <div class="section-heading">
+          <div>
+            <span class="step-label">RESERVATION RECORDS</span>
+            <h2>Cancelled Reservations</h2>
+            <p>
+              View reservations that have been cancelled.
+            </p>
+          </div>
+        </div>
+
+        @for (
+          reservation of filteredReservations;
+          track reservation.reference
+        ) {
+          <article class="cancelled-card">
+            <div class="cancelled-icon">
+              <span class="material-symbols-outlined">event_busy</span>
+            </div>
+
+            <div class="cancelled-info">
+              <span class="cancelled-badge">CANCELLED</span>
+              <h3>{{ reservation.dateLabel }} · {{ reservation.time }}</h3>
+              <p>
+                {{ reservation.reference }} · {{ reservation.menu }}
+              </p>
+              <span>{{ reservation.notes }}</span>
+            </div>
+
+            <button
+              type="button"
+              class="button button-rebook"
+              (click)="rebookReservation(reservation)"
+            >
+              Re-book
+            </button>
+          </article>
+        }
+
+        @if (filteredReservations.length === 0) {
+          <div class="empty-state">
+            <span class="material-symbols-outlined">event_available</span>
+            <h3>No cancelled reservations</h3>
+            <p>
+              Your cancelled reservations will appear here if you cancel a booking.
+            </p>
+          </div>
+        }
+      </section>
+    }
+
+  </div>
+</main>
+
+<!-- Cancellation modal -->
+@if (showCancelModal && selectedReservation) {
+  <div
+    class="modal-backdrop"
+    (click)="closeCancelModal()"
+    (keydown.escape)="closeCancelModal()"
+  >
+    <section
+      class="cancellation-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cancel-modal-title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-heading">
+        <div>
+          <span class="material-symbols-outlined">cancel</span>
+          <span>CANCEL RESERVATION</span>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          aria-label="Close cancellation dialog"
+          (click)="closeCancelModal()"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <h2 id="cancel-modal-title">
+        Cancel reservation {{ selectedReservation.reference }}?
+      </h2>
+
+      <p class="modal-description">
+        {{ selectedReservation.dateLabel }} at
+        {{ selectedReservation.time }} for
+        {{ selectedReservation.guests }} guests.
+      </p>
+
+      <div class="modal-notice">
+        <span class="material-symbols-outlined">info</span>
+        <p>
+          Cancelling this demo reservation will move it to your
+          Cancelled tab. Any actual deposit refund must be confirmed
+          by the restaurant's booking and payment system.
+        </p>
+      </div>
+
+      <div class="form-field">
+        <label for="cancelReason">
+          Reason for cancellation (optional)
+        </label>
+
+        <select
+          id="cancelReason"
+          name="cancelReason"
+          [(ngModel)]="cancelReason"
+        >
+          <option>Scheduling conflict / Travel changes</option>
+          <option>Unexpected circumstances</option>
+          <option>Prefer another date/time</option>
+          <option>Other reason</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="button button-light"
+          (click)="closeCancelModal()"
+        >
+          Keep Reservation
+        </button>
+
+        <button
+          type="button"
+          class="button button-danger"
+          (click)="confirmCancellation()"
+        >
+          Confirm Cancellation
+        </button>
+      </div>
+    </section>
+  </div>
+}
+
+<!-- Toast notification -->
+@if (toastMessage) {
+  <div class="toast-message" role="status">
+    <span class="material-symbols-outlined">check_circle</span>
+    <p>{{ toastMessage }}</p>
+
+    <button
+      type="button"
+      aria-label="Dismiss notification"
+      (click)="dismissToast()"
+    >
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+}
+
+<app-footer></app-footer>

@@ -19,4 +19,14 @@ export class HeaderComponent {
   isAdminLogin(): boolean {
     return this.router.url === '/admin-login';
   }
+
+  isProfileMenuOpen = false;
+
+  toggleProfileMenu(): void {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
+
+  closeProfileMenu(): void {
+    this.isProfileMenuOpen = false;
+  }
 }

@@ -1,0 +1,697 @@
+<app-header></app-header>
+
+<main class="reservation-page">
+  <section class="reservation-container">
+
+    <!-- Page heading -->
+    <div class="page-heading">
+      <div class="heading-copy">
+        <div class="eyebrow">
+          <span>AURELIA TABLE RESERVE</span>
+          <span class="eyebrow-dot"></span>
+          <span>GEORGE TOWN, PENANG</span>
+        </div>
+
+        <h1>Reserve an Intimate Dining Experience</h1>
+
+        <p>
+          Discover refined French flavours, seasonal ingredients,
+          and warm hospitality. Choose your preferred date, time,
+          and dining experience.
+        </p>
+      </div>
+
+      <div class="season-card">
+        <div class="season-icon">
+          <span class="material-symbols-outlined">calendar_month</span>
+        </div>
+
+        <div>
+          <span class="small-label">OUR CURRENT SELECTION</span>
+          <strong>Seasonal Dining</strong>
+          <span class="season-caption">Thoughtfully prepared, always fresh</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="reservation-layout">
+
+      <!-- LEFT: Booking selections -->
+      <div class="booking-column">
+
+        <!-- 01 Service -->
+        <section class="booking-card">
+          <div class="section-heading">
+            <div>
+              <span class="step-label">01 / SERVICE PERIOD</span>
+              <h2>When would you like to dine?</h2>
+            </div>
+            <span class="optional-label">Choose one</span>
+          </div>
+
+          <div class="service-options">
+            <button
+              type="button"
+              class="service-option"
+              [class.selected]="selectedPeriod === 'dinner'"
+              [attr.aria-pressed]="selectedPeriod === 'dinner'"
+              (click)="changePeriod('dinner')"
+            >
+              <span class="material-symbols-outlined service-icon">
+                nights_stay
+              </span>
+
+              <span class="service-copy">
+                <strong>Dinner Service</strong>
+                <span>Tuesday – Sunday</span>
+                <span class="service-hours">17:30 – 23:00</span>
+              </span>
+
+              <span class="material-symbols-outlined selection-icon">
+                {{ selectedPeriod === 'dinner' ? 'check_circle' : 'radio_button_unchecked' }}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              class="service-option"
+              [class.selected]="selectedPeriod === 'brunch'"
+              [attr.aria-pressed]="selectedPeriod === 'brunch'"
+              (click)="changePeriod('brunch')"
+            >
+              <span class="material-symbols-outlined service-icon">
+                wb_twilight
+              </span>
+
+              <span class="service-copy">
+                <strong>Weekend Brunch</strong>
+                <span>Saturday &amp; Sunday</span>
+                <span class="service-hours">11:00 – 15:00</span>
+              </span>
+
+              <span class="material-symbols-outlined selection-icon">
+                {{ selectedPeriod === 'brunch' ? 'check_circle' : 'radio_button_unchecked' }}
+              </span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 02 Date -->
+        <section class="booking-card">
+          <div class="section-heading">
+            <div>
+              <span class="step-label">02 / SELECT DATE</span>
+              <h2>Choose your date</h2>
+            </div>
+
+            <div class="month-navigation">
+              <button
+                type="button"
+                aria-label="Previous month"
+                [disabled]="
+                  displayedMonth.getFullYear() === today.getFullYear()
+                  && displayedMonth.getMonth() === today.getMonth()
+                "
+                (click)="previousMonth()"
+              >
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+
+              <strong>{{ monthLabel }}</strong>
+
+              <button
+                type="button"
+                aria-label="Next month"
+                (click)="nextMonth()"
+              >
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="calendar">
+            <div class="weekday-row">
+              <span>Sun</span>
+              <span>Mon</span>
+              <span>Tue</span>
+              <span>Wed</span>
+              <span>Thu</span>
+              <span>Fri</span>
+              <span>Sat</span>
+            </div>
+
+            <div class="calendar-grid">
+              @for (day of calendarDays; track $index) {
+                <button
+                  type="button"
+                  class="calendar-day"
+                  [class.outside-month]="!day.isCurrentMonth"
+                  [class.selected]="isSameDate(day.date, selectedDate)"
+                  [class.weekend]="isWeekend(day.date)"
+                  [disabled]="
+                    day.disabled
+                    || !day.isCurrentMonth
+                    || (selectedPeriod === 'brunch' && !isWeekend(day.date))
+                  "
+                  [attr.aria-pressed]="isSameDate(day.date, selectedDate)"
+                  (click)="selectDate(day)"
+                >
+                  <span>{{ day.date.getDate() }}</span>
+                  @if (
+                    day.isCurrentMonth
+                    && !day.disabled
+                    && !(selectedPeriod === 'brunch' && !isWeekend(day.date))
+                  ) {
+                    <span class="calendar-dot"></span>
+                  }
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="calendar-legend">
+            <span>
+              <span class="legend-dot"></span>
+              Available dates
+            </span>
+            <span>Closed Mondays</span>
+          </div>
+
+          @if (selectedPeriod === 'brunch') {
+            <p class="inline-note">
+              Weekend brunch is available on Saturdays and Sundays.
+            </p>
+          }
+        </section>
+
+        <!-- 03 Party size -->
+        <section class="booking-card">
+          <div class="section-heading">
+            <div>
+              <span class="step-label">03 / PARTY SIZE</span>
+              <h2>Who is joining you?</h2>
+            </div>
+
+            <span class="optional-label">
+              {{ partySize === '7+' ? 'Private dining' : 'Table for ' + partySize }}
+            </span>
+          </div>
+
+          <div class="party-options">
+            @for (size of [1, 2, 3, 4, 5, 6]; track size) {
+              <button
+                type="button"
+                class="party-button"
+                [class.selected]="partySize === size"
+                [attr.aria-pressed]="partySize === size"
+                (click)="selectPartySize(size)"
+              >
+                {{ size }}
+              </button>
+            }
+
+            <button
+              type="button"
+              class="party-button private-party"
+              [class.selected]="partySize === '7+'"
+              [attr.aria-pressed]="partySize === '7+'"
+              (click)="selectPartySize('7+')"
+            >
+              <span class="material-symbols-outlined">groups</span>
+              <span>7+ Guests</span>
+            </button>
+          </div>
+
+          @if (partySize === '7+') {
+            <p class="inline-note">
+              Your request will be treated as a private dining inquiry.
+              The displayed price estimate is based on eight guests.
+            </p>
+          }
+        </section>
+
+        <!-- 04 Dining experience -->
+        <section class="booking-card">
+          <div class="section-heading">
+            <div>
+              <span class="step-label">04 / DINING EXPERIENCE</span>
+              <h2>Make it your own</h2>
+            </div>
+            <span class="optional-label">Optional</span>
+          </div>
+
+          <div class="dining-options">
+            <button
+              type="button"
+              class="dining-option"
+              [class.selected]="selectedDiningOption === 'tasting'"
+              (click)="selectDiningOption('tasting')"
+            >
+              <span class="dining-option-top">
+                <strong>Set Tasting Menu</strong>
+                <span class="material-symbols-outlined">
+                  {{ selectedDiningOption === 'tasting' ? 'check_circle' : 'radio_button_unchecked' }}
+                </span>
+              </span>
+              <span>A curated multi-course journey.</span>
+            </button>
+
+            <button
+              type="button"
+              class="dining-option"
+              [class.selected]="selectedDiningOption === 'alacarte'"
+              (click)="selectDiningOption('alacarte')"
+            >
+              <span class="dining-option-top">
+                <strong>Hand-Pick Dishes</strong>
+                <span class="material-symbols-outlined">
+                  {{ selectedDiningOption === 'alacarte' ? 'check_circle' : 'radio_button_unchecked' }}
+                </span>
+              </span>
+              <span>Choose dishes from our menu.</span>
+            </button>
+
+            <button
+              type="button"
+              class="dining-option"
+              [class.selected]="selectedDiningOption === 'table'"
+              (click)="selectDiningOption('table')"
+            >
+              <span class="dining-option-top">
+                <strong>Order at Table</strong>
+                <span class="material-symbols-outlined">
+                  {{ selectedDiningOption === 'table' ? 'check_circle' : 'radio_button_unchecked' }}
+                </span>
+              </span>
+              <span>Explore the menu when seated.</span>
+            </button>
+          </div>
+
+          @if (selectedDiningOption === 'tasting') {
+            <div class="tasting-menu-list">
+              @for (menu of tastingMenus; track menu.name) {
+                <button
+                  type="button"
+                  class="tasting-menu"
+                  [class.selected]="selectedTastingMenu === menu.name"
+                  (click)="selectMenu(menu.name)"
+                >
+                  <span class="menu-topline">
+                    <span class="small-label">{{ menu.label }}</span>
+                    <span class="menu-courses">{{ menu.courses }}</span>
+                  </span>
+
+                  <strong>{{ menu.name }}</strong>
+                  <span class="menu-description">{{ menu.description }}</span>
+
+                  <span class="menu-bottomline">
+                    <span class="menu-price">
+                      RM {{ menu.price.toFixed(2) }}
+                      <small>/ guest</small>
+                    </span>
+
+                    <span class="menu-action">
+                      <span class="material-symbols-outlined">
+                        {{ selectedTastingMenu === menu.name ? 'check_circle' : 'add_circle' }}
+                      </span>
+                      {{ selectedTastingMenu === menu.name ? 'Selected' : 'Choose' }}
+                    </span>
+                  </span>
+                </button>
+              }
+            </div>
+          } @else {
+            <div class="selection-notice">
+              <span class="material-symbols-outlined">restaurant_menu</span>
+              <p>
+                {{ selectedDiningOption === 'alacarte'
+                  ? 'You can explore the menu and make your selections before your visit.'
+                  : 'You can browse our menu and order after being seated.' }}
+              </p>
+              <a routerLink="/menu">Explore Our Menu</a>
+            </div>
+          }
+
+          <label class="pairing-option">
+            <span class="pairing-icon material-symbols-outlined">
+              local_cafe
+            </span>
+
+            <span class="pairing-copy">
+              <strong>Seasonal Beverage Pairing</strong>
+              <span>Curated non-alcoholic drinks · RM 56.00 per guest</span>
+            </span>
+
+            <input
+              type="checkbox"
+              name="beveragePairing"
+              [(ngModel)]="includeBeveragePairing"
+              (ngModelChange)="isConfirmed = false"
+            />
+          </label>
+        </section>
+
+        <!-- 05 Seating -->
+        <section class="booking-card">
+          <div class="section-heading">
+            <div>
+              <span class="step-label">05 / SEATING ATMOSPHERE</span>
+              <h2>Choose your setting</h2>
+            </div>
+            <span class="optional-label">Subject to availability</span>
+          </div>
+
+          <div class="seating-options">
+            @for (option of seatingOptions; track option.name) {
+              <button
+                type="button"
+                class="seating-option"
+                [class.selected]="selectedSeating === option.name"
+                [attr.aria-pressed]="selectedSeating === option.name"
+                (click)="selectSeating(option.name)"
+              >
+                <span class="seating-topline">
+                  <span class="material-symbols-outlined">
+                    {{ option.icon }}
+                  </span>
+                  <span class="seating-badge">{{ option.label }}</span>
+                </span>
+
+                <strong>{{ option.name }}</strong>
+                <span class="seating-description">{{ option.description }}</span>
+
+                <span class="seating-choice">
+                  {{ selectedSeating === option.name ? 'Selected' : 'Choose seating' }}
+                </span>
+              </button>
+            }
+          </div>
+        </section>
+
+        <!-- 06 Time -->
+        <section class="booking-card">
+          <div class="section-heading">
+            <div>
+              <span class="step-label">06 / AVAILABLE TIMES</span>
+              <h2>Select your arrival time</h2>
+            </div>
+            <span class="optional-label">Local restaurant time</span>
+          </div>
+
+          <div class="time-options">
+            @for (slot of currentTimes; track slot.time) {
+              <button
+                type="button"
+                class="time-option"
+                [class.selected]="selectedTime === slot.time"
+                [disabled]="slot.disabled"
+                [attr.aria-pressed]="selectedTime === slot.time"
+                (click)="selectTime(slot)"
+              >
+                <strong>{{ slot.time }}</strong>
+                <span>{{ slot.label }}</span>
+              </button>
+            }
+          </div>
+
+          <p class="inline-note">
+            Times shown are illustrative for the frontend prototype.
+            Actual availability will be checked when the backend is connected.
+          </p>
+        </section>
+      </div>
+
+      <!-- RIGHT: Summary and guest details -->
+      <aside class="summary-column">
+
+        <section class="summary-card">
+          <div class="summary-heading">
+            <div class="summary-title">
+              <span class="material-symbols-outlined">restaurant_menu</span>
+              <h2>Your Reservation</h2>
+            </div>
+            <span class="draft-badge">PREVIEW</span>
+          </div>
+
+          <div class="summary-details">
+            <div class="summary-detail">
+              <span>DATE</span>
+              <strong>{{ shortSelectedDate }}</strong>
+            </div>
+
+            <div class="summary-detail">
+              <span>TIME</span>
+              <strong>{{ selectedTime || 'Not selected' }}</strong>
+            </div>
+
+            <div class="summary-detail">
+              <span>PARTY</span>
+              <strong>
+                {{ partySize === '7+' ? '7+ Guests' : partySize + ' Guests' }}
+              </strong>
+            </div>
+
+            <div class="summary-detail">
+              <span>SEATING</span>
+              <strong>{{ selectedSeating }}</strong>
+            </div>
+
+            <div class="summary-detail full-width">
+              <span>SERVICE</span>
+              <strong>
+                {{ selectedPeriod === 'dinner' ? 'Dinner Service' : 'Weekend Brunch' }}
+              </strong>
+            </div>
+          </div>
+
+          <div class="summary-menu">
+            <span class="small-label">DINING PREFERENCE</span>
+            <strong>{{ diningOptionLabel }}</strong>
+
+            @if (selectedDiningOption === 'tasting') {
+              <span>{{ selectedTastingMenu }}</span>
+            }
+
+            @if (includeBeveragePairing) {
+              <span>Seasonal Beverage Pairing included</span>
+            }
+          </div>
+
+          <div class="price-breakdown">
+            @if (selectedDiningOption === 'tasting') {
+              <div class="price-row">
+                <span>{{ selectedMenu.name }} × {{ guestCount }}</span>
+                <strong>RM {{ (selectedMenu.price * guestCount).toFixed(2) }}</strong>
+              </div>
+            }
+
+            @if (includeBeveragePairing) {
+              <div class="price-row">
+                <span>Beverage pairing × {{ guestCount }}</span>
+                <strong>
+                  RM {{ (beveragePairingPrice * guestCount).toFixed(2) }}
+                </strong>
+              </div>
+            }
+
+            <div class="price-row subtotal-row">
+              <span>Estimated dining subtotal</span>
+              <strong>RM {{ diningSubtotal.toFixed(2) }}</strong>
+            </div>
+
+            <div class="price-row deposit-row">
+              <span>
+                <span class="material-symbols-outlined">lock</span>
+                Table deposit (RM 25 × {{ guestCount }})
+              </span>
+              <strong>RM {{ depositTotal.toFixed(2) }}</strong>
+            </div>
+
+            <p class="deposit-note">
+              The deposit is an illustrative estimate and is credited
+              towards the final bill, subject to the restaurant's policy.
+            </p>
+          </div>
+
+          <div class="summary-total">
+            <span>Deposit estimate</span>
+            <strong>RM {{ depositTotal.toFixed(2) }}</strong>
+          </div>
+
+          <p class="summary-disclaimer">
+            This is a reservation preview, not a confirmed booking.
+            Final availability and any deposit payment will be handled
+            by the connected booking system.
+          </p>
+        </section>
+
+        <!-- Guest contact form -->
+        <section class="guest-details-card">
+          <div class="section-heading">
+            <div>
+              <span class="step-label">YOUR DETAILS</span>
+              <h2>Who should we contact?</h2>
+            </div>
+          </div>
+
+          <form class="guest-form" (ngSubmit)="confirmReservation()">
+            <div class="form-field">
+              <label for="guestName">Full Name *</label>
+              <input
+                id="guestName"
+                name="guestName"
+                type="text"
+                [(ngModel)]="guestName"
+                placeholder="Enter your full name"
+                autocomplete="name"
+                required
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="guestEmail">Email Address *</label>
+              <input
+                id="guestEmail"
+                name="guestEmail"
+                type="email"
+                [(ngModel)]="guestEmail"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="guestPhone">Phone Number *</label>
+              <input
+                id="guestPhone"
+                name="guestPhone"
+                type="tel"
+                [(ngModel)]="guestPhone"
+                placeholder="+60 12 345 6789"
+                autocomplete="tel"
+                required
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="specialNotes">Special Requests or Allergies</label>
+              <textarea
+                id="specialNotes"
+                name="specialNotes"
+                [(ngModel)]="specialNotes"
+                rows="3"
+                placeholder="Let us know about dietary needs or a special occasion..."
+              ></textarea>
+            </div>
+
+            @if (errorMessage) {
+              <div class="form-message error-message" role="alert">
+                <span class="material-symbols-outlined">error</span>
+                {{ errorMessage }}
+              </div>
+            }
+
+            @if (isConfirmed) {
+              <div class="form-message success-message" role="status">
+                <span class="material-symbols-outlined">check_circle</span>
+                <div>
+                  <strong>Reservation preview complete</strong>
+                  <span>
+                    Your selections are ready. A real booking will require
+                    backend integration.
+                  </span>
+                </div>
+              </div>
+            }
+
+            <button
+              type="submit"
+              class="confirm-button"
+              [disabled]="isSubmitting"
+            >
+              <span>
+                {{ isSubmitting ? 'Preparing preview...' : 'Review Reservation' }}
+              </span>
+              <span class="material-symbols-outlined">
+                {{ isSubmitting ? 'progress_activity' : 'arrow_forward' }}
+              </span>
+            </button>
+          </form>
+
+          <div class="guest-guidelines">
+            <div class="guidelines-heading">
+              <span class="material-symbols-outlined">info</span>
+              <strong>Guest Guidelines</strong>
+            </div>
+
+            <ul>
+              <li>
+                <span class="material-symbols-outlined">check</span>
+                Please arrive on time for your reservation.
+              </li>
+              <li>
+                <span class="material-symbols-outlined">check</span>
+                Inform us of allergies or dietary requirements in advance.
+              </li>
+              <li>
+                <span class="material-symbols-outlined">check</span>
+                Changes and cancellations will be subject to the restaurant's policy.
+              </li>
+            </ul>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <!-- Atmosphere gallery -->
+    <section class="atmosphere-section">
+      <div class="atmosphere-heading">
+        <span class="step-label">THE AURELIA EXPERIENCE</span>
+        <h2>A setting for every occasion</h2>
+        <p>Thoughtful details, seasonal cooking, and a welcoming atmosphere.</p>
+      </div>
+
+      <div class="atmosphere-grid">
+        <article class="atmosphere-card atmosphere-main">
+          <img
+            src="/images/aurelia-dining.png"
+            alt="Aurelia restaurant dining room"
+            loading="lazy"
+          />
+          <div class="atmosphere-overlay">
+            <span>THE SETTING</span>
+            <h3>Dining Room Elegance</h3>
+          </div>
+        </article>
+
+        <article class="atmosphere-card">
+          <img
+            src="/images/aurelia-chef.png"
+            alt="Chef preparing a seasonal dish"
+            loading="lazy"
+          />
+          <div class="atmosphere-overlay">
+            <span>THE CRAFT</span>
+            <h3>Made with Intention</h3>
+          </div>
+        </article>
+
+        <article class="atmosphere-card">
+          <img
+            src="/images/aurelia-atmosphere.png"
+            alt="An intimate restaurant table prepared for dinner"
+            loading="lazy"
+          />
+          <div class="atmosphere-overlay">
+            <span>THE MOMENT</span>
+            <h3>Gather Around the Table</h3>
+          </div>
+        </article>
+      </div>
+    </section>
+
+  </section>
+</main>
+
+<app-footer></app-footer>

@@ -4,6 +4,8 @@ import { GuestLoginComponent } from './pages/guest-login/guest-login.component';
 import { AdminLoginComponent } from './pages/admin-login/admin-login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { MenuComponent } from './pages/menu/menu.component';
+import { ReservationsComponent } from './pages/reservations/reservations.component';
+import { MyReservationsComponent } from './pages/my-reservations/my-reservations.component';
 
 export const routes: Routes = [
   {
@@ -26,5 +28,13 @@ export const routes: Routes = [
   {
     path: 'menu',
     component: MenuComponent
+  },
+  {
+    path: 'reservations',
+    component: ReservationsComponent
+  },
+  {
+    path: 'my-reservations',
+    component: MyReservationsComponent
   },
 ];
