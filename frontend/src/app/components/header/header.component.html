@@ -1,59 +1,115 @@
-<header class="site-header">
-    <div class="header-inner">
-  
-      <div class="brand-area">
-  
-        <a class="brand" routerLink="/">
-          AURELIA
-          <span class="brand-tag">RESTAURANT</span>
-        </a>
-  
-        <nav class="main-nav">
-          <a routerLink="/menu">Our Menu</a>
-          <a routerLink="/reservations">Reservations</a>
-          <a routerLink="/private-events">Private Events</a>
-          <a routerLink="/story">Our Story</a>
-        </nav>
-  
-      </div>
-  
-      <div class="header-actions">
-  
-        <div class="portal-switcher">
 
-          <a
-            routerLink="/guest-login"
-            [class.portal-active]="isGuestLogin()"
-          >
-            GUEST
+<header class="site-header">
+  <div class="header-inner">
+
+    <!-- Brand -->
+    <div class="brand-area">
+      <a
+        class="brand"
+        [routerLink]="isStaffMode() ? '/admin-dashboard' : '/menu'"
+      >
+        AURELIA
+        <span class="brand-tag">RESTAURANT</span>
+      </a>
+
+      <!-- Guest navigation -->
+      @if (!isStaffMode()) {
+        <nav class="main-nav">
+          <a routerLink="/menu" routerLinkActive="nav-active"
+             [routerLinkActiveOptions]="{ exact: true }">
+            Our Menu
           </a>
-        
-          <a
-            routerLink="/admin-login"
-            [class.portal-active]="isAdminLogin()"
-          >
-            STAFF
+
+          <a routerLink="/reservations" routerLinkActive="nav-active">
+            Reservations
           </a>
-        
-        </div>
-  
+
+        </nav>
+      }
+
+      <!-- Staff navigation -->
+      @if (isStaffMode()) {
+        <!-- <span class="portal-label">Staff Portal</span> -->
+
+        <nav class="main-nav staff-nav">
+          <a routerLink="/admin-dashboard" routerLinkActive="nav-active"
+             [routerLinkActiveOptions]="{ exact: true }">
+            Dashboard
+          </a>
+
+          <a routerLink="/reservation-management" routerLinkActive="nav-active">
+            Reservations
+          </a>
+
+          <a routerLink="/menu-management" routerLinkActive="nav-active">
+            Menu Management
+          </a>
+
+          <a routerLink="/staff-management" routerLinkActive="nav-active">
+            Staff Management
+          </a>
+        </nav>
+      }
+    </div>
+
+    <!-- Header actions -->
+    <div class="header-actions">
+
+      <!-- Switch between guest and staff portals -->
+      <div class="portal-switcher">
+        <a
+          routerLink="/menu"
+          [class.portal-active]="!isStaffMode()"
+        >
+          GUEST
+        </a>
+
+        <a
+          routerLink="/admin-dashboard"
+          [class.portal-active]="isStaffMode()"
+        >
+          STAFF
+        </a>
+      </div>
+
+      <!-- Guest action -->
+      @if (!isStaffMode()) {
         <a class="reserve-button" routerLink="/reservations">
           Reserve a Table
         </a>
-  
-        <div class="profile-menu">
-          <button
-            type="button"
-            class="profile-icon"
-            (click)="toggleProfileMenu()"
-            aria-label="Open profile menu"
-            [attr.aria-expanded]="isProfileMenuOpen"
-          >
-            <span class="material-symbols-outlined">person</span>
-          </button>
-        
-          @if (isProfileMenuOpen) {
-            <div class="profile-dropdown">
+      }
+
+      <!-- Staff notification shortcut -->
+      @if (isStaffMode()) {
+        <button
+          type="button"
+          class="notification-button"
+          aria-label="Staff notifications"
+          title="Staff Notifications"
+          (click)="closeProfileMenu()"
+        >
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+      }
+
+      <!-- Profile dropdown -->
+      <div class="profile-menu">
+        <button
+          type="button"
+          class="profile-icon"
+          (click)="toggleProfileMenu()"
+          aria-label="Open profile menu"
+          [attr.aria-expanded]="isProfileMenuOpen"
+        >
+          <span class="material-symbols-outlined">
+            {{ isStaffMode() ? 'badge' : 'person' }}
+          </span>
+        </button>
+
+        @if (isProfileMenuOpen) {
+          <div class="profile-dropdown">
+
+            @if (!isStaffMode()) {
               <a
                 routerLink="/my-reservations"
                 (click)="closeProfileMenu()"
@@ -61,19 +117,58 @@
                 <span class="material-symbols-outlined">calendar_month</span>
                 My Reservations
               </a>
-        
+
               <a
                 routerLink="/guest-login"
                 (click)="closeProfileMenu()"
               >
-                <span class="material-symbols-outlined">logout</span>
+                <span class="material-symbols-outlined">login</span>
                 Guest Login
               </a>
-            </div>
-          }
-        </div>
-  
+
+              <a
+                routerLink="/admin-login"
+                (click)="closeProfileMenu()"
+              >
+                <span class="material-symbols-outlined">admin_panel_settings</span>
+                Staff Login
+              </a>
+            }
+
+            @if (isStaffMode()) {
+              <div class="dropdown-heading">
+                Staff Workspace
+              </div>
+
+              <a
+                routerLink="/admin-dashboard"
+                (click)="closeProfileMenu()"
+              >
+                <span class="material-symbols-outlined">dashboard</span>
+                Operations Dashboard
+              </a>
+
+              <a
+                routerLink="/reservations-mgmt"
+                (click)="closeProfileMenu()"
+              >
+                <span class="material-symbols-outlined">calendar_month</span>
+                Manage Reservations
+              </a>
+
+              <a
+                routerLink="/admin-login"
+                (click)="closeProfileMenu()"
+              >
+                <span class="material-symbols-outlined">logout</span>
+                Staff Sign Out
+              </a>
+            }
+
+          </div>
+        }
       </div>
-  
+
     </div>
-  </header>
+  </div>
+</header>

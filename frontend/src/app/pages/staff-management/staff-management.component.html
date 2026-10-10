@@ -1,0 +1,544 @@
+<app-header></app-header>
+
+<main class="staff-page">
+  <div class="page-container page-content">
+  <!-- Page heading -->
+  <section class="page-heading">
+    <div class="heading-copy">
+      <div class="eyebrow">
+        <span class="material-symbols-outlined">manage_accounts</span>
+        STAFF &amp; ACCESS CONFIGURATION
+      </div>
+
+      <h1>Staff &amp; Access Management</h1>
+
+      <p>
+        Manage staff profiles, assign restaurant roles, and control access
+        to Aurelia's service and management modules from one workspace.
+      </p>
+    </div>
+
+    <div class="heading-actions">
+      <button
+        class="button button-light"
+        type="button"
+        (click)="exportCsv()"
+      >
+        <span class="material-symbols-outlined">download</span>
+        Export CSV
+      </button>
+
+      <button
+        class="button button-primary"
+        type="button"
+        (click)="openCreateDrawer()"
+      >
+        <span class="material-symbols-outlined">person_add</span>
+        Create Staff
+      </button>
+    </div>
+  </section>
+
+
+  
+    <!-- Summary cards -->
+    <section class="metrics-grid" aria-label="Staff summary">
+      <article class="metric-card">
+        <div class="metric-heading">
+          <span>Total Staff Members</span>
+          <span class="metric-icon material-symbols-outlined">badge</span>
+        </div>
+
+        <div class="metric-number">{{ staff.length }}</div>
+        <div class="metric-foot">
+          <span>Registered staff profiles</span>
+          <span class="metric-highlight">Directory</span>
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-heading">
+          <span>Roles Breakdown</span>
+          <span class="metric-icon material-symbols-outlined">pie_chart</span>
+        </div>
+
+        <div class="role-bars" aria-label="Staff distribution by role">
+          @for (role of roleBreakdown; track role.label) {
+            @if (role.count > 0) {
+              <span
+                class="role-bar-segment"
+                [class.role-bar-1]="$index % 4 === 0"
+                [class.role-bar-2]="$index % 4 === 1"
+                [class.role-bar-3]="$index % 4 === 2"
+                [class.role-bar-4]="$index % 4 === 3"
+                [style.flex]="role.count"
+                [title]="role.label + ': ' + role.count"
+              ></span>
+            }
+          }
+        </div>
+
+        <div class="role-legend">
+          @for (role of roleBreakdown; track role.label) {
+            @if (role.count > 0) {
+              <span>{{ role.count }} {{ role.label }}</span>
+            }
+          }
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-heading">
+          <span>Account Status</span>
+          <span class="metric-icon material-symbols-outlined">verified_user</span>
+        </div>
+
+        <div class="status-metrics">
+          <div>
+            <strong>{{ activeCount }}</strong>
+            <span class="status-label">
+              <i class="status-dot active-dot"></i>
+              Active
+            </span>
+          </div>
+
+          <span class="status-separator"></span>
+
+          <div>
+            <strong>{{ deactivatedCount }}</strong>
+            <span class="status-label">
+              <i class="status-dot inactive-dot"></i>
+              Deactivated
+            </span>
+          </div>
+        </div>
+
+        <div class="metric-foot">
+          <span>Current directory status</span>
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-heading">
+          <span>Access Permissions</span>
+          <span class="metric-icon material-symbols-outlined">shield</span>
+        </div>
+
+        <div class="metric-number">{{ permissionGroups.length }}</div>
+        <div class="metric-foot">
+          <span>Permission modules</span>
+          <span class="metric-highlight">Configurable</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- Directory -->
+    <section class="directory-section">
+      <div class="section-heading">
+        <div>
+          <h2>Staff Directory</h2>
+          <p>Search team members and manage their account access.</p>
+        </div>
+
+        <span class="result-count">
+          {{ filteredStaff.length }} shown
+        </span>
+      </div>
+
+      <!-- Search and filters -->
+      <div class="filter-panel">
+        <label class="search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input
+            type="search"
+            name="staffSearch"
+            [(ngModel)]="searchQuery"
+            placeholder="Search name, email, ID or role..."
+            aria-label="Search staff"
+          />
+        </label>
+
+        <label class="filter-control">
+          <span>Role</span>
+          <select name="roleFilter" [(ngModel)]="roleFilter">
+            <option value="all">All roles</option>
+            @for (role of roles; track role.value) {
+              <option [value]="role.value">{{ role.label }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="filter-control">
+          <span>Status</span>
+          <select name="statusFilter" [(ngModel)]="statusFilter">
+            <option value="all">All statuses</option>
+            <option value="active">Active</option>
+            <option value="deactivated">Deactivated</option>
+          </select>
+        </label>
+
+        <button
+          class="icon-button reset-button"
+          type="button"
+          (click)="resetFilters()"
+          title="Reset filters"
+          aria-label="Reset filters"
+        >
+          <span class="material-symbols-outlined">refresh</span>
+        </button>
+      </div>
+
+      <!-- Staff table -->
+      <div class="table-card">
+        <div class="table-scroll">
+          <table class="staff-table">
+            <thead>
+              <tr>
+                <th>Staff Member</th>
+                <th>Role &amp; Zone</th>
+                <th>Status</th>
+                <th class="actions-column">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (member of filteredStaff; track member.id) {
+                <tr
+                  [class.deactivated-row]="!member.active"
+                  (click)="openStaff(member)"
+                  (keydown.enter)="openStaff(member)"
+                  tabindex="0"
+                  role="button"
+                  [attr.aria-label]="'Edit ' + member.name"
+                >
+                  <td>
+                    <div class="staff-identity">
+                      <div class="staff-avatar">
+                        {{ member.name.charAt(0) }}
+                      </div>
+
+                      <div class="staff-details">
+                        <strong>{{ member.name }}</strong>
+                        <span>{{ member.email }}</span>
+                        <small>{{ member.id }}</small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="role-details">
+                      <span class="role-pill" [attr.data-role]="member.role">
+                        {{ roleLabel(member.role) }}
+                      </span>
+                      <span class="staff-zone">{{ member.zone }}</span>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span class="status-pill" [class.status-inactive]="!member.active">
+                      <i class="status-dot" [class.active-dot]="member.active"
+                         [class.inactive-dot]="!member.active"></i>
+                      {{ member.active ? 'Active' : 'Deactivated' }}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="row-actions">
+                      @if (member.active) {
+                        <button
+                          class="icon-button"
+                          type="button"
+                          title="Edit permissions"
+                          aria-label="Edit permissions"
+                          (click)="$event.stopPropagation(); openStaff(member)"
+                        >
+                          <span class="material-symbols-outlined">tune</span>
+                        </button>
+                      } @else {
+                        <button
+                          class="icon-button"
+                          type="button"
+                          title="Reactivate account"
+                          aria-label="Reactivate account"
+                          (click)="reactivateStaff(member, $event)"
+                        >
+                          <span class="material-symbols-outlined">lock_open</span>
+                        </button>
+                      }
+
+                      <button
+                        class="icon-button"
+                        type="button"
+                        title="Edit staff details"
+                        aria-label="Edit staff details"
+                        (click)="$event.stopPropagation(); openStaff(member)"
+                      >
+                        <span class="material-symbols-outlined">edit</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td class="empty-state" colspan="4">
+                    <span class="material-symbols-outlined">person_search</span>
+                    <strong>No staff members found</strong>
+                    <span>Try changing your search or filters.</span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span>
+            Showing <strong>{{ filteredStaff.length }}</strong> of
+            <strong>{{ staff.length }}</strong> staff profiles
+          </span>
+          <span class="demo-note">Demo directory</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security information -->
+    <section class="security-card">
+      <div class="security-icon material-symbols-outlined">admin_panel_settings</div>
+
+      <div class="security-copy">
+        <h3>Staff Access &amp; Security</h3>
+        <p>
+          Assign only the permissions required for each staff member's role.
+          Account access and permission enforcement will be handled by the
+          backend when authentication is connected.
+        </p>
+      </div>
+
+      <span class="security-tag">Access control</span>
+    </section>
+  </div>
+</main>
+
+<!-- Right-side staff drawer -->
+@if (drawerOpen) {
+  <div class="drawer-backdrop" (click)="closeDrawer()">
+    <aside
+      class="staff-drawer"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="isCreating ? 'Create staff account' : 'Edit staff account'"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="drawer-header">
+        <div>
+          <span class="eyebrow drawer-eyebrow">
+            {{ isCreating ? 'New Account' : 'Staff Management' }}
+          </span>
+          <h2>{{ isCreating ? 'Create Staff' : 'Staff Profile' }}</h2>
+          <p>
+            {{ isCreating
+              ? 'Add a team member to the Aurelia directory.'
+              : 'Update staff details and access permissions.' }}
+          </p>
+        </div>
+
+        <button
+          class="icon-button close-drawer"
+          type="button"
+          aria-label="Close drawer"
+          (click)="closeDrawer()"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="drawer-body">
+        <form id="staffForm" (ngSubmit)="saveStaff()">
+          <section class="editor-section">
+            <div class="editor-section-heading">
+              <span class="material-symbols-outlined">person</span>
+              <div>
+                <h3>Personal Details</h3>
+                <p>Basic staff contact information.</p>
+              </div>
+            </div>
+
+            <div class="field-stack">
+              @if (!isCreating) {
+                <div class="staff-id-field">
+                  <span>Staff ID</span>
+                  <strong>{{ form.id }}</strong>
+                </div>
+              }
+
+              <label class="form-field">
+                <span>Full Name <i>*</i></span>
+                <input
+                  type="text"
+                  name="fullName"
+                  [(ngModel)]="form.name"
+                  placeholder="Enter full name"
+                  required
+                />
+              </label>
+
+              <label class="form-field">
+                <span>Email Address <i>*</i></span>
+                <input
+                  type="email"
+                  name="email"
+                  [(ngModel)]="form.email"
+                  placeholder="staff@aurelia.example"
+                  required
+                />
+              </label>
+
+              <label class="form-field">
+                <span>Phone Number</span>
+                <input
+                  type="tel"
+                  name="phone"
+                  [(ngModel)]="form.phone"
+                  placeholder="+60 12-345 6789"
+                />
+              </label>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <div class="editor-section-heading">
+              <span class="material-symbols-outlined">work</span>
+              <div>
+                <h3>Role &amp; Assignment</h3>
+                <p>Set the primary role and work area.</p>
+              </div>
+            </div>
+
+            <div class="field-stack">
+              <label class="form-field">
+                <span>Restaurant Role <i>*</i></span>
+                <select name="staffRole" [(ngModel)]="form.role" required>
+                  @for (role of roles; track role.value) {
+                    <option [value]="role.value">{{ role.label }}</option>
+                  }
+                </select>
+              </label>
+
+              <label class="form-field">
+                <span>Service Zone <i>*</i></span>
+                <input
+                  type="text"
+                  name="serviceZone"
+                  [(ngModel)]="form.zone"
+                  placeholder="e.g. Main Dining Room"
+                  required
+                />
+              </label>
+            </div>
+          </section>
+
+          <section class="editor-section">
+            <div class="editor-section-heading">
+              <span class="material-symbols-outlined">shield_person</span>
+              <div>
+                <h3>Account Status</h3>
+                <p>Control whether the account should be active.</p>
+              </div>
+            </div>
+
+            <label class="status-toggle-row">
+              <span class="status-toggle-copy">
+                <strong>{{ form.active ? 'Active account' : 'Deactivated account' }}</strong>
+                <small>
+                  {{ form.active
+                    ? 'Account is marked as active.'
+                    : 'Account is marked as deactivated.' }}
+                </small>
+              </span>
+
+              <input
+                type="checkbox"
+                name="accountActive"
+                [checked]="form.active"
+                (change)="form.active = $any($event.target).checked"
+              />
+              <span class="toggle-track"></span>
+            </label>
+          </section>
+
+          <section class="editor-section permissions-section">
+            <div class="permission-heading-row">
+              <div class="editor-section-heading">
+                <span class="material-symbols-outlined">admin_panel_settings</span>
+                <div>
+                  <h3>Module Permissions</h3>
+                  <p>{{ permissionCount }} permissions selected.</p>
+                </div>
+              </div>
+
+              <button
+                class="text-button"
+                type="button"
+                (click)="setAllPermissions(true)"
+              >
+                Select all
+              </button>
+            </div>
+
+            <div class="permission-groups">
+              @for (group of permissionGroups; track group.title) {
+                <div class="permission-group">
+                  <div class="permission-group-title">
+                    <span class="material-symbols-outlined">{{ group.icon }}</span>
+                    <h4>{{ group.title }}</h4>
+                  </div>
+
+                  <div class="permission-options">
+                    @for (item of group.items; track item.id) {
+                      <label class="permission-option">
+                        <input
+                          type="checkbox"
+                          [checked]="!!form.permissions[item.id]"
+                          (change)="togglePermission(item.id, $any($event.target).checked)"
+                        />
+                        <span>{{ item.label }}</span>
+                      </label>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <button
+              class="text-button clear-permissions"
+              type="button"
+              (click)="setAllPermissions(false)"
+            >
+              Clear all permissions
+            </button>
+          </section>
+        </form>
+      </div>
+
+      <div class="drawer-footer">
+        <button class="button button-light" type="button" (click)="closeDrawer()">
+          Cancel
+        </button>
+
+        <button class="button button-primary save-button" type="submit" form="staffForm">
+          <span class="material-symbols-outlined">save</span>
+          {{ isCreating ? 'Create Account' : 'Save Changes' }}
+        </button>
+      </div>
+    </aside>
+  </div>
+}
+
+@if (toastMessage) {
+  <div class="toast-message" role="status">
+    <span class="material-symbols-outlined">check_circle</span>
+    {{ toastMessage }}
+  </div>
+}
+
+<app-footer></app-footer>

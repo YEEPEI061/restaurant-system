@@ -1,0 +1,772 @@
+<app-header></app-header>
+<main class="reservation-page">
+
+  <div class="page-container page-content">
+    <!-- Page heading -->
+    <section class="page-heading">
+      <div class="heading-copy">
+        <div class="eyebrow">
+          <span class="material-symbols-outlined">calendar_month</span>
+          RESERVATION CONFIGURATION
+        </div>
+  
+        <h1>Reservation Management</h1>
+  
+        <p>
+          Manage guest bookings, seating assignments, dining packages,
+          special requests and reservation status from one workspace.
+        </p>
+      </div>
+  
+      <div class="heading-actions">
+  
+        <button
+          class="button button-light"
+          type="button"
+          (click)="exportCsv()"
+        >
+          <span class="material-symbols-outlined">download</span>
+          Export CSV
+        </button>
+  
+        <button
+          class="button button-primary"
+          type="button"
+          (click)="openCreateDrawer()"
+        >
+          <span class="material-symbols-outlined">add</span>
+          New Booking
+        </button>
+      </div>
+    </section>
+  
+    <!-- Service overview -->
+    <section class="service-banner">
+      <div class="service-copy">
+        <span class="service-indicator"></span>
+  
+        <div>
+          <span class="service-eyebrow">FRONT OF HOUSE</span>
+          <h2>Guest Bookings &amp; Seating Dispatch</h2>
+          <p>Reservation overview for Aurelia's dining service.</p>
+        </div>
+      </div>
+  
+      <div class="service-date">
+        <span class="material-symbols-outlined">calendar_today</span>
+        <div>
+          <span class="service-date-label">SERVICE DATE</span>
+          <strong>10 October 2026</strong>
+          <span>18:00 – 23:00</span>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Summary cards -->
+    <section class="metrics-grid">
+      <article class="metric-card metric-primary">
+        <div>
+          <span class="metric-label">Active Bookings</span>
+          <strong class="metric-value">{{ totalCount }}</strong>
+          <span class="metric-caption">Excluding cancelled</span>
+        </div>
+        <div class="metric-icon">
+          <span class="material-symbols-outlined">book_online</span>
+        </div>
+      </article>
+  
+      <article class="metric-card metric-pending">
+        <div>
+          <span class="metric-label">Pending Requests</span>
+          <strong class="metric-value">{{ pendingCount }}</strong>
+          <span class="metric-caption">Awaiting confirmation</span>
+        </div>
+        <div class="metric-icon">
+          <span class="material-symbols-outlined">pending_actions</span>
+        </div>
+      </article>
+  
+      <article class="metric-card metric-confirmed">
+        <div>
+          <span class="metric-label">Confirmed</span>
+          <strong class="metric-value">{{ confirmedCount }}</strong>
+          <span class="metric-caption">Bookings confirmed</span>
+        </div>
+        <div class="metric-icon">
+          <span class="material-symbols-outlined">check_circle</span>
+        </div>
+      </article>
+  
+      <article class="metric-card metric-seated">
+        <div>
+          <span class="metric-label">Currently Seated</span>
+          <strong class="metric-value">{{ seatedCount }}</strong>
+          <span class="metric-caption">Guests being served</span>
+        </div>
+        <div class="metric-icon">
+          <span class="material-symbols-outlined">table_restaurant</span>
+        </div>
+      </article>
+  
+      <article class="metric-card metric-cancelled">
+        <div>
+          <span class="metric-label">Cancelled</span>
+          <strong class="metric-value">{{ cancelledCount }}</strong>
+          <span class="metric-caption">Cancelled bookings</span>
+        </div>
+        <div class="metric-icon">
+          <span class="material-symbols-outlined">event_busy</span>
+        </div>
+      </article>
+    </section>
+  
+    <!-- Search and filters -->
+    <section class="filter-panel">
+      <div class="filter-toolbar">
+        <label class="search-box">
+          <span class="material-symbols-outlined">search</span>
+          <input
+            type="search"
+            [(ngModel)]="searchQuery"
+            placeholder="Search guest, phone or booking reference..."
+            aria-label="Search reservations"
+          />
+          @if (searchQuery) {
+            <button
+              type="button"
+              class="search-clear"
+              aria-label="Clear search"
+              (click)="searchQuery = ''"
+            >
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          }
+        </label>
+  
+        <div class="toolbar-actions">
+          <button
+            class="button button-light"
+            type="button"
+            (click)="showFloorMatrix()"
+          >
+            <span class="material-symbols-outlined">grid_view</span>
+            Floor Matrix
+          </button>
+  
+          <button
+            class="button button-light"
+            type="button"
+            (click)="exportCsv()"
+          >
+            <span class="material-symbols-outlined">file_download</span>
+            Export List
+          </button>
+        </div>
+      </div>
+  
+      <div class="filter-tabs" aria-label="Filter reservations by status">
+        <button
+          type="button"
+          [class.active]="activeFilter === 'All'"
+          (click)="setFilter('All')"
+        >
+          All Bookings
+          <span class="filter-count">{{ reservations.length }}</span>
+        </button>
+  
+        <button
+          type="button"
+          [class.active]="activeFilter === 'Pending'"
+          class="pending-tab"
+          (click)="setFilter('Pending')"
+        >
+          Pending
+          <span class="filter-count">{{ pendingCount }}</span>
+        </button>
+  
+        <button
+          type="button"
+          [class.active]="activeFilter === 'Confirmed'"
+          (click)="setFilter('Confirmed')"
+        >
+          Confirmed
+          <span class="filter-count">{{ confirmedCount }}</span>
+        </button>
+  
+        <button
+          type="button"
+          [class.active]="activeFilter === 'Seated'"
+          (click)="setFilter('Seated')"
+        >
+          Seated
+          <span class="filter-count">{{ seatedCount }}</span>
+        </button>
+  
+        <button
+          type="button"
+          [class.active]="activeFilter === 'Completed'"
+          (click)="setFilter('Completed')"
+        >
+          Completed
+        </button>
+  
+        <button
+          type="button"
+          [class.active]="activeFilter === 'Cancelled'"
+          (click)="setFilter('Cancelled')"
+        >
+          Cancelled
+          <span class="filter-count">{{ cancelledCount }}</span>
+        </button>
+      </div>
+    </section>
+  
+    <!-- Reservation table -->
+    <section class="table-panel">
+      <div class="table-panel-heading">
+        <div>
+          <div class="table-title-row">
+            <h2>Reservation Ledger</h2>
+            <span class="sync-label">
+              <span class="sync-dot"></span>
+              DEMO DATA
+            </span>
+          </div>
+  
+          <p>
+            {{ filteredReservations.length }} reservation(s) found
+          </p>
+        </div>
+  
+        <button
+          class="button button-primary table-add-button"
+          type="button"
+          (click)="openCreateDrawer()"
+        >
+          <span class="material-symbols-outlined">add</span>
+          Add Booking
+        </button>
+      </div>
+  
+      <div class="table-scroll">
+        <table class="reservation-table">
+          <thead>
+            <tr>
+              <th>Booking Ref</th>
+              <th>Guest Details</th>
+              <th>Date &amp; Time</th>
+              <th>Table</th>
+              <th>Dining Package</th>
+              <th>Status</th>
+              <th class="actions-column">Actions</th>
+            </tr>
+          </thead>
+  
+          <tbody>
+            @for (
+              reservation of filteredReservations;
+              track reservation.id
+            ) {
+              <tr
+                class="reservation-row"
+                [class.selected-row]="form.id === reservation.id && drawerOpen"
+                tabindex="0"
+                (click)="openReservation(reservation)"
+                (keydown.enter)="openReservation(reservation)"
+              >
+                <td>
+                  <div class="reference-cell">
+                    <strong>{{ reservation.id }}</strong>
+                    <span>Reservation</span>
+                  </div>
+                </td>
+  
+                <td>
+                  <div class="guest-cell">
+                    <div class="guest-name">
+                      <strong>{{ reservation.guestName }}</strong>
+  
+                      @if (reservation.vip) {
+                        <span class="vip-tag">VIP</span>
+                      }
+                    </div>
+  
+                    <span>
+                      {{ reservation.guests }}
+                      {{ reservation.guests === 1 ? 'guest' : 'guests' }}
+                      · {{ reservation.phone }}
+                    </span>
+  
+                    @if (reservation.dietaryNotes &&
+                         reservation.dietaryNotes !== 'No dietary notes provided.') {
+                      <span class="guest-note">
+                        <span class="material-symbols-outlined">info</span>
+                        Special notes recorded
+                      </span>
+                    }
+                  </div>
+                </td>
+  
+                <td>
+                  <div class="time-cell">
+                    <strong>{{ reservation.time }}</strong>
+                    <span>{{ reservation.date | date:'dd MMM yyyy' }}</span>
+                  </div>
+                </td>
+  
+                <td (click)="$event.stopPropagation()">
+                  <select
+                    class="table-select"
+                    [ngModel]="reservation.table"
+                    [ngModelOptions]="{ standalone: true }"
+                    [attr.aria-label]="'Assign table for ' + reservation.id"
+                    (ngModelChange)="assignTable(reservation, $event)"
+                  >
+                    <option value="">Unassigned</option>
+                    @for (table of tables; track table.id) {
+                      <option [value]="table.id">{{ table.id }}</option>
+                    }
+                  </select>
+                </td>
+  
+                <td>
+                  <div class="package-cell">
+                    <strong>{{ reservation.packageName }}</strong>
+                    <span>{{ reservation.guests }} guest(s)</span>
+                    <small>Deposit: RM {{ reservation.deposit }}</small>
+                  </div>
+                </td>
+  
+                <td>
+                  <span
+                    class="status-badge"
+                    [ngClass]="getStatusClass(reservation.status)"
+                  >
+                    <span class="status-dot"></span>
+                    {{ reservation.status }}
+                  </span>
+                </td>
+  
+                <td class="actions-column" (click)="$event.stopPropagation()">
+                  <div class="row-actions">
+                    @if (reservation.status === 'Pending') {
+                      <button
+                        type="button"
+                        class="icon-action action-confirm"
+                        title="Confirm reservation"
+                        aria-label="Confirm reservation"
+                        (click)="updateStatus(reservation, 'Confirmed')"
+                      >
+                        <span class="material-symbols-outlined">check</span>
+                      </button>
+                    }
+  
+                    @if (reservation.status === 'Confirmed') {
+                      <button
+                        type="button"
+                        class="icon-action action-seat"
+                        title="Seat guests"
+                        aria-label="Seat guests"
+                        (click)="updateStatus(reservation, 'Seated')"
+                      >
+                        <span class="material-symbols-outlined">chair</span>
+                      </button>
+                    }
+  
+                    @if (reservation.status === 'Seated') {
+                      <button
+                        type="button"
+                        class="icon-action"
+                        title="Complete booking"
+                        aria-label="Complete booking"
+                        (click)="updateStatus(reservation, 'Completed')"
+                      >
+                        <span class="material-symbols-outlined">task_alt</span>
+                      </button>
+                    }
+  
+                    @if (reservation.status === 'Cancelled') {
+                      <button
+                        type="button"
+                        class="icon-action"
+                        title="Reopen booking"
+                        aria-label="Reopen booking"
+                        (click)="updateStatus(reservation, 'Pending')"
+                      >
+                        <span class="material-symbols-outlined">restore</span>
+                      </button>
+                    }
+  
+                    <button
+                    type="button"
+                    class="icon-action"
+                    title="View booking details"
+                    aria-label="View booking details"
+                    (click)="openReservation(reservation)"
+                    >
+                    <span class="material-symbols-outlined">edit</span>
+                    </button>
+  
+                    @if (
+                      reservation.status !== 'Cancelled' &&
+                      reservation.status !== 'Completed'
+                    ) {
+                      <button
+                        type="button"
+                        class="icon-action action-cancel"
+                        title="Cancel booking"
+                        aria-label="Cancel booking"
+                        (click)="updateStatus(reservation, 'Cancelled')"
+                      >
+                        <span class="material-symbols-outlined">event_busy</span>
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-state">
+                  <span class="material-symbols-outlined">event_busy</span>
+                  <strong>No reservations found</strong>
+                  <p>Try another search or status filter.</p>
+                  <button
+                    class="button button-light"
+                    type="button"
+                    (click)="searchQuery = ''; setFilter('All')"
+                  >
+                    Clear Filters
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+  
+      <div class="table-footer">
+        <span>
+          Showing {{ filteredReservations.length }} of
+          {{ reservations.length }} reservations
+        </span>
+  
+        <span class="service-window">
+          <span class="sync-dot"></span>
+          Service window: 18:00 – 23:00
+        </span>
+      </div>
+    </section>
+  
+  </div>
+</main>
+  
+  <!-- Right-side reservation drawer -->
+  @if (drawerOpen) {
+    <div
+      class="drawer-overlay"
+      (click)="closeDrawer()"
+      (keydown.escape)="closeDrawer()"
+    >
+      <aside
+        class="reservation-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawer-title"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="drawer-header">
+          <div>
+            <span class="drawer-eyebrow">
+              <span class="material-symbols-outlined">edit_calendar</span>
+              RESERVATION DETAILS
+            </span>
+  
+            <h2 id="drawer-title">
+              {{ drawerMode === 'create' ? 'New Booking' : 'Booking Inspector' }}
+            </h2>
+  
+            <p>
+              {{
+                drawerMode === 'create'
+                  ? 'Enter the guest and booking details below.'
+                  : 'Review and update this reservation.'
+              }}
+            </p>
+          </div>
+  
+          <button
+            class="drawer-close"
+            type="button"
+            aria-label="Close reservation details"
+            (click)="closeDrawer()"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+  
+        <form class="drawer-form" (ngSubmit)="saveReservation()">
+          <div class="drawer-scroll">
+  
+            <!-- Reference -->
+            <section class="drawer-section">
+              <div class="drawer-section-heading">
+                <span class="material-symbols-outlined">confirmation_number</span>
+                <h3>Booking Reference</h3>
+              </div>
+  
+              @if (drawerMode === 'edit') {
+                <div class="reference-summary">
+                  <div>
+                    <span class="field-label">REFERENCE NUMBER</span>
+                    <strong>{{ form.id }}</strong>
+                  </div>
+  
+                  <span
+                    class="status-badge"
+                    [ngClass]="getStatusClass(form.status)"
+                  >
+                    <span class="status-dot"></span>
+                    {{ form.status }}
+                  </span>
+                </div>
+              } @else {
+                <p class="helper-text">
+                  A booking reference will be generated when you save.
+                </p>
+              }
+            </section>
+  
+            <!-- Guest information -->
+            <section class="drawer-section">
+              <div class="drawer-section-heading">
+                <span class="material-symbols-outlined">person</span>
+                <h3>Guest Information</h3>
+              </div>
+  
+              <div class="form-grid">
+                <label class="form-field full-width">
+                  <span>Guest Name <em>*</em></span>
+                  <input
+                    type="text"
+                    name="guestName"
+                    [(ngModel)]="form.guestName"
+                    required
+                    placeholder="Enter guest's full name"
+                  />
+                </label>
+  
+                <label class="form-field">
+                  <span>Phone Number <em>*</em></span>
+                  <input
+                    type="tel"
+                    name="phone"
+                    [(ngModel)]="form.phone"
+                    required
+                    placeholder="+60 12 345 6789"
+                  />
+                </label>
+  
+                <label class="form-field">
+                  <span>Email Address</span>
+                  <input
+                    type="email"
+                    name="email"
+                    [(ngModel)]="form.email"
+                    placeholder="guest@example.com"
+                  />
+                </label>
+  
+                <label class="form-field">
+                  <span>Number of Guests <em>*</em></span>
+                  <input
+                    type="number"
+                    name="guests"
+                    [(ngModel)]="form.guests"
+                    min="1"
+                    max="30"
+                    required
+                  />
+                </label>
+  
+                <label class="form-field checkbox-field">
+                  <input
+                    type="checkbox"
+                    name="vip"
+                    [(ngModel)]="form.vip"
+                  />
+                  <span>Mark as VIP guest</span>
+                </label>
+              </div>
+            </section>
+  
+            <!-- Booking details -->
+            <section class="drawer-section">
+              <div class="drawer-section-heading">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <h3>Booking Details</h3>
+              </div>
+  
+              <div class="form-grid">
+                <label class="form-field">
+                  <span>Reservation Date <em>*</em></span>
+                  <input
+                    type="date"
+                    name="date"
+                    [(ngModel)]="form.date"
+                    required
+                  />
+                </label>
+  
+                <label class="form-field">
+                  <span>Time Slot <em>*</em></span>
+                  <input
+                    type="time"
+                    name="time"
+                    [(ngModel)]="form.time"
+                    required
+                  />
+                </label>
+  
+                <label class="form-field full-width">
+                  <span>Dining Package</span>
+                  <select
+                    name="packageName"
+                    [(ngModel)]="form.packageName"
+                  >
+                    @for (packageName of packages; track packageName) {
+                      <option [value]="packageName">{{ packageName }}</option>
+                    }
+                  </select>
+                </label>
+  
+                <label class="form-field full-width">
+                  <span>Assign Table</span>
+                  <select name="table" [(ngModel)]="form.table">
+                    <option value="">Not assigned</option>
+                    @for (table of tables; track table.id) {
+                      <option [value]="table.id">{{ table.label }}</option>
+                    }
+                  </select>
+                </label>
+  
+                <label class="form-field">
+                  <span>Booking Status</span>
+                  <select name="status" [(ngModel)]="form.status">
+                    @for (status of statusOptions; track status) {
+                      <option [value]="status">{{ status }}</option>
+                    }
+                  </select>
+                </label>
+  
+                <label class="form-field">
+                  <span>Deposit Paid (RM)</span>
+                  <input
+                    type="number"
+                    name="deposit"
+                    [(ngModel)]="form.deposit"
+                    min="0"
+                    step="10"
+                  />
+                </label>
+              </div>
+            </section>
+  
+            <!-- Bill estimate -->
+            <section class="drawer-section">
+              <div class="drawer-section-heading">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <h3>Estimated Bill</h3>
+              </div>
+  
+              <div class="bill-summary">
+                <div class="bill-row">
+                  <span>{{ form.packageName }}</span>
+                  <strong>RM {{ packagePrice(form.packageName) | number:'1.2-2' }} / guest</strong>
+                </div>
+  
+                <div class="bill-row">
+                  <span>Guests</span>
+                  <strong>× {{ form.guests }}</strong>
+                </div>
+  
+                <div class="bill-row">
+                  <span>Estimated total</span>
+                  <strong>RM {{ estimatedTotal | number:'1.2-2' }}</strong>
+                </div>
+  
+                <div class="bill-row deposit-row">
+                  <span>Deposit paid</span>
+                  <strong>− RM {{ form.deposit | number:'1.2-2' }}</strong>
+                </div>
+  
+                <div class="bill-total">
+                  <span>Estimated balance</span>
+                  <strong>RM {{ amountDue | number:'1.2-2' }}</strong>
+                </div>
+              </div>
+  
+              <p class="helper-text">
+                This is a demo estimate. Final pricing and deposits should be
+                validated against your restaurant's booking rules.
+              </p>
+            </section>
+  
+            <!-- Special requests -->
+            <section class="drawer-section">
+              <div class="drawer-section-heading">
+                <span class="material-symbols-outlined">restaurant</span>
+                <h3>Dietary Notes &amp; Requests</h3>
+              </div>
+  
+              <label class="form-field">
+                <span>Dietary Requirements</span>
+                <textarea
+                  name="dietaryNotes"
+                  [(ngModel)]="form.dietaryNotes"
+                  rows="3"
+                  placeholder="Allergies, intolerances or dietary requirements..."
+                ></textarea>
+              </label>
+  
+              <label class="form-field request-field">
+                <span>Special Requests</span>
+                <textarea
+                  name="specialRequests"
+                  [(ngModel)]="form.specialRequests"
+                  rows="3"
+                  placeholder="Celebrations, seating preferences or other requests..."
+                ></textarea>
+              </label>
+            </section>
+  
+          </div>
+  
+          <!-- Drawer footer -->
+          <div class="drawer-footer">
+            <button
+              class="button button-light"
+              type="button"
+              (click)="closeDrawer()"
+            >
+              Discard
+            </button>
+  
+            <button class="button button-primary save-button" type="submit">
+              <span class="material-symbols-outlined">save</span>
+              {{ drawerMode === 'create' ? 'Create Booking' : 'Save Changes' }}
+            </button>
+          </div>
+        </form>
+      </aside>
+    </div>
+  }
+  
+  <!-- Toast feedback -->
+  @if (toastMessage) {
+    <div class="toast-message" role="status">
+      <span class="material-symbols-outlined">check_circle</span>
+      {{ toastMessage }}
+    </div>
+  }
+
+<app-footer></app-footer>

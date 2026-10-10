@@ -6,6 +6,10 @@ import { RegisterComponent } from './pages/register/register.component';
 import { MenuComponent } from './pages/menu/menu.component';
 import { ReservationsComponent } from './pages/reservations/reservations.component';
 import { MyReservationsComponent } from './pages/my-reservations/my-reservations.component';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { MenuManagementComponent } from './pages/menu-management/menu-management.component';
+import { StaffManagementComponent } from './pages/staff-management/staff-management.component';
+import { ReservationManagementComponent } from './pages/reservation-management/reservation-management.component';
 
 export const routes: Routes = [
   {
@@ -37,4 +41,20 @@ export const routes: Routes = [
     path: 'my-reservations',
     component: MyReservationsComponent
   },
+  {
+    path: 'admin-dashboard',
+    component: AdminDashboardComponent
+  },
+  {
+    path: 'menu-management',
+    component: MenuManagementComponent
+  },
+  {
+    path: 'staff-management',
+    component: StaffManagementComponent
+  },
+  {
+    path: 'reservation-management',
+    component: ReservationManagementComponent
+  }
 ];

@@ -1,0 +1,552 @@
+
+<app-header></app-header>
+
+<main class="menu-page">
+
+  <div class="page-container page-content">
+    <!-- Page heading -->
+    <section class="page-heading">
+      <div class="heading-copy">
+        <div class="eyebrow">
+          <span class="material-symbols-outlined">restaurant_menu</span>
+          CATALOG CONFIGURATION
+        </div>
+
+        <h1>Menu Catalog &amp; Recipe Management</h1>
+
+        <p>
+          Manage Aurelia's dishes, menu categories, kitchen stations, prices
+          and daily availability from one workspace.
+        </p>
+      </div>
+
+      <div class="heading-actions">
+        <button class="button button-light" type="button" (click)="exportCsv()">
+          <span class="material-symbols-outlined">download</span>
+          Export CSV
+        </button>
+
+        <button class="button button-primary" type="button" (click)="openAddDrawer()">
+          <span class="material-symbols-outlined">add</span>
+          Add New Dish
+        </button>
+      </div>
+    </section>
+
+    <!-- Summary cards -->
+    <section class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Available Dishes</span>
+          <span class="material-symbols-outlined">restaurant_menu</span>
+        </div>
+        <div class="stat-value">{{ activeDishCount }}</div>
+        <div class="stat-foot">Across {{ categoryCount }} categories</div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Average Food Margin</span>
+          <span class="material-symbols-outlined">pie_chart</span>
+        </div>
+        <div class="stat-value">{{ averageMargin | number:'1.1-1' }}%</div>
+        <div class="stat-foot">Based on available demo dishes</div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Unavailable Dishes</span>
+          <span class="material-symbols-outlined warning-icon">inventory_2</span>
+        </div>
+        <div class="stat-value warning-value">{{ unavailableCount }}</div>
+        <div class="stat-foot">Review availability and stock</div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Menu Items</span>
+          <span class="material-symbols-outlined">menu_book</span>
+        </div>
+        <div class="stat-value">{{ dishes.length }}</div>
+        <div class="stat-foot">Current demo catalogue</div>
+      </article>
+    </section>
+
+    <!-- Catalogue -->
+    <section class="catalog-panel">
+      <div class="catalog-heading">
+        <div>
+          <h2>Dish Catalogue</h2>
+          <p>Search, filter, update availability and manage menu items.</p>
+        </div>
+
+        <span class="result-count">
+          {{ filteredDishes.length }} {{ filteredDishes.length === 1 ? 'dish' : 'dishes' }}
+        </span>
+      </div>
+
+      <!-- Category filters -->
+      <div class="category-tabs" aria-label="Filter by menu category">
+        @for (category of categories; track category) {
+          <button
+            type="button"
+            [class.active]="activeCategory === category"
+            (click)="selectCategory(category)"
+          >
+            {{ category }}
+            <span>{{ categoryDishCount(category) }}</span>
+          </button>
+        }
+      </div>
+
+      <!-- Search and filters -->
+      <div class="filter-toolbar">
+        <label class="search-field">
+          <span class="material-symbols-outlined">search</span>
+          <input
+            type="search"
+            name="menuSearch"
+            [(ngModel)]="searchTerm"
+            placeholder="Search dish name, description or ID..."
+            aria-label="Search menu"
+          />
+        </label>
+
+        <label class="select-field">
+          <span>Station</span>
+          <select name="stationFilter" [(ngModel)]="selectedStation">
+            <option value="All Stations">All Stations</option>
+            @for (station of stations; track station) {
+              <option [value]="station">{{ station }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      <div class="quick-filters">
+        <span class="quick-filter-label">Dietary:</span>
+
+        @for (tag of dietaryOptions; track tag) {
+          <button
+            type="button"
+            class="filter-chip"
+            [class.chip-active]="isDietaryActive(tag)"
+            (click)="toggleDietary(tag)"
+          >
+            {{ tag }}
+          </button>
+        }
+
+        <span class="filter-spacer"></span>
+
+        <button
+          type="button"
+          class="filter-chip signature-chip"
+          [class.chip-active]="signatureOnly"
+          (click)="signatureOnly = !signatureOnly"
+        >
+          <span class="material-symbols-outlined">star</span>
+          Signature
+        </button>
+
+        <button
+          type="button"
+          class="filter-chip unavailable-chip"
+          [class.chip-active]="unavailableOnly"
+          (click)="unavailableOnly = !unavailableOnly"
+        >
+          <span class="material-symbols-outlined">block</span>
+          Unavailable
+        </button>
+
+        <button
+          type="button"
+          class="reset-button"
+          (click)="activeCategory = 'All Courses'; searchTerm = ''; selectedStation = 'All Stations'; activeDietary = []; signatureOnly = false; unavailableOnly = false"
+        >
+          Reset filters
+        </button>
+      </div>
+
+      <!-- Responsive menu table -->
+      <div class="table-scroll">
+        <table class="menu-table">
+          <thead>
+            <tr>
+              <th>Dish</th>
+              <th>Category / Station</th>
+              <th class="numeric-cell">Price</th>
+              <th class="numeric-cell">Food Cost</th>
+              <th class="stock-cell">Stock / Par</th>
+              <th class="availability-cell">Availability</th>
+              <th class="actions-cell">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (dish of filteredDishes; track dish.id) {
+              <tr [class.unavailable-row]="!dish.available">
+                <td>
+                  <div class="dish-cell">
+                    @if (dish.image) {
+                      <img class="dish-image" [src]="dish.image" [alt]="dish.name" />
+                    } @else {
+                      <div class="dish-image dish-placeholder">
+                        <span class="material-symbols-outlined">restaurant</span>
+                      </div>
+                    }
+
+                    <div class="dish-info">
+                      <div class="dish-title-row">
+                        <strong>{{ dish.name }}</strong>
+                        @if (dish.signature) {
+                          <span class="signature-badge">SIGNATURE</span>
+                        }
+                      </div>
+
+                      <p>{{ dish.description }}</p>
+
+                      <div class="dish-meta">
+                        <span>ID: {{ dish.id }}</span>
+                        @for (tag of dish.dietary; track tag) {
+                          <span class="dietary-badge">{{ tag }}</span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="category-cell">{{ dish.category }}</div>
+                  <span class="station-badge">{{ dish.station }}</span>
+                </td>
+
+                <td class="numeric-cell price-cell">
+                  RM {{ dish.price | number:'1.2-2' }}
+                </td>
+
+                <td class="numeric-cell">
+                  <div class="cost-value">RM {{ dish.cost | number:'1.2-2' }}</div>
+                  <span class="margin-value">
+                    {{ dish.price > 0 ? ((dish.price - dish.cost) / dish.price * 100 | number:'1.1-1') : 0 }}% margin
+                  </span>
+                </td>
+
+                <td class="stock-cell">
+                  <strong [class.stock-empty]="dish.stock === 0">
+                    {{ dish.stock }} / {{ dish.parCap }}
+                  </strong>
+                  <div class="stock-track">
+                    <div
+                      class="stock-progress"
+                      [class.stock-low]="dish.stock === 0"
+                      [style.width.%]="dish.parCap > 0 ? Math.min(100, dish.stock / dish.parCap * 100) : 0"
+                    ></div>
+                  </div>
+                </td>
+
+                <td class="availability-cell">
+                  <button
+                    type="button"
+                    class="availability-toggle"
+                    [class.toggle-on]="dish.available"
+                    [attr.aria-pressed]="dish.available"
+                    [attr.aria-label]="'Toggle availability for ' + dish.name"
+                    (click)="toggleAvailability(dish)"
+                  >
+                    <span></span>
+                  </button>
+                  <span class="availability-label" [class.off-label]="!dish.available">
+                    {{ dish.available ? 'Available' : '86 / Unavailable' }}
+                  </span>
+                </td>
+
+                <td class="actions-cell">
+                  <div class="row-actions">
+                    <button
+                      type="button"
+                      class="icon-action"
+                      title="Edit dish"
+                      aria-label="Edit dish"
+                      (click)="openEditDrawer(dish)"
+                    >
+                      <span class="material-symbols-outlined">edit</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="icon-action delete-action"
+                      title="Delete dish"
+                      aria-label="Delete dish"
+                      (click)="deleteDish(dish)"
+                    >
+                      <span class="material-symbols-outlined">delete_outline</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7">
+                  <div class="empty-state">
+                    <span class="material-symbols-outlined">search_off</span>
+                    <strong>No dishes found</strong>
+                    <p>Try changing your search or filters.</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <span>Showing {{ filteredDishes.length }} of {{ dishes.length }} menu items</span>
+        <span class="demo-note">
+          <span class="material-symbols-outlined">info</span>
+          Demo data — not connected to MongoDB
+        </span>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Add / Edit drawer -->
+@if (showDishDrawer) {
+    <div class="drawer-overlay" (click)="closeDrawer()">
+      <aside
+        class="dish-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawer-title"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="drawer-header">
+          <div>
+            <span class="drawer-eyebrow">AURELIA · MENU CATALOGUE</span>
+            <h2 id="drawer-title">{{ drawerTitle }}</h2>
+            <p>Manage the dish image and guest-facing menu information.</p>
+          </div>
+  
+          <button
+            type="button"
+            class="drawer-close"
+            aria-label="Close drawer"
+            (click)="closeDrawer()"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+  
+        <form class="dish-form" (ngSubmit)="saveDish()">
+          <div class="dish-editor-content">
+  
+            <!-- Large dish image -->
+            <section class="image-editor-section">
+              <div
+                class="dish-image-editor"
+                [class.has-image]="!!form.image"
+              >
+                @if (form.image) {
+                  <img
+                    class="dish-editor-image"
+                    [src]="form.image"
+                    [alt]="form.name || 'Dish image'"
+                  />
+                } @else {
+                  <div class="dish-image-empty">
+                    <span class="material-symbols-outlined">add_photo_alternate</span>
+                    <strong>No dish image</strong>
+                    <span>Add a photo to showcase this dish.</span>
+                  </div>
+                }
+  
+                <div class="image-hover-actions">
+                  <label class="image-action" for="dish-image-upload">
+                    <span class="material-symbols-outlined">upload</span>
+                    {{ form.image ? 'Replace Image' : 'Upload Image' }}
+                  </label>
+  
+                  @if (form.image) {
+                    <button
+                      type="button"
+                      class="image-action image-delete-action"
+                      (click)="removeDishImage()"
+                    >
+                      <span class="material-symbols-outlined">delete_outline</span>
+                      Delete Image
+                    </button>
+                  }
+                </div>
+  
+                <input
+                  id="dish-image-upload"
+                  class="image-file-input"
+                  type="file"
+                  accept="image/*"
+                  (change)="onDishImageSelected($event)"
+                />
+              </div>
+  
+              <p class="image-helper">
+                Use a clear, high-quality photo of the finished dish.
+              </p>
+            </section>
+  
+            <!-- Basic dish details -->
+            <section class="editor-section">
+              <h3>Dish Information</h3>
+  
+              <div class="form-field">
+                <label for="dish-name">Dish Name *</label>
+                <input
+                  id="dish-name"
+                  name="dishName"
+                  [(ngModel)]="form.name"
+                  required
+                  maxlength="100"
+                  placeholder="e.g. French Onion Soup"
+                />
+              </div>
+  
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="dish-category">Course *</label>
+                  <select
+                    id="dish-category"
+                    name="dishCategory"
+                    [(ngModel)]="form.category"
+                    required
+                  >
+                    @for (category of categories.slice(1); track category) {
+                      <option [value]="category">{{ category }}</option>
+                    }
+                  </select>
+                </div>
+  
+                <div class="form-field">
+                  <label for="dish-price">Price (RM) *</label>
+                  <input
+                    id="dish-price"
+                    name="dishPrice"
+                    type="number"
+                    [(ngModel)]="form.price"
+                    min="0.01"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
+  
+              <div class="form-field">
+                <label for="dish-description">Description *</label>
+                <textarea
+                  id="dish-description"
+                  name="dishDescription"
+                  [(ngModel)]="form.description"
+                  rows="4"
+                  maxlength="500"
+                  required
+                  placeholder="Describe the dish, its flavours and key ingredients..."
+                ></textarea>
+              </div>
+            </section>
+  
+            <!-- Provenance and pairing -->
+            <section class="editor-section">
+              <h3>Provenance &amp; Pairing</h3>
+  
+              <div class="form-field">
+                <label for="dish-provenance">Provenance</label>
+                <textarea
+                  id="dish-provenance"
+                  name="dishProvenance"
+                  [(ngModel)]="form.provenance"
+                  rows="2"
+                  maxlength="300"
+                  placeholder="Ingredient origin, farm or supplier..."
+                ></textarea>
+              </div>
+  
+              <div class="form-field">
+                <label for="dish-pairing">Pairing Recommendation</label>
+                <textarea
+                  id="dish-pairing"
+                  name="dishPairing"
+                  [(ngModel)]="form.pairing"
+                  rows="2"
+                  maxlength="300"
+                  placeholder="Suggested side dish or beverage..."
+                ></textarea>
+              </div>
+            </section>
+  
+            <!-- Dietary badges and allergies -->
+            <section class="editor-section">
+              <h3>Dietary &amp; Allergens</h3>
+              <p class="section-description">
+                Select the dietary labels that apply and record known allergens
+                so guests can make informed choices.
+              </p>
+  
+              <div class="form-field">
+                <label>Dietary Badges</label>
+  
+                <div class="checkbox-list">
+                  @for (tag of dietaryOptions; track tag) {
+                    <label class="checkbox-option">
+                      <input
+                        type="checkbox"
+                        [checked]="form.dietary.includes(tag)"
+                        (change)="toggleFormDietary(tag, $any($event.target).checked)"
+                      />
+                      <span>{{ tag }}</span>
+                    </label>
+                  }
+                </div>
+              </div>
+  
+              <div class="form-field">
+                <label for="dish-allergens">Allergy Information</label>
+                <textarea
+                  id="dish-allergens"
+                  name="dishAllergens"
+                  [(ngModel)]="form.allergens"
+                  rows="3"
+                  maxlength="500"
+                  placeholder="e.g. Contains milk and wheat. Note possible cross-contact where applicable."
+                ></textarea>
+              </div>
+            </section>
+          </div>
+  
+          <div class="drawer-footer">
+            <button
+              type="button"
+              class="button button-light"
+              (click)="closeDrawer()"
+            >
+              Cancel
+            </button>
+  
+            <button type="submit" class="button button-primary">
+              <span class="material-symbols-outlined">check</span>
+              Save Menu Item
+            </button>
+          </div>
+        </form>
+      </aside>
+    </div>
+  }
+
+@if (toastMessage) {
+  <div class="toast-message" role="status">
+    <span class="material-symbols-outlined">check_circle</span>
+    <span>{{ toastMessage }}</span>
+    <button type="button" aria-label="Dismiss notification" (click)="dismissToast()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+}
+
+<app-footer></app-footer>
