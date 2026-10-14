@@ -8,7 +8,7 @@ import { ReservationsComponent } from './pages/reservations/reservations.compone
 import { MyReservationsComponent } from './pages/my-reservations/my-reservations.component';
 import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { MenuManagementComponent } from './pages/menu-management/menu-management.component';
-import { StaffManagementComponent } from './pages/staff-management/staff-management.component';
+import { UserManagementComponent } from './pages/user-management/user-management.component';
 import { ReservationManagementComponent } from './pages/reservation-management/reservation-management.component';
 
 export const routes: Routes = [
@@ -50,8 +50,8 @@ export const routes: Routes = [
     component: MenuManagementComponent
   },
   {
-    path: 'staff-management',
-    component: StaffManagementComponent
+    path: 'user-management',
+    component: UserManagementComponent
   },
   {
     path: 'reservation-management',

@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
 const User = require('../models/User');
 
 async function getUsers(req, res) {
@@ -213,6 +214,12 @@ async function updateUserStatus(req, res) {
     if (typeof active !== 'boolean') {
       return res.status(400).json({
         message: 'Active must be true or false'
+      });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        message: 'Invalid user ID'
       });
     }
 

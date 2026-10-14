@@ -306,6 +306,22 @@
 
         }
 
+        @if (errorMessage) {
+
+          <div class="auth-error">
+        
+            <span class="material-symbols-outlined">
+              error
+            </span>
+        
+            <span>
+              {{ errorMessage }}
+            </span>
+        
+          </div>
+        
+        }
+
 
         <!-- Guest Login -->
         <div class="guest-link">

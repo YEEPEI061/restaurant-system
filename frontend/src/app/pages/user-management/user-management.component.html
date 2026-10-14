@@ -1,0 +1,1198 @@
+<app-header></app-header>
+
+<main class="user-page">
+  <div class="page-container page-content">
+
+    <!-- Page heading -->
+    <section class="page-heading">
+      <div class="heading-copy">
+        <div class="eyebrow">
+          <span class="material-symbols-outlined">manage_accounts</span>
+          USER &amp; ACCESS MANAGEMENT
+        </div>
+
+        <h1>User Management</h1>
+
+        <p>
+          Manage Aurelia user accounts, assign access roles, and control
+          account status from one workspace.
+        </p>
+      </div>
+
+      <div class="heading-actions">
+        <button
+          class="button button-light"
+          type="button"
+          (click)="exportCsv()"
+        >
+          <span class="material-symbols-outlined">download</span>
+          Export CSV
+        </button>
+
+        <button
+          class="button button-primary"
+          type="button"
+          (click)="openCreateDrawer()"
+        >
+          <span class="material-symbols-outlined">person_add</span>
+          Add User
+        </button>
+      </div>
+    </section>
+
+    <!-- Summary cards -->
+    <section class="metrics-grid" aria-label="User summary">
+
+      <article class="metric-card">
+        <div class="metric-heading">
+          <span>Total Users</span>
+          <span class="metric-icon material-symbols-outlined">
+            group
+          </span>
+        </div>
+
+        <div class="metric-number">{{ users.length }}</div>
+
+        <div class="metric-foot">
+          <span>Registered user accounts</span>
+          <span class="metric-highlight">Directory</span>
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-heading">
+          <span>User Roles</span>
+          <span class="metric-icon material-symbols-outlined">
+            pie_chart
+          </span>
+        </div>
+
+        <div class="role-bars" aria-label="User distribution by role">
+          @for (role of roleBreakdown; track role.label) {
+            @if (role.count > 0) {
+              <span
+                class="role-bar-segment"
+                [class.role-bar-1]="$index % 4 === 0"
+                [class.role-bar-2]="$index % 4 === 1"
+                [class.role-bar-3]="$index % 4 === 2"
+                [class.role-bar-4]="$index % 4 === 3"
+                [style.flex]="role.count"
+                [title]="role.label + ': ' + role.count"
+              ></span>
+            }
+          }
+        </div>
+
+        <div class="role-legend">
+          @for (role of roleBreakdown; track role.label) {
+            @if (role.count > 0) {
+              <span>{{ role.count }} {{ role.label }}</span>
+            }
+          }
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-heading">
+          <span>Account Status</span>
+          <span class="metric-icon material-symbols-outlined">
+            verified_user
+          </span>
+        </div>
+
+        <div class="status-metrics">
+          <div>
+            <strong>{{ activeCount }}</strong>
+
+            <span class="status-label">
+              <i class="status-dot active-dot"></i>
+              Active
+            </span>
+          </div>
+
+          <span class="status-separator"></span>
+
+          <div>
+            <strong>{{ deactivatedCount }}</strong>
+
+            <span class="status-label">
+              <i class="status-dot inactive-dot"></i>
+              Deactivated
+            </span>
+          </div>
+        </div>
+
+        <div class="metric-foot">
+          <span>Current account status</span>
+        </div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-heading">
+          <span>Administrators</span>
+          <span class="metric-icon material-symbols-outlined">
+            admin_panel_settings
+          </span>
+        </div>
+
+        <div class="metric-number">
+          {{ adminCount }}
+        </div>
+
+        <div class="metric-foot">
+          <span>Users with admin access</span>
+          <span class="metric-highlight">Protected</span>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- User Directory -->
+    <section class="directory-section">
+
+      <div class="section-heading">
+        <div>
+          <h2>User Directory</h2>
+          <p>
+            Search registered users and manage their account access.
+          </p>
+        </div>
+
+        <span class="result-count">
+          {{ filteredUsers.length }} <span class="result-label">shown</span>
+        </span>
+      </div>
+
+      <!-- User type tabs -->
+      <div
+        class="user-tabs"
+        role="tablist"
+        aria-label="User type"
+      >
+
+        <button
+          type="button"
+          class="user-tab"
+          [class.active]="roleFilter === 'all'"
+          (click)="roleFilter = 'all'"
+        >
+          <span class="material-symbols-outlined">group</span>
+          All Users
+          <span class="tab-count">{{ users.length }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="user-tab"
+          [class.active]="roleFilter === 'guest'"
+          (click)="roleFilter = 'guest'"
+        >
+          <span class="material-symbols-outlined">person</span>
+          Guests
+          <span class="tab-count">{{ guestCount }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="user-tab"
+          [class.active]="roleFilter === 'admin'"
+          (click)="roleFilter = 'admin'"
+        >
+          <span class="material-symbols-outlined">
+            admin_panel_settings
+          </span>
+
+          Admins
+
+          <span class="tab-count">
+            {{ adminCount }}
+          </span>
+        </button>
+
+      </div>
+
+      <!-- Search and filters -->
+      <div class="filter-panel">
+
+        <label class="search-box">
+          <span class="material-symbols-outlined">
+            search
+          </span>
+
+          <input
+            type="search"
+            name="userSearch"
+            [(ngModel)]="searchQuery"
+            placeholder="Search name, email, ID or role..."
+            aria-label="Search users"
+          />
+        </label>
+
+        <label class="filter-control">
+          <span>Status</span>
+
+          <select
+            name="statusFilter"
+            [(ngModel)]="statusFilter"
+          >
+            <option value="all">
+              All statuses
+            </option>
+
+            <option value="active">
+              Active
+            </option>
+
+            <option value="deactivated">
+              Deactivated
+            </option>
+          </select>
+        </label>
+
+        <button
+          class="icon-button reset-button"
+          type="button"
+          (click)="resetFilters()"
+          title="Reset filters"
+          aria-label="Reset filters"
+        >
+          <span class="material-symbols-outlined">
+            refresh
+          </span>
+        </button>
+
+      </div>
+
+      <!-- User table -->
+      <div class="table-card">
+
+        <div class="table-scroll">
+
+          <table class="user-table">
+
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Role</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th class="actions-column">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              @for (member of filteredUsers; track member.id) {
+
+                <tr
+                  [class.deactivated-row]="!member.active"
+                  (click)="openUser(member)"
+                  (keydown.enter)="openUser(member)"
+                  tabindex="0"
+                  role="button"
+                  [attr.aria-label]="'Edit ' + member.name"
+                >
+
+                  <!-- User -->
+                  <td>
+                    <div class="user-identity">
+
+                      <div class="user-avatar">
+                        {{ member.name.charAt(0) }}
+                      </div>
+
+                      <div class="user-details">
+
+                        <strong>
+                          {{ member.name }}
+                        </strong>
+
+                        <span>
+                          {{ member.email }}
+                        </span>
+
+                        <small>
+                          {{ member.id }}
+                        </small>
+
+                      </div>
+
+                    </div>
+                  </td>
+
+                  <!-- Role -->
+                  <td>
+                    <span
+                      class="role-pill"
+                      [attr.data-role]="member.role"
+                    >
+                      {{ roleLabel(member.role) }}
+                    </span>
+                  </td>
+
+                  <!-- Contact -->
+                  <td>
+                    <div class="contact-details">
+                      <span>
+                        {{ member.phone || 'No phone number' }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <!-- Status -->
+                  <td>
+
+                    <span
+                      class="status-pill"
+                      [class.status-inactive]="!member.active"
+                    >
+
+                      <i
+                        class="status-dot"
+                        [class.active-dot]="member.active"
+                        [class.inactive-dot]="!member.active"
+                      ></i>
+
+                      {{
+                        member.active
+                          ? 'Active'
+                          : 'Deactivated'
+                      }}
+
+                    </span>
+
+                  </td>
+
+                  <!-- Actions -->
+                  <td>
+
+                    <div class="row-actions">
+
+                      @if (member.active) {
+
+                        <button
+                          class="icon-button"
+                          type="button"
+                          title="Edit user"
+                          aria-label="Edit user"
+                          (click)="$event.stopPropagation(); openUser(member)"
+                        >
+                          <span class="material-symbols-outlined">
+                            edit
+                          </span>
+                        </button>
+
+                      } @else {
+
+                        <button
+                          class="icon-button"
+                          type="button"
+                          title="Reactivate account"
+                          aria-label="Reactivate account"
+                          (click)="reactivateUser(member, $event)"
+                        >
+                          <span class="material-symbols-outlined">
+                            lock_open
+                          </span>
+                        </button>
+
+                      }
+
+                      <button
+                        class="icon-button"
+                        type="button"
+                        title="Delete user"
+                        aria-label="Delete user"
+                        (click)="$event.stopPropagation(); deleteUser(member)"
+                      >
+                        <span class="material-symbols-outlined">
+                          delete
+                        </span>
+                      </button>
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              } @empty {
+
+                <tr>
+
+                  <td
+                    class="empty-state"
+                    colspan="5"
+                  >
+
+                    <span class="material-symbols-outlined">
+                      person_search
+                    </span>
+
+                    <strong>
+                      No users found
+                    </strong>
+
+                    <span>
+                      Try changing your search or filters.
+                    </span>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <div class="table-footer">
+
+          <span>
+            Showing
+            <strong>{{ filteredUsers.length }}</strong>
+            of
+            <strong>{{ users.length }}</strong>
+            users
+          </span>
+
+          <span class="demo-note">
+            User directory
+          </span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Security information -->
+    <section class="security-card">
+
+      <div class="security-icon material-symbols-outlined">
+        admin_panel_settings
+      </div>
+
+      <div class="security-copy">
+
+        <h3>User Access &amp; Security</h3>
+
+        <p>
+          Guest accounts have access to customer features such as menu
+          browsing and reservations. Admin accounts have access to
+          Aurelia's management modules. Account permissions are enforced
+          securely by the backend.
+        </p>
+
+      </div>
+
+      <span class="security-tag">
+        Role-based access
+      </span>
+
+    </section>
+
+  </div>
+</main>
+
+
+<!-- =====================================================
+     RIGHT-SIDE USER DRAWER
+     ===================================================== -->
+
+@if (drawerOpen) {
+
+  <div
+    class="drawer-backdrop"
+    (click)="closeDrawer()"
+  >
+
+    <aside
+      class="user-drawer"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="
+        isCreating
+          ? 'Create user account'
+          : 'Edit user account'
+      "
+      (click)="$event.stopPropagation()"
+    >
+
+      <!-- Drawer header -->
+      <div class="drawer-header">
+
+        <div>
+
+          <span class="eyebrow drawer-eyebrow">
+            {{
+              isCreating
+                ? 'New Account'
+                : 'User Management'
+            }}
+          </span>
+
+          <h2>
+            {{
+              isCreating
+                ? 'Add User'
+                : 'User Profile'
+            }}
+          </h2>
+
+          <p>
+            {{
+              isCreating
+                ? 'Add a user account to the Aurelia directory.'
+                : 'Update user details and account access.'
+            }}
+          </p>
+
+        </div>
+
+        <button
+          class="icon-button close-drawer"
+          type="button"
+          aria-label="Close drawer"
+          (click)="closeDrawer()"
+        >
+          <span class="material-symbols-outlined">
+            close
+          </span>
+        </button>
+
+      </div>
+
+
+      <!-- Drawer body -->
+      <div class="drawer-body">
+
+        <form
+          id="userForm"
+          #userForm="ngForm"
+          (ngSubmit)="saveUser()"
+          novalidate
+        >
+
+          <!-- =================================================
+               PERSONAL DETAILS
+               ================================================= -->
+
+          <section class="editor-section">
+
+            <div class="editor-section-heading">
+
+              <span class="material-symbols-outlined">
+                person
+              </span>
+
+              <div>
+                <h3>Personal Details</h3>
+
+                <p>
+                  Basic user contact information.
+                </p>
+              </div>
+
+            </div>
+
+
+            <div class="field-stack">
+
+              <!-- User ID -->
+              @if (!isCreating) {
+
+                <div class="user-id-field">
+
+                  <span>
+                    User ID
+                  </span>
+
+                  <strong>
+                    {{ form.id }}
+                  </strong>
+
+                </div>
+
+              }
+
+
+              <!-- First + Last Name -->
+              <div class="form-row">
+
+                <!-- First Name -->
+                <label class="form-field">
+
+                  <span>
+                    First Name <i>*</i>
+                  </span>
+
+                  <input
+                    type="text"
+                    name="firstName"
+                    [(ngModel)]="form.firstName"
+                    #firstName="ngModel"
+                    placeholder="Enter first name"
+                    required
+                    [class.input-invalid]="
+                      firstName.invalid &&
+                      (
+                        firstName.touched ||
+                        userForm.submitted
+                      )
+                    "
+                  />
+
+                  @if (
+                    firstName.invalid &&
+                    (
+                      firstName.touched ||
+                      userForm.submitted
+                    )
+                  ) {
+
+                    <small class="field-error">
+                      <span class="material-symbols-outlined">
+                        error
+                      </span>
+
+                      Please enter a first name.
+                    </small>
+
+                  }
+
+                </label>
+
+
+                <!-- Last Name -->
+                <label class="form-field">
+
+                  <span>
+                    Last Name <i>*</i>
+                  </span>
+
+                  <input
+                    type="text"
+                    name="lastName"
+                    [(ngModel)]="form.lastName"
+                    #lastName="ngModel"
+                    placeholder="Enter last name"
+                    required
+                    [class.input-invalid]="
+                      lastName.invalid &&
+                      (
+                        lastName.touched ||
+                        userForm.submitted
+                      )
+                    "
+                  />
+
+                  @if (
+                    lastName.invalid &&
+                    (
+                      lastName.touched ||
+                      userForm.submitted
+                    )
+                  ) {
+
+                    <small class="field-error">
+                      <span class="material-symbols-outlined">
+                        error
+                      </span>
+
+                      Please enter a last name.
+                    </small>
+
+                  }
+
+                </label>
+
+              </div>
+
+
+              <!-- Email -->
+              <label class="form-field">
+
+                <span>
+                  Email Address <i>*</i>
+                </span>
+
+                <input
+                  type="email"
+                  name="email"
+                  [(ngModel)]="form.email"
+                  #email="ngModel"
+                  placeholder="user@aurelia.example"
+                  required
+                  email
+                  [class.input-invalid]="
+                    email.invalid &&
+                    (
+                      email.touched ||
+                      userForm.submitted
+                    )
+                  "
+                />
+
+                @if (
+                  email.invalid &&
+                  (
+                    email.touched ||
+                    userForm.submitted
+                  )
+                ) {
+
+                  <small class="field-error">
+
+                    <span class="material-symbols-outlined">
+                      error
+                    </span>
+
+                    @if (email.errors?.['required']) {
+                      Please enter an email address.
+                    } @else if (email.errors?.['email']) {
+                      Please enter a valid email address.
+                    }
+
+                  </small>
+
+                }
+
+              </label>
+
+
+              <!-- Phone -->
+              <label class="form-field">
+
+                <span>
+                  Phone Number
+                </span>
+
+                <input
+                  type="tel"
+                  name="phone"
+                  [(ngModel)]="form.phone"
+                  placeholder="+60 12-345 6789"
+                />
+
+              </label>
+
+
+              <!-- Password -->
+              @if (isCreating) {
+
+                <label class="form-field">
+
+                  <span>
+                    Password <i>*</i>
+                  </span>
+
+                  <input
+                    type="password"
+                    name="password"
+                    [(ngModel)]="form.password"
+                    #password="ngModel"
+                    placeholder="Minimum 6 characters"
+                    required
+                    minlength="6"
+                    [class.input-invalid]="
+                      password.invalid &&
+                      (
+                        password.touched ||
+                        userForm.submitted
+                      )
+                    "
+                  />
+
+                  @if (
+                    password.invalid &&
+                    (
+                      password.touched ||
+                      userForm.submitted
+                    )
+                  ) {
+
+                    <small class="field-error">
+
+                      <span class="material-symbols-outlined">
+                        error
+                      </span>
+
+                      @if (password.errors?.['required']) {
+                        Please enter a password.
+                      } @else if (password.errors?.['minlength']) {
+                        Password must be at least 6 characters.
+                      }
+
+                    </small>
+
+                  }
+
+                </label>
+
+              }
+
+            </div>
+
+          </section>
+
+
+          <!-- =================================================
+               ACCOUNT ROLE
+               ================================================= -->
+
+          <section class="editor-section">
+
+            <div class="editor-section-heading">
+
+              <span class="material-symbols-outlined">
+                shield_person
+              </span>
+
+              <div>
+
+                <h3>Account Role</h3>
+
+                <p>
+                  Determine which area of Aurelia the user can access.
+                </p>
+
+              </div>
+
+            </div>
+
+            <div class="field-stack">
+
+              <label class="form-field">
+
+                <span>
+                  User Role <i>*</i>
+                </span>
+
+                <select
+                  name="userRole"
+                  [(ngModel)]="form.role"
+                  required
+                >
+
+                  <option value="guest">
+                    Guest
+                  </option>
+
+                  <option value="admin">
+                    Admin
+                  </option>
+
+                </select>
+
+              </label>
+
+            </div>
+
+          </section>
+
+
+          <!-- =================================================
+               ACCOUNT STATUS
+               ================================================= -->
+
+          <section class="editor-section">
+
+            <div class="editor-section-heading">
+
+              <span class="material-symbols-outlined">
+                verified_user
+              </span>
+
+              <div>
+
+                <h3>Account Status</h3>
+
+                <p>
+                  Control whether this account can sign in.
+                </p>
+
+              </div>
+
+            </div>
+
+            <label class="status-toggle-row">
+
+              <span class="status-toggle-copy">
+
+                <strong>
+                  {{
+                    form.active
+                      ? 'Active account'
+                      : 'Deactivated account'
+                  }}
+                </strong>
+
+                <small>
+                  {{
+                    form.active
+                      ? 'The user can access their account.'
+                      : 'The user cannot access their account.'
+                  }}
+                </small>
+
+              </span>
+
+              <input
+                type="checkbox"
+                name="accountActive"
+                [checked]="form.active"
+                (change)="
+                  form.active =
+                    $any($event.target).checked
+                "
+              />
+
+              <span class="toggle-track"></span>
+
+            </label>
+
+          </section>
+
+        </form>
+
+      </div>
+
+
+      <!-- Drawer footer -->
+      <div class="drawer-footer">
+
+        <button
+          class="button button-light"
+          type="button"
+          (click)="closeDrawer()"
+        >
+          Cancel
+        </button>
+
+        <button
+          class="button button-primary save-button"
+          type="submit"
+          form="userForm"
+        >
+
+          <span class="material-symbols-outlined">
+            save
+          </span>
+
+          {{
+            isCreating
+              ? 'Create Account'
+              : 'Save Changes'
+          }}
+
+        </button>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+}
+
+
+<!-- =====================================================
+     DELETE CONFIRMATION
+     ===================================================== -->
+
+@if (deleteConfirmOpen) {
+
+  <div
+    class="message-modal-backdrop"
+    (click)="cancelDelete()"
+  >
+
+    <div
+      class="message-card confirm-card"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="delete-title"
+      (click)="$event.stopPropagation()"
+    >
+
+      <div class="message-icon delete-message-icon">
+
+        <span class="material-symbols-outlined">
+          delete
+        </span>
+
+      </div>
+
+      <div class="message-copy">
+
+        <span class="message-eyebrow">
+          CONFIRM ACTION
+        </span>
+
+        <h2 id="delete-title">
+          Delete User?
+        </h2>
+
+        <p>
+          Are you sure you want to delete
+          <strong>
+            {{ userToDelete?.name }}
+          </strong>?
+          This action cannot be undone.
+        </p>
+
+      </div>
+
+      <div class="message-actions">
+
+        <button
+          type="button"
+          class="button button-light modal-button"
+          (click)="cancelDelete()"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="button delete-confirm-button modal-button"
+          (click)="confirmDelete()"
+        >
+
+          <span class="material-symbols-outlined">
+            delete
+          </span>
+
+          Delete User
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}
+
+
+<!-- =====================================================
+     SUCCESS MESSAGE
+     ===================================================== -->
+
+@if (successMessage) {
+
+  <div
+    class="message-modal-backdrop success-backdrop"
+    role="status"
+  >
+
+    <div class="message-card success-card">
+
+      <div class="success-animation">
+
+        <svg
+          class="success-svg"
+          viewBox="0 0 52 52"
+          aria-hidden="true"
+        >
+
+          <circle
+            class="success-circle"
+            cx="26"
+            cy="26"
+            r="24"
+            fill="none"
+          ></circle>
+
+          <path
+            class="success-check"
+            fill="none"
+            d="M14 27 L22 35 L39 18"
+          ></path>
+
+        </svg>
+
+      </div>
+
+      <div class="message-copy">
+
+        <span class="message-eyebrow success-eyebrow">
+          SUCCESS
+        </span>
+
+        <h2>
+          {{ successTitle }}
+        </h2>
+
+        <p>
+          {{ successMessage }}
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+}
+
+
+<!-- =====================================================
+ERROR MESSAGE
+===================================================== -->
+
+@if (errorMessage) {
+
+<div
+class="message-modal-backdrop error-backdrop"
+role="alert"
+>
+
+<div class="message-card error-card">
+
+ <div class="error-icon">
+
+   <span class="material-symbols-outlined">
+     error
+   </span>
+
+ </div>
+
+ <div class="message-copy">
+
+   <span class="message-eyebrow error-eyebrow">
+     ATTENTION
+   </span>
+
+   <h2>
+     {{ errorTitle }}
+   </h2>
+
+   <p>
+     {{ errorMessage }}
+   </p>
+
+ </div>
+
+ <button
+   type="button"
+   class="button button-light error-close-button"
+   (click)="clearError()"
+ >
+   Close
+ </button>
+
+</div>
+
+</div>
+
+}
+
+<app-footer></app-footer>

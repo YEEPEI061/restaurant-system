@@ -38,7 +38,7 @@ export class HeaderComponent {
       '/admin-login',
       '/admin-dashboard',
       '/reservation-management',
-      '/staff-management',
+      '/user-management',
       '/menu-management',
     ];
 

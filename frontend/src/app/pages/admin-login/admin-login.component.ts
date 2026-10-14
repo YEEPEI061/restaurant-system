@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-admin-login',
@@ -18,6 +20,7 @@ import { FooterComponent } from '../../components/footer/footer.component';
   styleUrl: './admin-login.component.css'
 })
 export class AdminLoginComponent {
+
   staffIdentifier = '';
   password = '';
 
@@ -25,22 +28,66 @@ export class AdminLoginComponent {
   isSigningIn = false;
   isAuthenticated = false;
 
+  errorMessage = '';
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
   signIn(): void {
-    if (!this.staffIdentifier || !this.password) {
+
+    this.errorMessage = '';
+
+    const email = this.staffIdentifier.trim();
+    const password = this.password;
+
+    if (!email || !password) {
+      this.errorMessage =
+        'Please enter your email and password.';
       return;
     }
 
     this.isSigningIn = true;
 
-    setTimeout(() => {
-      this.isSigningIn = false;
-      this.isAuthenticated = true;
+    this.authService.adminLogin({
+      email,
+      password
+    }).subscribe({
 
-      console.log('Staff sign in:', this.staffIdentifier);
-    }, 900);
+      next: (response) => {
+
+        this.isSigningIn = false;
+        this.isAuthenticated = true;
+
+        console.log(
+          'Admin login successful:',
+          response.user
+        );
+
+        setTimeout(() => {
+          this.router.navigate(['/admin-dashboard']);
+        }, 900);
+      },
+
+      error: (error) => {
+
+        this.isSigningIn = false;
+        this.isAuthenticated = false;
+
+        console.error(
+          'Admin login failed:',
+          error
+        );
+
+        this.errorMessage =
+          error?.error?.message ||
+          'Invalid email or password.';
+      }
+    });
   }
 }
