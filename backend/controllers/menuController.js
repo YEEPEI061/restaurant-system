@@ -1,5 +1,30 @@
 const MenuItem = require('../models/MenuItem');
 
+async function generateNextDishId() {
+  const menuItems = await MenuItem.find(
+    {},
+    {
+      dishId: 1
+    }
+  );
+
+  let maxNumber = 0;
+
+  menuItems.forEach(item => {
+    const match = /^M-(\d+)$/.exec(item.dishId);
+
+    if (match) {
+      const number = parseInt(match[1], 10);
+
+      if (number > maxNumber) {
+        maxNumber = number;
+      }
+    }
+  });
+
+  return `M-${String(maxNumber + 1).padStart(3, '0')}`;
+}
+
 // GET all menu items
 async function getMenuItems(req, res) {
   try {
@@ -48,16 +73,12 @@ async function getMenuItemById(req, res) {
 // CREATE a menu item
 async function createMenuItem(req, res) {
   try {
+
     const {
-      dishId,
       name,
       description,
       category,
-      station,
       price,
-      cost,
-      stock,
-      parCap,
       available,
       signature,
       dietary,
@@ -67,27 +88,15 @@ async function createMenuItem(req, res) {
       allergens
     } = req.body;
 
-    // Check whether the dish ID already exists
-    const existingMenuItem = await MenuItem.findOne({
-      dishId
-    });
-
-    if (existingMenuItem) {
-      return res.status(409).json({
-        message: 'A menu item with this dish ID already exists'
-      });
-    }
+    // Generate the next dish ID automatically
+    const dishId = await generateNextDishId();
 
     const menuItem = await MenuItem.create({
       dishId,
       name,
       description,
       category,
-      station,
       price,
-      cost,
-      stock,
-      parCap,
       available,
       signature,
       dietary,
@@ -101,6 +110,7 @@ async function createMenuItem(req, res) {
       message: 'Menu item created successfully',
       menuItem
     });
+
   } catch (error) {
     console.error('Create menu item error:', error);
 
@@ -127,11 +137,7 @@ async function updateMenuItem(req, res) {
       'name',
       'description',
       'category',
-      'station',
       'price',
-      'cost',
-      'stock',
-      'parCap',
       'available',
       'signature',
       'dietary',

@@ -955,6 +955,11 @@
   gap: 7px;
 }
 
+.form-field label i {
+  color: #a34b36;
+  font-style: normal;
+}
+
 .form-field label {
   color: #444842;
   font-size: 10px;
@@ -1126,7 +1131,428 @@
   cursor: pointer;
 }
 
+/* =========================================================
+   CENTER MESSAGE MODALS
+   ========================================================= */
 
+.message-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(18, 24, 18, 0.42);
+  backdrop-filter: blur(3px);
+
+  animation: modalBackdropIn 0.2s ease;
+}
+
+
+/* Main card */
+
+.message-card {
+  width: min(420px, 100%);
+  padding: 34px 32px 30px;
+
+  border: 1px solid #ece8ed;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 24px 70px rgba(20, 27, 20, 0.16),
+    0 4px 18px rgba(20, 27, 20, 0.08);
+
+  text-align: center;
+
+  animation: messageCardIn 0.3s ease;
+}
+
+
+/* =========================================================
+   MESSAGE TEXT
+   ========================================================= */
+
+.message-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.message-eyebrow {
+  display: inline-block;
+
+  margin-bottom: 9px;
+
+  color: #8c7d70;
+
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+}
+
+.message-copy h2 {
+  margin: 0 0 10px;
+
+  color: #182418;
+
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.message-copy p {
+  max-width: 330px;
+
+  margin: 0;
+
+  color: #747871;
+
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.message-copy p strong {
+  color: #343a34;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   DELETE CONFIRMATION
+   ========================================================= */
+
+.delete-message-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 20px;
+
+  border-radius: 50%;
+
+  background: #fbefef;
+  color: #a65353;
+}
+
+.delete-message-icon .material-symbols-outlined {
+  font-size: 27px;
+}
+
+
+.message-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+  margin-top: 26px;
+}
+
+
+.modal-button {
+  min-height: 43px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+}
+
+
+.delete-confirm-button {
+  border: 1px solid #9d4e4e;
+  border-radius: 6px;
+
+  background: #9d4e4e;
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.delete-confirm-button:hover {
+  background: #894242;
+  border-color: #894242;
+}
+
+.delete-confirm-button:active {
+  transform: scale(0.98);
+}
+
+.delete-confirm-button
+.material-symbols-outlined {
+  font-size: 17px;
+}
+
+/* =========================================================
+   INLINE FORM VALIDATION
+   ========================================================= */
+
+.form-field input.input-invalid,
+.form-field select.input-invalid {
+  border-color: #c86a6a;
+  background: #fffafa;
+}
+
+.form-field input.input-invalid:focus,
+.form-field select.input-invalid:focus {
+  border-color: #b85555;
+  box-shadow: 0 0 0 3px rgba(184, 85, 85, 0.08);
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  margin-top: 6px;
+
+  color: #b85555;
+
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+
+  animation: fieldErrorIn 0.18s ease;
+}
+
+.field-error .material-symbols-outlined {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+@keyframes fieldErrorIn {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================================
+   SUCCESS
+   ========================================================= */
+
+.success-card {
+  padding-top: 38px;
+  padding-bottom: 38px;
+}
+
+
+.success-animation {
+  width: 70px;
+  height: 70px;
+
+  margin: 0 auto 20px;
+}
+
+
+.success-svg {
+  width: 100%;
+  height: 100%;
+}
+
+
+.success-circle {
+  stroke: #536251;
+  stroke-width: 2;
+
+  stroke-dasharray: 151;
+  stroke-dashoffset: 151;
+
+  animation:
+    drawSuccessCircle 0.35s ease-out forwards;
+}
+
+.success-check {
+  stroke: #536251;
+  stroke-width: 3;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+
+  animation:
+    drawSuccessCheck 0.25s ease-out 0.25s forwards;
+}
+
+
+.success-eyebrow {
+  color: #687866;
+}
+
+
+/* =====================================================
+   ERROR MESSAGE
+   ===================================================== */
+
+.error-backdrop {
+  z-index: 3000;
+}
+
+.error-card {
+  max-width: 420px;
+}
+
+/* Static error icon */
+
+.error-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #fbefef;
+  color: #a64b4b;
+}
+
+.error-icon .material-symbols-outlined {
+  font-size: 34px;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 500,
+    'GRAD' 0,
+    'opsz' 32;
+}
+
+/* Error text */
+
+.error-eyebrow {
+  color: #a64b4b;
+}
+
+/* Close button */
+
+.error-close-button {
+  margin-top: 22px;
+  min-width: 100px;
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes modalBackdropIn {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
+
+
+@keyframes messageCardIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+}
+
+
+@keyframes drawSuccessCircle {
+
+  from {
+    stroke-dashoffset: 151;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+
+}
+
+
+@keyframes drawSuccessCheck {
+
+  from {
+    stroke-dashoffset: 40;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+
+
+/* Animations */
+
+@keyframes drawer-appear {
+  from {
+    opacity: 0.7;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes backdrop-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes toast-appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 @keyframes overlay-in {
   from { opacity: 0; }

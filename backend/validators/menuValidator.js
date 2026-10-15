@@ -1,12 +1,6 @@
 const { body } = require('express-validator');
 
 const menuItemValidator = [
-  body('dishId')
-    .trim()
-    .notEmpty()
-    .withMessage('Dish ID is required')
-    .matches(/^M-\d{3,}$/)
-    .withMessage('Dish ID must follow the format M-001'),
 
   body('name')
     .trim()
@@ -32,30 +26,9 @@ const menuItemValidator = [
     ])
     .withMessage('Invalid menu category'),
 
-  body('station')
-    .isIn([
-      'Grill & Robata',
-      'Larder / Garde Manger',
-      'Pastry Line',
-      'Beverage Station'
-    ])
-    .withMessage('Invalid kitchen station'),
-
   body('price')
     .isFloat({ min: 0 })
     .withMessage('Price must be a number greater than or equal to 0'),
-
-  body('cost')
-    .isFloat({ min: 0 })
-    .withMessage('Cost must be a number greater than or equal to 0'),
-
-  body('stock')
-    .isInt({ min: 0 })
-    .withMessage('Stock must be a whole number greater than or equal to 0'),
-
-  body('parCap')
-    .isInt({ min: 0 })
-    .withMessage('Par cap must be a whole number greater than or equal to 0'),
 
   body('available')
     .optional()

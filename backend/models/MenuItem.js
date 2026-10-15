@@ -35,41 +35,10 @@ const menuItemSchema = new mongoose.Schema(
       ]
     },
 
-    station: {
-      type: String,
-      required: true,
-      enum: [
-        'Grill & Robata',
-        'Larder / Garde Manger',
-        'Pastry Line',
-        'Beverage Station'
-      ]
-    },
-
     price: {
       type: Number,
       required: true,
       min: 0
-    },
-
-    cost: {
-      type: Number,
-      required: true,
-      min: 0
-    },
-
-    stock: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 0
-    },
-
-    parCap: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 20
     },
 
     available: {

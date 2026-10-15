@@ -1,24 +1,27 @@
-
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+
+import {
+  MenuService,
+  MenuItem as ApiMenuItem,
+  MenuCategory,
+  DietaryTag
+} from '../../services/menu.service';
 
 interface MenuDish {
   id: string;
   name: string;
   description: string;
-  category: string;
-  station: string;
+  category: MenuCategory;
   price: number;
-  cost: number;
-  stock: number;
-  parCap: number;
   available: boolean;
   signature: boolean;
-  dietary: string[];
+  dietary: DietaryTag[];
   image: string;
   provenance: string;
   pairing: string;
@@ -38,7 +41,12 @@ interface MenuDish {
   templateUrl: './menu-management.component.html',
   styleUrl: './menu-management.component.css'
 })
-export class MenuManagementComponent {
+export class MenuManagementComponent implements OnInit {
+
+  // =========================
+  // FILTERS
+  // =========================
+
   categories = [
     'All Courses',
     'Prelude & Starters',
@@ -48,443 +56,1065 @@ export class MenuManagementComponent {
     'Beverages'
   ];
 
-  stations = [
-    'Grill & Robata',
-    'Larder / Garde Manger',
-    'Pastry Line',
-    'Beverage Station'
+  dietaryOptions: DietaryTag[] = [
+    'GF',
+    'DF',
+    'SF',
+    'NF',
+    'Veg'
   ];
-
-  dietaryOptions = ['GF', 'DF', 'SF', 'NF', 'Veg'];
-
-  readonly Math = Math;
 
   activeCategory = 'All Courses';
+
   searchTerm = '';
-  selectedStation = 'All Stations';
-  activeDietary: string[] = [];
+
+  activeDietary: DietaryTag[] = [];
+
   signatureOnly = false;
+
   unavailableOnly = false;
 
+  // =========================
+  // SUCCESS MESSAGE
+  // =========================
+
+  successMessage = '';
+  successTitle = '';
+
+  private successTimeout?:
+    ReturnType<typeof setTimeout>;
+
+  // =========================
+  // ERROR MESSAGE
+  // =========================
+
+  errorMessage = '';
+  errorTitle = '';
+
+  private errorTimeout?:
+    ReturnType<typeof setTimeout>;
+
+  // =========================
+  // DELETE CONFIRMATION
+  // =========================
+
+  deleteConfirmOpen = false;
+
+  dishToDelete:
+    MenuDish | null = null;
+
+  // =========================
+  // DRAWER
+  // =========================
+
   showDishDrawer = false;
+
   editingDishId: string | null = null;
-  toastMessage = '';
 
-  dishes: MenuDish[] = [
-    {
-      id: 'M-043',
-      name: 'Ember-Smoked Duck Breast',
-      description: 'Danish duck breast, charred maitake mushrooms, lingonberry reduction and sansho oil.',
-      category: 'Wood-Fire Mains',
-      station: 'Grill & Robata',
-      price: 145,
-      cost: 38,
-      stock: 16,
-      parCap: 20,
-      available: true,
-      signature: true,
-      dietary: ['GF', 'DF'],
-      image: 'https://images.unsplash.com/photo-1518492104633-130d0cc84637?auto=format&fit=crop&w=180&q=80',
-      provenance: 'Danish heritage farm, Kyoto wild sansho',
-      pairing: 'Seasonal fruit soda',
-      allergens: '',
-    },
-    {
-      id: 'M-018',
-      name: 'Cured Nordic Mackerel',
-      description: 'Cured mackerel, pickled cucumber, fermented kohlrabi and dill infusion.',
-      category: 'Prelude & Starters',
-      station: 'Larder / Garde Manger',
-      price: 64,
-      cost: 14.5,
-      stock: 28,
-      parCap: 30,
-      available: true,
-      signature: false,
-      dietary: ['GF', 'DF'],
-      image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=180&q=80',
-      provenance: 'Responsibly sourced seafood',
-      pairing: 'Citrus herb cooler',
-      allergens: '',
-    },
-    {
-      id: 'M-022',
-      name: 'Kagoshima A5 Striploin',
-      description: 'Binchotan grilled beef, black garlic glaze and pickled sea fennel.',
-      category: 'Wood-Fire Mains',
-      station: 'Grill & Robata',
-      price: 260,
-      cost: 88,
-      stock: 12,
-      parCap: 15,
-      available: true,
-      signature: true,
-      dietary: ['GF'],
-      image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=180&q=80',
-      provenance: 'Kagoshima, Japan',
-      pairing: 'Roasted barley tea',
-      allergens: '',
-    },
-    {
-      id: 'M-039',
-      name: 'Wild Forest Chanterelle Tart',
-      description: 'Mushroom tart, seasonal herbs and a delicate birch syrup glaze.',
-      category: 'Desserts & Confections',
-      station: 'Pastry Line',
-      price: 48,
-      cost: 11.2,
-      stock: 0,
-      parCap: 24,
-      available: false,
-      signature: false,
-      dietary: ['Veg'],
-      image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=180&q=80',
-      provenance: 'Seasonal local produce',
-      pairing: 'Apple and elderflower infusion',
-      allergens: '',
-    },
-    {
-      id: 'M-009',
-      name: 'Hokkaido Scallop Crudo',
-      description: 'Scallop crudo, citrus dressing, kelp oil and fresh herbs.',
-      category: 'Prelude & Starters',
-      station: 'Larder / Garde Manger',
-      price: 82,
-      cost: 22,
-      stock: 18,
-      parCap: 25,
-      available: true,
-      signature: false,
-      dietary: ['GF', 'DF'],
-      image: 'https://images.unsplash.com/photo-1559737558-2f5a35f4523b?auto=format&fit=crop&w=180&q=80',
-      provenance: 'Hokkaido, Japan',
-      pairing: 'Yuzu sparkling water',
-      allergens: '',
-    },
-    {
-      id: 'M-051',
-      name: 'Vanilla Bean Panna Cotta',
-      description: 'Vanilla bean cream, seasonal berries and crisp almond crumble.',
-      category: 'Desserts & Confections',
-      station: 'Pastry Line',
-      price: 32,
-      cost: 8,
-      stock: 14,
-      parCap: 20,
-      available: true,
-      signature: false,
-      dietary: [],
-      image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=180&q=80',
-      provenance: 'Madagascar vanilla',
-      pairing: 'Freshly brewed coffee',
-      allergens: '',
-    }
-  ];
+  // =========================
+  // LOADING
+  // =========================
 
-  form: MenuDish = this.createEmptyDish();
+  isLoading = false;
 
-  get filteredDishes(): MenuDish[] {
-    const term = this.searchTerm.trim().toLowerCase();
+  // =========================
+  // FORM
+  // =========================
 
-    return this.dishes.filter(dish => {
-      const matchesCategory =
-        this.activeCategory === 'All Courses' ||
-        dish.category === this.activeCategory;
+  form: MenuDish =
+    this.createEmptyDish();
 
-      const matchesSearch =
-        !term ||
-        dish.name.toLowerCase().includes(term) ||
-        dish.description.toLowerCase().includes(term) ||
-        dish.id.toLowerCase().includes(term) ||
-        dish.station.toLowerCase().includes(term);
+  // =========================
+  // MENU DATA
+  // =========================
 
-      const matchesStation =
-        this.selectedStation === 'All Stations' ||
-        dish.station === this.selectedStation;
+  dishes: MenuDish[] = [];
 
-      const matchesDietary =
-        this.activeDietary.every(tag => dish.dietary.includes(tag));
+  constructor(
+    private menuService: MenuService
+  ) {}
 
-      const matchesSignature =
-        !this.signatureOnly || dish.signature;
-
-      const matchesUnavailable =
-        !this.unavailableOnly || !dish.available;
-
-      return matchesCategory &&
-        matchesSearch &&
-        matchesStation &&
-        matchesDietary &&
-        matchesSignature &&
-        matchesUnavailable;
-    });
+  ngOnInit(): void {
+    this.loadMenuItems();
   }
 
-  get activeDishCount(): number {
-    return this.dishes.filter(dish => dish.available).length;
+  // =========================
+  // LOAD MENU ITEMS
+  // =========================
+
+  loadMenuItems(): void {
+
+    this.isLoading = true;
+
+    this.menuService
+      .getMenuItems()
+      .subscribe({
+
+        next: (response) => {
+
+          this.dishes =
+            response.menuItems.map(
+              item =>
+                this.mapApiMenuItem(item)
+            );
+
+          this.isLoading = false;
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to load menu items:',
+            error
+          );
+
+          this.isLoading = false;
+
+          this.showError(
+            'Unable to Load Menu',
+            error?.error?.message ||
+            'Failed to load the menu catalogue.'
+          );
+        }
+
+      });
   }
 
-  get unavailableCount(): number {
-    return this.dishes.filter(dish => !dish.available).length;
-  }
+  // =========================
+  // API → FRONTEND MAPPING
+  // =========================
 
-  get averageMargin(): number {
-    const active = this.dishes.filter(dish => dish.available && dish.price > 0);
+  private mapApiMenuItem(
+    item: ApiMenuItem
+  ): MenuDish {
 
-    if (!active.length) {
-      return 0;
-    }
-
-    const totalMargin = active.reduce(
-      (sum, dish) => sum + ((dish.price - dish.cost) / dish.price) * 100,
-      0
-    );
-
-    return totalMargin / active.length;
-  }
-
-  get categoryCount(): number {
-    return new Set(this.dishes.map(dish => dish.category)).size;
-  }
-
-  get drawerTitle(): string {
-    return this.editingDishId ? 'Edit Menu Item' : 'Add New Menu Item';
-  }
-
-  get foodCostMargin(): number {
-    if (this.form.price <= 0) {
-      return 0;
-    }
-
-    return ((this.form.price - this.form.cost) / this.form.price) * 100;
-  }
-
-  selectCategory(category: string): void {
-    this.activeCategory = category;
-  }
-
-  toggleDietary(tag: string): void {
-    if (this.activeDietary.includes(tag)) {
-      this.activeDietary = this.activeDietary.filter(item => item !== tag);
-    } else {
-      this.activeDietary = [...this.activeDietary, tag];
-    }
-  }
-
-  isDietaryActive(tag: string): boolean {
-    return this.activeDietary.includes(tag);
-  }
-
-  openAddDrawer(): void {
-    this.editingDishId = null;
-    this.form = this.createEmptyDish();
-    this.showDishDrawer = true;
-  }
-
-  openEditDrawer(dish: MenuDish): void {
-    this.editingDishId = dish.id;
-    this.form = {
-      ...dish,
-      dietary: [...dish.dietary]
+    return {
+      id: item.dishId,
+      name: item.name,
+      description: item.description,
+      category: item.category,
+      price: item.price,
+      available: item.available,
+      signature: item.signature,
+      dietary: item.dietary || [],
+      image: item.image || '',
+      provenance: item.provenance || '',
+      pairing: item.pairing || '',
+      allergens: item.allergens || ''
     };
-    this.showDishDrawer = true;
   }
 
-  closeDrawer(): void {
-    this.showDishDrawer = false;
-    this.editingDishId = null;
-  }
-
-  toggleFormDietary(tag: string, checked: boolean): void {
-    if (checked && !this.form.dietary.includes(tag)) {
-      this.form.dietary = [...this.form.dietary, tag];
-    } else if (!checked) {
-      this.form.dietary = this.form.dietary.filter(item => item !== tag);
-    }
-  }
-
-  saveDish(): void {
-    const name = this.form.name.trim();
-
-    if (!name) {
-      this.showToast('Please enter a dish name.');
-      return;
-    }
-
-    if (this.form.price < 0 || this.form.cost < 0 || this.form.stock < 0 || this.form.parCap < 0) {
-      this.showToast('Price, cost and stock values cannot be negative.');
-      return;
-    }
-
-    if (this.form.price <= 0) {
-      this.showToast('Please enter a price greater than RM 0.');
-      return;
-    }
-
-    if (this.editingDishId) {
-      this.dishes = this.dishes.map(dish =>
-        dish.id === this.editingDishId
-          ? { ...this.form, name }
-          : dish
-      );
-      this.showToast(`${name} updated successfully.`);
-    } else {
-      const newDish: MenuDish = {
-        ...this.form,
-        id: `M-${String(Date.now()).slice(-5)}`,
-        name
-      };
-
-      this.dishes = [newDish, ...this.dishes];
-      this.showToast(`${name} added to the menu.`);
-    }
-
-    this.closeDrawer();
-  }
-
-  toggleAvailability(dish: MenuDish): void {
-    dish.available = !dish.available;
-
-    if (!dish.available) {
-      this.showToast(`${dish.name} marked as unavailable.`);
-    } else {
-      this.showToast(`${dish.name} is now available.`);
-    }
-  }
-
-  deleteDish(dish: MenuDish): void {
-    const confirmed = window.confirm(
-      `Remove "${dish.name}" from this demo menu?`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    this.dishes = this.dishes.filter(item => item.id !== dish.id);
-    this.showToast(`${dish.name} removed from the menu.`);
-  }
-
-  exportCsv(): void {
-    const headers = [
-      'ID',
-      'Name',
-      'Category',
-      'Station',
-      'Price (RM)',
-      'Cost (RM)',
-      'Available',
-      'Stock',
-      'Par Cap'
-    ];
-
-    const rows = this.filteredDishes.map(dish => [
-      dish.id,
-      dish.name,
-      dish.category,
-      dish.station,
-      dish.price.toFixed(2),
-      dish.cost.toFixed(2),
-      dish.available ? 'Yes' : 'No',
-      dish.stock,
-      dish.parCap
-    ]);
-
-    const escapeCsv = (value: string | number): string =>
-      `"${String(value).replace(/"/g, '""')}"`;
-
-    const csv = [headers, ...rows]
-      .map(row => row.map(escapeCsv).join(','))
-      .join('\r\n');
-
-    const blob = new Blob(['\uFEFF' + csv], {
-      type: 'text/csv;charset=utf-8;'
-    });
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-
-    link.href = url;
-    link.download = 'aurelia-menu.csv';
-    link.click();
-
-    URL.revokeObjectURL(url);
-    this.showToast('Menu CSV exported.');
-  }
-
-  showToast(message: string): void {
-    this.toastMessage = message;
-  }
-
-  dismissToast(): void {
-    this.toastMessage = '';
-  }
-
-  trackByDishId(index: number, dish: MenuDish): string {
-    return dish.id;
-  }
+  // =========================
+  // EMPTY MENU ITEM
+  // =========================
 
   private createEmptyDish(): MenuDish {
+
     return {
       id: '',
       name: '',
       description: '',
       category: 'Wood-Fire Mains',
-      station: 'Grill & Robata',
       price: 0,
-      cost: 0,
-      stock: 0,
-      parCap: 20,
       available: true,
       signature: false,
       dietary: [],
       image: '',
       provenance: '',
       pairing: '',
-      allergens: '',
+      allergens: ''
     };
   }
 
-  categoryDishCount(category: string): number {
-    if (category === 'All Courses') {
+  // =========================
+  // FILTERING
+  // =========================
+
+  get filteredDishes(): MenuDish[] {
+
+    const term =
+      this.searchTerm
+        .trim()
+        .toLowerCase();
+
+    return this.dishes.filter(dish => {
+
+      const matchesCategory =
+        this.activeCategory === 'All Courses' ||
+        dish.category === this.activeCategory;
+
+      const matchesSearch =
+        !term ||
+        dish.name
+          .toLowerCase()
+          .includes(term) ||
+        dish.description
+          .toLowerCase()
+          .includes(term) ||
+        dish.id
+          .toLowerCase()
+          .includes(term);
+
+      const matchesDietary =
+        this.activeDietary.every(
+          tag =>
+            dish.dietary.includes(tag)
+        );
+
+      const matchesSignature =
+        !this.signatureOnly ||
+        dish.signature;
+
+      const matchesUnavailable =
+        !this.unavailableOnly ||
+        !dish.available;
+
+      return (
+        matchesCategory &&
+        matchesSearch &&
+        matchesDietary &&
+        matchesSignature &&
+        matchesUnavailable
+      );
+    });
+  }
+
+  // =========================
+  // COUNTS
+  // =========================
+
+  get totalDishCount(): number {
+
+    return this.dishes.length;
+  }
+
+  get signatureDishCount(): number {
+
+    return this.dishes.filter(
+      dish => dish.signature
+    ).length;
+  }
+
+  get activeDishCount(): number {
+
+    return this.dishes.filter(
+      dish => dish.available
+    ).length;
+  }
+
+  get unavailableCount(): number {
+
+    return this.dishes.filter(
+      dish => !dish.available
+    ).length;
+  }
+
+  get categoryCount(): number {
+
+    return new Set(
+      this.dishes.map(
+        dish => dish.category
+      )
+    ).size;
+  }
+
+  // =========================
+  // DRAWER TITLE
+  // =========================
+
+  get drawerTitle(): string {
+
+    return this.editingDishId
+      ? 'Edit Menu Item'
+      : 'Add New Menu Item';
+  }
+
+  // =========================
+  // CATEGORY FILTER
+  // =========================
+
+  selectCategory(
+    category: string
+  ): void {
+
+    this.activeCategory =
+      category;
+  }
+
+  // =========================
+  // DIETARY FILTER
+  // =========================
+
+  toggleDietary(
+    tag: DietaryTag
+  ): void {
+
+    if (
+      this.activeDietary.includes(tag)
+    ) {
+
+      this.activeDietary =
+        this.activeDietary.filter(
+          item => item !== tag
+        );
+
+    } else {
+
+      this.activeDietary = [
+        ...this.activeDietary,
+        tag
+      ];
+    }
+  }
+
+  isDietaryActive(
+    tag: DietaryTag
+  ): boolean {
+
+    return this.activeDietary
+      .includes(tag);
+  }
+
+  // =========================
+  // OPEN ADD DRAWER
+  // =========================
+
+  openAddDrawer(): void {
+
+    this.editingDishId = null;
+
+    this.form =
+      this.createEmptyDish();
+
+    this.drawerOpenMessageCleanup();
+
+    this.showDishDrawer = true;
+  }
+
+  // =========================
+  // OPEN EDIT DRAWER
+  // =========================
+
+  openEditDrawer(
+    dish: MenuDish
+  ): void {
+
+    this.editingDishId =
+      dish.id;
+
+    this.form = {
+      ...dish,
+      dietary: [
+        ...dish.dietary
+      ]
+    };
+
+    this.drawerOpenMessageCleanup();
+
+    this.showDishDrawer = true;
+  }
+
+  // =========================
+  // CLOSE DRAWER
+  // =========================
+
+  closeDrawer(): void {
+
+    this.showDishDrawer = false;
+
+    this.editingDishId = null;
+  }
+
+  // =========================
+  // CLEAR MESSAGE BEFORE
+  // OPENING DRAWER
+  // =========================
+
+  private drawerOpenMessageCleanup(): void {
+
+    this.clearSuccess();
+    this.clearError();
+  }
+
+  // =========================
+  // FORM DIETARY
+  // =========================
+
+  toggleFormDietary(
+    tag: DietaryTag,
+    checked: boolean
+  ): void {
+
+    if (
+      checked &&
+      !this.form.dietary.includes(tag)
+    ) {
+
+      this.form.dietary = [
+        ...this.form.dietary,
+        tag
+      ];
+
+    } else if (!checked) {
+
+      this.form.dietary =
+        this.form.dietary.filter(
+          item => item !== tag
+        );
+    }
+  }
+
+  // =========================
+  // SAVE MENU ITEM
+  // =========================
+
+  saveDish(): void {
+
+    const name =
+      this.form.name.trim();
+  
+    const description =
+      this.form.description.trim();
+  
+    // =========================
+    // FRONTEND VALIDATION
+    // =========================
+  
+    // =========================
+    // FRONTEND VALIDATION
+    // =========================
+    
+    if (!name) {
+      return;
+    }
+    
+    if (!this.form.category) {
+      return;
+    }
+    
+    if (!this.form.price || this.form.price <= 0) {
+      return;
+    }
+    
+    if (!description) {
+      return;
+    }
+
+    // =========================
+    // CREATE / UPDATE DATA
+    // =========================
+
+    const menuData = {
+      name,
+      description,
+      category:
+        this.form.category,
+      price:
+        this.form.price,
+      available:
+        this.form.available,
+      signature:
+        this.form.signature,
+      dietary:
+        this.form.dietary,
+      image:
+        this.form.image,
+      provenance:
+        this.form.provenance.trim(),
+      pairing:
+        this.form.pairing.trim(),
+      allergens:
+        this.form.allergens.trim()
+    };
+
+    // =========================
+    // UPDATE MENU ITEM
+    // =========================
+
+    if (this.editingDishId) {
+
+      this.menuService
+        .updateMenuItem(
+          this.editingDishId,
+          menuData
+        )
+        .subscribe({
+
+          next: (response) => {
+
+            const updatedDish =
+              this.mapApiMenuItem(
+                response.menuItem
+              );
+
+            const index =
+              this.dishes.findIndex(
+                dish =>
+                  dish.id ===
+                  updatedDish.id
+              );
+
+            if (index !== -1) {
+
+              this.dishes[index] =
+                updatedDish;
+            }
+
+            this.closeDrawer();
+
+            this.showSuccess(
+              'Changes Saved',
+              `${name} has been updated successfully.`
+            );
+          },
+
+          error: (error) => {
+
+            console.error(
+              'Failed to update menu item:',
+              error
+            );
+
+            this.showError(
+              'Unable to Save Changes',
+              error?.error?.message ||
+              'Failed to update the menu item.'
+            );
+          }
+
+        });
+
+      return;
+    }
+
+    // =========================
+    // CREATE MENU ITEM
+    // =========================
+
+    this.menuService
+      .createMenuItem(
+        menuData
+      )
+      .subscribe({
+
+        next: (response) => {
+
+          const newDish =
+            this.mapApiMenuItem(
+              response.menuItem
+            );
+
+          this.dishes.unshift(
+            newDish
+          );
+
+          this.closeDrawer();
+
+          this.showSuccess(
+            'Menu Item Added',
+            `${name} has been added to the menu successfully.`
+          );
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to create menu item:',
+            error
+          );
+
+          this.showError(
+            'Unable to Add Menu Item',
+            error?.error?.message ||
+            'Failed to create the menu item.'
+          );
+        }
+
+      });
+  }
+
+  // =========================
+  // TOGGLE AVAILABILITY
+  // =========================
+
+  toggleAvailability(
+    dish: MenuDish
+  ): void {
+
+    const newStatus =
+      !dish.available;
+
+    this.menuService
+      .updateAvailability(
+        dish.id,
+        newStatus
+      )
+      .subscribe({
+
+        next: (response) => {
+
+          const updatedDish =
+            this.mapApiMenuItem(
+              response.menuItem
+            );
+
+          this.dishes =
+            this.dishes.map(item =>
+              item.id ===
+              updatedDish.id
+                ? updatedDish
+                : item
+            );
+
+          if (
+            updatedDish.available
+          ) {
+
+            this.showSuccess(
+              'Dish Available',
+              `${updatedDish.name} is now available on the menu.`
+            );
+
+          } else {
+
+            this.showSuccess(
+              'Dish Unavailable',
+              `${updatedDish.name} has been marked as unavailable.`
+            );
+          }
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to update availability:',
+            error
+          );
+
+          this.showError(
+            'Unable to Update Availability',
+            error?.error?.message ||
+            'Failed to update menu availability.'
+          );
+        }
+
+      });
+  }
+
+  // =========================
+  // OPEN DELETE CONFIRMATION
+  // =========================
+
+  openDeleteConfirmation(
+    dish: MenuDish
+  ): void {
+
+    this.dishToDelete =
+      dish;
+
+    this.deleteConfirmOpen =
+      true;
+  }
+
+  // =========================
+  // CANCEL DELETE
+  // =========================
+
+  cancelDelete(): void {
+
+    this.deleteConfirmOpen =
+      false;
+
+    this.dishToDelete =
+      null;
+  }
+
+  // =========================
+  // CONFIRM DELETE
+  // =========================
+
+  confirmDelete(): void {
+
+    if (!this.dishToDelete) {
+      return;
+    }
+
+    const dish =
+      this.dishToDelete;
+
+    this.menuService
+      .deleteMenuItem(
+        dish.id
+      )
+      .subscribe({
+
+        next: () => {
+
+          this.dishes =
+            this.dishes.filter(
+              item =>
+                item.id !==
+                dish.id
+            );
+
+          // Close confirmation
+          this.deleteConfirmOpen =
+            false;
+
+          this.dishToDelete =
+            null;
+
+          // Close drawer if necessary
+          if (
+            this.editingDishId ===
+            dish.id
+          ) {
+            this.closeDrawer();
+          }
+
+          this.showSuccess(
+            'Menu Item Deleted',
+            `${dish.name} has been removed from the menu successfully.`
+          );
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to delete menu item:',
+            error
+          );
+
+          // Close confirmation
+          this.deleteConfirmOpen =
+            false;
+
+          this.dishToDelete =
+            null;
+
+          this.showError(
+            'Unable to Delete Menu Item',
+            error?.error?.message ||
+            'Failed to delete the menu item.'
+          );
+        }
+
+      });
+  }
+
+  // =========================
+  // CATEGORY COUNT
+  // =========================
+
+  categoryDishCount(
+    category: string
+  ): number {
+
+    if (
+      category === 'All Courses'
+    ) {
+
       return this.dishes.length;
     }
-  
-    return this.dishes.filter(dish => dish.category === category).length;
+
+    return this.dishes.filter(
+      dish =>
+        dish.category ===
+        category
+    ).length;
   }
 
-  onDishImageSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-  
-    if (!file) return;
-  
-    if (!file.type.startsWith('image/')) {
-      this.toastMessage = 'Please select a valid image file.';
-      input.value = '';
+  // =========================
+  // EXPORT CSV
+  // =========================
+
+  exportCsv(): void {
+
+    const headers = [
+      'ID',
+      'Name',
+      'Category',
+      'Price (RM)',
+      'Available',
+      'Signature'
+    ];
+
+    const rows =
+      this.filteredDishes.map(
+        dish => [
+          dish.id,
+          dish.name,
+          dish.category,
+          dish.price.toFixed(2),
+          dish.available
+            ? 'Yes'
+            : 'No',
+          dish.signature
+            ? 'Yes'
+            : 'No'
+        ]
+      );
+
+    const escapeCsv =
+      (
+        value: string | number
+      ): string =>
+        `"${String(value)
+          .replace(
+            /"/g,
+            '""'
+          )}"`;
+
+    const csv =
+      [headers, ...rows]
+        .map(row =>
+          row
+            .map(escapeCsv)
+            .join(',')
+        )
+        .join('\r\n');
+
+    const blob =
+      new Blob(
+        ['\uFEFF' + csv],
+        {
+          type:
+            'text/csv;charset=utf-8;'
+        }
+      );
+
+    const url =
+      URL.createObjectURL(
+        blob
+      );
+
+    const link =
+      document.createElement('a');
+
+    link.href = url;
+
+    link.download =
+      'aurelia-menu.csv';
+
+    link.click();
+
+    URL.revokeObjectURL(
+      url
+    );
+
+    this.showSuccess(
+      'Export Complete',
+      'The menu catalogue has been exported successfully.'
+    );
+  }
+
+  // =========================
+  // TRACKING
+  // =========================
+
+  trackByDishId(
+    index: number,
+    dish: MenuDish
+  ): string {
+
+    return dish.id;
+  }
+
+  // =========================
+  // IMAGE UPLOAD
+  // =========================
+
+  onDishImageSelected(
+    event: Event
+  ): void {
+
+    const input =
+      event.target as
+      HTMLInputElement;
+
+    const file =
+      input.files?.[0];
+
+    if (!file) {
       return;
     }
-  
-    // Keep the demo upload at a reasonable size.
-    if (file.size > 5 * 1024 * 1024) {
-      this.toastMessage = 'Please choose an image smaller than 5 MB.';
+
+    if (
+      !file.type.startsWith(
+        'image/'
+      )
+    ) {
+
+      this.showError(
+        'Invalid Image',
+        'Please select a valid image file.'
+      );
+
       input.value = '';
+
       return;
     }
-  
-    const reader = new FileReader();
-  
+
+    if (
+      file.size >
+      5 * 1024 * 1024
+    ) {
+
+      this.showError(
+        'Image Too Large',
+        'Please choose an image smaller than 5 MB.'
+      );
+
+      input.value = '';
+
+      return;
+    }
+
+    const reader =
+      new FileReader();
+
     reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        this.form.image = reader.result;
+
+      if (
+        typeof reader.result ===
+        'string'
+      ) {
+
+        this.form.image =
+          reader.result;
       }
     };
-  
-    reader.readAsDataURL(file);
+
+    reader.readAsDataURL(
+      file
+    );
+
     input.value = '';
   }
-  
+
+  // =========================
+  // REMOVE IMAGE
+  // =========================
+
   removeDishImage(): void {
+
     this.form.image = '';
+  }
+
+  // =========================
+  // SUCCESS MESSAGE
+  // =========================
+
+  showSuccess(
+    title: string,
+    message: string
+  ): void {
+
+    // Remove existing error
+    this.clearError();
+
+    // Reset existing timer
+    if (this.successTimeout) {
+
+      clearTimeout(
+        this.successTimeout
+      );
+    }
+
+    this.successTitle =
+      title;
+
+    this.successMessage =
+      message;
+
+    this.successTimeout =
+      setTimeout(() => {
+
+        this.successMessage =
+          '';
+
+        this.successTitle =
+          '';
+
+        this.successTimeout =
+          undefined;
+
+      }, 1400);
+  }
+
+  // =========================
+  // ERROR MESSAGE
+  // =========================
+
+  showError(
+    title: string,
+    message: string
+  ): void {
+
+    // Remove existing success message
+    this.clearSuccess();
+
+    // Cancel previous error timer
+    if (this.errorTimeout) {
+
+      clearTimeout(
+        this.errorTimeout
+      );
+
+      this.errorTimeout =
+        undefined;
+    }
+
+    this.errorTitle =
+      title;
+
+    this.errorMessage =
+      message;
+  }
+
+  // =========================
+  // CLEAR SUCCESS
+  // =========================
+
+  clearSuccess(): void {
+
+    if (this.successTimeout) {
+
+      clearTimeout(
+        this.successTimeout
+      );
+
+      this.successTimeout =
+        undefined;
+    }
+
+    this.successMessage =
+      '';
+
+    this.successTitle =
+      '';
+  }
+
+  // =========================
+  // CLEAR ERROR
+  // =========================
+
+  clearError(): void {
+
+    if (this.errorTimeout) {
+
+      clearTimeout(
+        this.errorTimeout
+      );
+
+      this.errorTimeout =
+        undefined;
+    }
+
+    this.errorMessage =
+      '';
+
+    this.errorTitle =
+      '';
   }
 }
