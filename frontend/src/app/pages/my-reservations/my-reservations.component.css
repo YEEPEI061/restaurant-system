@@ -810,24 +810,6 @@
     font-weight: 600;
   }
   
-  .payment-row.deposit-payment {
-    color: #536251;
-  }
-  
-  .deposit-payment > span {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  
-  .deposit-payment .material-symbols-outlined {
-    font-size: 15px;
-  }
-  
-  .deposit-payment > strong {
-    color: #536251;
-  }
-  
   .payment-divider {
     height: 1px;
     background: #e4e1e6;

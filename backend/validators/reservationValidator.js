@@ -62,9 +62,39 @@ const createReservationValidator = [
     .isIn(servicePeriods)
     .withMessage('Invalid service period'),
 
+  body('seating')
+    .isIn([
+      'Main Dining Room',
+      "Chef's Counter",
+      'Garden Solarium'
+    ])
+    .withMessage('Invalid seating option'),
+
   body('diningOption')
     .isIn(diningOptions)
     .withMessage('Invalid dining option'),
+
+    body('selectedDishes')
+    .optional()
+    .isArray()
+    .withMessage('Selected dishes must be an array'),
+  
+  body('selectedDishes.*.id')
+    .if(body('selectedDishes').exists())
+    .trim()
+    .notEmpty()
+    .withMessage('Selected dish ID is required'),
+  
+  body('selectedDishes.*.name')
+    .if(body('selectedDishes').exists())
+    .trim()
+    .notEmpty()
+    .withMessage('Selected dish name is required'),
+  
+  body('selectedDishes.*.price')
+    .if(body('selectedDishes').exists())
+    .isFloat({ min: 0 })
+    .withMessage('Selected dish price must be a valid non-negative number'),
 
   body('tastingMenu')
     .optional()
@@ -88,17 +118,6 @@ const createReservationValidator = [
     .trim()
     .isLength({ max: 20 })
     .withMessage('Table number cannot exceed 20 characters'),
-
-  body('deposit')
-    .optional()
-    .isFloat({ min: 0 })
-    .withMessage('Deposit must be a number greater than or equal to 0'),
-
-  body('dietaryNotes')
-    .optional()
-    .trim()
-    .isLength({ max: 500 })
-    .withMessage('Dietary notes cannot exceed 500 characters'),
 
   body('specialRequests')
     .optional()
@@ -162,6 +181,15 @@ const updateReservationValidator = [
     .isIn(servicePeriods)
     .withMessage('Invalid service period'),
 
+  body('seating')
+    .optional()
+    .isIn([
+      'Main Dining Room',
+      "Chef's Counter",
+      'Garden Solarium'
+    ])
+    .withMessage('Invalid seating option'),
+
   body('diningOption')
     .optional()
     .isIn(diningOptions)
@@ -189,17 +217,6 @@ const updateReservationValidator = [
     .trim()
     .isLength({ max: 20 })
     .withMessage('Table number cannot exceed 20 characters'),
-
-  body('deposit')
-    .optional()
-    .isFloat({ min: 0 })
-    .withMessage('Deposit must be a number greater than or equal to 0'),
-
-  body('dietaryNotes')
-    .optional()
-    .trim()
-    .isLength({ max: 500 })
-    .withMessage('Dietary notes cannot exceed 500 characters'),
 
   body('specialRequests')
     .optional()

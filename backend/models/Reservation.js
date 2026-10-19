@@ -60,10 +60,43 @@ const reservationSchema = new mongoose.Schema(
       required: true
     },
 
+    seating: {
+      type: String,
+      enum: [
+        'Main Dining Room',
+        "Chef's Counter",
+        'Garden Solarium'
+      ],
+      required: true
+    },
+
     diningOption: {
       type: String,
       enum: ['tasting', 'alacarte', 'table'],
       required: true
+    },
+
+    selectedDishes: {
+      type: [
+        {
+          id: {
+            type: String,
+            required: true,
+            trim: true
+          },
+          name: {
+            type: String,
+            required: true,
+            trim: true
+          },
+          price: {
+            type: Number,
+            required: true,
+            min: 0
+          }
+        }
+      ],
+      default: []
     },
 
     tastingMenu: {
@@ -87,19 +120,6 @@ const reservationSchema = new mongoose.Schema(
       type: String,
       default: '',
       trim: true
-    },
-
-    deposit: {
-      type: Number,
-      min: 0,
-      default: 0
-    },
-
-    dietaryNotes: {
-      type: String,
-      default: '',
-      trim: true,
-      maxlength: 500
     },
 
     specialRequests: {

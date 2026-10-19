@@ -161,14 +161,6 @@
                   </div>
 
                   <div class="metric">
-                    <span>DEPOSIT</span>
-                    <strong class="green-text">
-                      RM {{ reservation.deposit.toFixed(2) }}
-                    </strong>
-                    <small>Subject to booking policy</small>
-                  </div>
-
-                  <div class="metric">
                     <span>BALANCE ESTIMATE</span>
                     <strong>
                       RM {{ getBalanceForReservation(reservation) }}
@@ -227,10 +219,10 @@
                 </div>
               </div>
 
-              <!-- Deposit and cancellation information -->
+              <!-- Cancellation information -->
               <aside class="payment-column">
                 <div class="payment-heading">
-                  <h3>Deposit &amp; Payment Summary</h3>
+                  <h3>ayment Summary</h3>
                   <span class="payment-status">
                     {{ reservation.paymentLabel }}
                   </span>
@@ -245,7 +237,7 @@
                     <strong>Need to change your plans?</strong>
                     <p>
                       Contact the restaurant to confirm the applicable
-                      cancellation deadline and deposit refund policy.
+                      cancellation deadline.
                     </p>
                   </div>
                 </div>
@@ -258,18 +250,6 @@
                     </div>
                   }
 
-                  <div class="payment-row deposit-payment">
-                    <span>
-                      <span class="material-symbols-outlined">
-                        check_circle
-                      </span>
-                      Deposit estimate
-                    </span>
-
-                    <strong>
-                      − RM {{ reservation.deposit.toFixed(2) }}
-                    </strong>
-                  </div>
 
                   <div class="payment-divider"></div>
 
@@ -526,9 +506,8 @@
       <div class="modal-notice">
         <span class="material-symbols-outlined">info</span>
         <p>
-          Cancelling this demo reservation will move it to your
-          Cancelled tab. Any actual deposit refund must be confirmed
-          by the restaurant's booking and payment system.
+          Cancelling this reservation will move it to your
+          Cancelled tab. 
         </p>
       </div>
 

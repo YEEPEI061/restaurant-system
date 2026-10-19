@@ -21,7 +21,6 @@ interface Reservation {
   guests: number;
   table: string;
   packageName: string;
-  deposit: number;
   status: BookingStatus;
   dietaryNotes: string;
   specialRequests: string;
@@ -47,7 +46,6 @@ export class ReservationManagementComponent {
       guests: 4,
       table: 'T-12',
       packageName: 'Seven-Course Tasting',
-      deposit: 200,
       status: 'Pending',
       dietaryNotes: 'Shellfish allergy. Confirm with the kitchen before service.',
       specialRequests: 'Quiet table preferred.',
@@ -63,7 +61,6 @@ export class ReservationManagementComponent {
       guests: 6,
       table: 'T-08',
       packageName: 'Seven-Course Tasting',
-      deposit: 150,
       status: 'Confirmed',
       dietaryNotes: 'One guest is pescatarian. Please confirm suitable alternatives.',
       specialRequests: 'Anniversary dinner.',
@@ -79,7 +76,6 @@ export class ReservationManagementComponent {
       guests: 2,
       table: 'T-04',
       packageName: 'Five-Course Tasting',
-      deposit: 50,
       status: 'Seated',
       dietaryNotes: 'No dietary notes provided.',
       specialRequests: 'Window seat if available.',
@@ -95,7 +91,6 @@ export class ReservationManagementComponent {
       guests: 2,
       table: 'C-01',
       packageName: 'Seven-Course Tasting',
-      deposit: 100,
       status: 'Seated',
       dietaryNotes: 'Please confirm dietary requirements with the guest.',
       specialRequests: 'Chef counter seating.',
@@ -111,7 +106,6 @@ export class ReservationManagementComponent {
       guests: 4,
       table: 'T-05',
       packageName: 'A La Carte',
-      deposit: 100,
       status: 'Confirmed',
       dietaryNotes: 'Gluten-free requirements. Confirm preparation with kitchen.',
       specialRequests: 'Birthday dinner.',
@@ -127,7 +121,6 @@ export class ReservationManagementComponent {
       guests: 2,
       table: '',
       packageName: 'Five-Course Tasting',
-      deposit: 0,
       status: 'Cancelled',
       dietaryNotes: 'None recorded.',
       specialRequests: 'Booking cancelled by guest.',
@@ -224,7 +217,7 @@ export class ReservationManagementComponent {
   }
 
   get amountDue(): number {
-    return Math.max(0, this.estimatedTotal - this.form.deposit);
+    return Math.max(0, this.estimatedTotal);
   }
 
   setFilter(filter: string): void {
@@ -354,7 +347,6 @@ export class ReservationManagementComponent {
       'Guests',
       'Table',
       'Package',
-      'Deposit (RM)',
       'Status'
     ];
 
@@ -368,7 +360,6 @@ export class ReservationManagementComponent {
       String(r.guests),
       r.table,
       r.packageName,
-      String(r.deposit),
       r.status
     ]);
 
@@ -418,7 +409,6 @@ export class ReservationManagementComponent {
       guests: 2,
       table: '',
       packageName: 'A La Carte',
-      deposit: 0,
       status: 'Pending',
       dietaryNotes: '',
       specialRequests: '',

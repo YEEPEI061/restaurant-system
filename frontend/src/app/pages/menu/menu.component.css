@@ -1019,6 +1019,13 @@
   .allergen-button:hover {
     color: #182418;
   }
+
+  .quantity {
+    margin-left: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #8b8175;
+  }
   
   .add-button {
     display: inline-flex;
@@ -1511,18 +1518,21 @@
   .tasting-item p {
     margin: 0;
   
-    overflow: hidden;
-  
     color: #182418;
   
     font-size: 13px;
     font-weight: 500;
   
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    line-height: 1.5;
   }
   
   .tasting-item span {
+    color: #536251;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .tasting-item .item-price {
     display: block;
   
     margin-top: 3px;
@@ -1531,6 +1541,19 @@
   
     font-size: 12px;
     font-weight: 600;
+  }
+  
+  .tasting-item .quantity {
+    display: inline-block;
+  
+    margin-left: 5px;
+  
+    color: #8b8175;
+  
+    font-size: 12px;
+    font-weight: 600;
+  
+    white-space: nowrap;
   }
   
   .tasting-item button {

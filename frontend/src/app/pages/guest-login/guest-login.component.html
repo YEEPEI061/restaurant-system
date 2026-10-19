@@ -211,6 +211,21 @@
               </div>
   
             </div>
+
+            @if (errorMessage) {
+              <div
+                class="form-message error-message"
+                role="alert"
+              >
+                <span class="material-symbols-outlined">
+                  error
+                </span>
+            
+                <span>
+                  {{ errorMessage }}
+                </span>
+              </div>
+            }
   
   
             <!-- Submit -->

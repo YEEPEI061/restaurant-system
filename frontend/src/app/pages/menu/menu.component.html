@@ -639,35 +639,41 @@
           }
 
 
-          @for (item of tastingList; track item.id) {
+          @for (item of groupedTastingList; track item.id) {
 
             <div class="tasting-item">
-
+          
               <div>
-
+          
                 <p>
                   {{ item.name }}
+          
+                  @if (item.quantity > 1) {
+                    <span class="quantity">
+                      ×{{ item.quantity }}
+                    </span>
+                  }
                 </p>
-
-                <span>
-                  RM {{ item.price }}
+          
+                <span class="item-price">
+                  RM {{ (item.price * item.quantity).toFixed(2) }}
                 </span>
-
+          
               </div>
-
+          
               <button
                 type="button"
                 (click)="removeFromTasting(item.id)"
               >
-
+          
                 <span class="material-symbols-outlined">
                   delete
                 </span>
-
+          
               </button>
-
+          
             </div>
-
+          
           }
 
         </div>
@@ -695,8 +701,7 @@
         </p>
 
         <a
-          routerLink="/reservations"
-          (click)="closeTastingDrawer()"
+          (click)="proceedToReservation()"
         >
           Proceed to Reserve Table
 

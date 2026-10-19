@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
@@ -9,6 +9,12 @@ import {
   MenuCategory,
   DietaryTag
 } from '../../services/menu.service';
+
+import {
+  TastingService,
+  TastingItem
+} from '../../services/tasting.service';
+import { AuthService } from '../../services/auth.service';
 
 interface MenuItem {
   _id: string;
@@ -26,11 +32,6 @@ interface MenuItem {
   allergens: string;
 }
 
-interface TastingItem {
-  name: string;
-  price: number;
-  id: string;
-}
 
 @Component({
   selector: 'app-menu',
@@ -48,7 +49,10 @@ interface TastingItem {
 export class MenuComponent implements OnInit {
 
   constructor(
-    private menuService: MenuService
+    private menuService: MenuService,
+    private tastingService: TastingService,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   activeCategory = 'all';
@@ -233,11 +237,14 @@ export class MenuComponent implements OnInit {
 
   addToTasting(item: MenuItem): void {
 
-    this.tastingList.push({
+    this.tastingService.addItem({
       name: item.name,
       price: item.price,
       id: item.dishId
     });
+  
+    this.tastingList =
+      this.tastingService.getItems();
   
     this.openTastingDrawer();
   }
@@ -248,7 +255,7 @@ export class MenuComponent implements OnInit {
   
     if (type === '5-course') {
   
-      this.tastingList.push({
+      this.tastingService.addItem({
         name: '5-Course Prelude Tasting Menu',
         price: 125,
         id: 'tasting-5-course'
@@ -256,7 +263,7 @@ export class MenuComponent implements OnInit {
   
     } else {
   
-      this.tastingList.push({
+      this.tastingService.addItem({
         name: '7-Course Odyssey Tasting Menu',
         price: 175,
         id: 'tasting-7-course'
@@ -264,12 +271,18 @@ export class MenuComponent implements OnInit {
   
     }
   
+    this.tastingList =
+      this.tastingService.getItems();
+  
     this.openTastingDrawer();
   }
 
   removeFromTasting(id: string): void {
+
+    this.tastingService.removeItem(id);
+  
     this.tastingList =
-      this.tastingList.filter(item => item.id !== id);
+      this.tastingService.getItems();
   }
 
   openDietaryModal(item: MenuItem): void {
@@ -288,6 +301,53 @@ export class MenuComponent implements OnInit {
 
   closeTastingDrawer(): void {
     this.isTastingDrawerOpen = false;
+  }
+
+  proceedToReservation(): void {
+
+    // Close the tasting drawer first
+    this.closeTastingDrawer();
+  
+    // Check whether the guest is logged in
+    if (this.authService.isLoggedIn()) {
+  
+      // Already logged in
+      this.router.navigate(['/reservations']);
+  
+    } else {
+  
+      // Not logged in
+      this.router.navigate(['/guest-login']);
+  
+    }
+  }
+
+  get groupedTastingList(): Array<TastingItem & { quantity: number }> {
+
+    const grouped =
+      new Map<string, TastingItem & { quantity: number }>();
+  
+    for (const item of this.tastingList) {
+  
+      const existing =
+        grouped.get(item.id);
+  
+      if (existing) {
+  
+        existing.quantity += 1;
+  
+      } else {
+  
+        grouped.set(item.id, {
+          ...item,
+          quantity: 1
+        });
+  
+      }
+  
+    }
+  
+    return Array.from(grouped.values());
   }
 
   trackByName(index: number, item: MenuItem): string {

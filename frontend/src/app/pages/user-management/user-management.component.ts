@@ -172,7 +172,7 @@ export class UserManagementComponent {
       name: '',
       email: '',
       phone: '',
-      role: 'guest',
+      role: 'admin',
       active: true,
       password: ''
     };

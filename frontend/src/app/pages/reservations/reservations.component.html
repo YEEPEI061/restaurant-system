@@ -27,7 +27,7 @@
         </div>
 
         <div>
-          <span class="small-label">OUR CURRENT SELECTION</span>
+          <span class="small-label">AT AURELIA</span>
           <strong>Seasonal Dining</strong>
           <span class="season-caption">Thoughtfully prepared, always fresh</span>
         </div>
@@ -193,7 +193,11 @@
             </div>
 
             <span class="optional-label">
-              {{ partySize === '7+' ? 'Private dining' : 'Table for ' + partySize }}
+              {{
+                partySize === '7+'
+                  ? 'Private dining · ' + largePartySize + ' guests'
+                  : 'Table for ' + partySize
+              }}
             </span>
           </div>
 
@@ -222,11 +226,46 @@
             </button>
           </div>
 
+
           @if (partySize === '7+') {
-            <p class="inline-note">
-              Your request will be treated as a private dining inquiry.
-              The displayed price estimate is based on eight guests.
-            </p>
+
+            <div class="large-party-field">
+          
+              <div class="large-party-input-row">
+          
+                <label for="largePartySize">
+                  Number of Guests
+                </label>
+          
+                <div class="large-party-input-wrapper">
+          
+                  <input
+                    id="largePartySize"
+                    name="largePartySize"
+                    type="number"
+                    min="7"
+                    max="30"
+                    [(ngModel)]="largePartySize"
+                  />
+          
+                  <span>guests</span>
+          
+                </div>
+          
+              </div>
+          
+              <div class="large-party-note">
+                <span class="material-symbols-outlined">
+                  info
+                </span>
+          
+                <span>
+                  Private dining is available for parties of 7–30 guests.
+                </span>
+              </div>
+          
+            </div>
+          
           }
         </section>
 
@@ -321,15 +360,102 @@
               }
             </div>
           } @else {
-            <div class="selection-notice">
-              <span class="material-symbols-outlined">restaurant_menu</span>
-              <p>
-                {{ selectedDiningOption === 'alacarte'
-                  ? 'You can explore the menu and make your selections before your visit.'
-                  : 'You can browse our menu and order after being seated.' }}
-              </p>
-              <a routerLink="/menu">Explore Our Menu</a>
-            </div>
+
+            @if (selectedDiningOption === 'alacarte') {
+
+              <div class="selected-dishes">
+            
+                <div class="selected-dishes-heading">
+                  <div>
+                    <span class="eyebrow">YOUR SELECTION</span>
+            
+                    <h4>Hand-Picked Dishes</h4>
+                  </div>
+            
+                  <span class="dish-count">
+                    {{ tastingList.length }}
+                    {{ tastingList.length === 1 ? 'dish' : 'dishes' }}
+                  </span>
+                </div>
+            
+            
+                @if (tastingList.length > 0) {
+            
+                  <div class="selected-dishes-list">
+            
+                    @for (item of groupedTastingList; track item.id) {
+
+                      <div class="selected-dish">
+                    
+                        <span class="dish-name">
+                    
+                          {{ item.name }}
+                    
+                          @if (item.quantity > 1) {
+                            <span class="quantity">
+                              ×{{ item.quantity }}
+                            </span>
+                          }
+                    
+                        </span>
+                    
+                        <span class="dish-price">
+                          RM {{ (item.price * item.quantity).toFixed(2) }}
+                        </span>
+                    
+                      </div>
+                    
+                    }
+            
+                  </div>
+            
+                } @else {
+            
+                  <p class="selection-empty">
+                    No dishes selected yet.
+                  </p>
+            
+                }
+            
+            
+                <a
+                  class="add-dishes-link"
+                  routerLink="/menu"
+                >
+                  <span class="material-symbols-outlined">
+                    add
+                  </span>
+            
+                  Add More Dishes
+                </a>
+            
+              </div>
+            
+            } @else {
+            
+              <div class="selection-notice">
+            
+                <div>
+                  <span class="eyebrow">DINING</span>
+            
+                  <h4>Order from the Menu</h4>
+            
+                  <p>
+                    Browse our menu and select your dishes before your visit.
+                  </p>
+                </div>
+            
+                <a routerLink="/menu">
+                  Explore Menu
+                  <span class="material-symbols-outlined">
+                    arrow_forward
+                  </span>
+                </a>
+            
+              </div>
+            
+            }
+          
           }
 
           <label class="pairing-option">
@@ -346,7 +472,6 @@
               type="checkbox"
               name="beveragePairing"
               [(ngModel)]="includeBeveragePairing"
-              (ngModelChange)="isConfirmed = false"
             />
           </label>
         </section>
@@ -415,8 +540,8 @@
           </div>
 
           <p class="inline-note">
-            Times shown are illustrative for the frontend prototype.
-            Actual availability will be checked when the backend is connected.
+            Select your preferred arrival time.
+            Final availability is subject to restaurant confirmation.
           </p>
         </section>
       </div>
@@ -430,7 +555,7 @@
               <span class="material-symbols-outlined">restaurant_menu</span>
               <h2>Your Reservation</h2>
             </div>
-            <span class="draft-badge">PREVIEW</span>
+            <span class="draft-badge">RESERVATION</span>
           </div>
 
           <div class="summary-details">
@@ -445,10 +570,14 @@
             </div>
 
             <div class="summary-detail">
+
               <span>PARTY</span>
+            
               <strong>
-                {{ partySize === '7+' ? '7+ Guests' : partySize + ' Guests' }}
+                {{ guestCount }}
+                {{ guestCount === 1 ? 'Guest' : 'Guests' }}
               </strong>
+            
             </div>
 
             <div class="summary-detail">
@@ -465,24 +594,112 @@
           </div>
 
           <div class="summary-menu">
-            <span class="small-label">DINING PREFERENCE</span>
-            <strong>{{ diningOptionLabel }}</strong>
 
+            <span class="small-label">
+              DINING PREFERENCE
+            </span>
+          
+            <strong>
+              {{ diningOptionLabel }}
+            </strong>
+          
+          
             @if (selectedDiningOption === 'tasting') {
-              <span>{{ selectedTastingMenu }}</span>
+          
+              <span>
+                {{ selectedTastingMenu }}
+              </span>
+          
             }
-
+          
+          
+            @if (selectedDiningOption === 'alacarte') {
+          
+              <span>
+                {{ tastingList.length }}
+                {{ tastingList.length === 1 ? 'dish' : 'dishes' }}
+                selected
+              </span>
+          
+              @for (item of groupedTastingList; track item.id) {
+          
+                <span>
+                  {{ item.name }}
+          
+                  @if (item.quantity > 1) {
+                    ×{{ item.quantity }}
+                  }
+          
+                  · RM {{ (item.price * item.quantity).toFixed(2) }}
+                </span>
+          
+              }
+          
+            }
+          
+          
+            @if (selectedDiningOption === 'table') {
+          
+              <span>
+                Order from our menu when seated
+              </span>
+          
+            }
+          
+          
             @if (includeBeveragePairing) {
-              <span>Seasonal Beverage Pairing included</span>
+          
+              <span>
+                Seasonal Beverage Pairing included
+              </span>
+          
             }
+          
           </div>
 
           <div class="price-breakdown">
             @if (selectedDiningOption === 'tasting') {
+
               <div class="price-row">
-                <span>{{ selectedMenu.name }} × {{ guestCount }}</span>
-                <strong>RM {{ (selectedMenu.price * guestCount).toFixed(2) }}</strong>
+            
+                <span>
+                  {{ selectedMenu.name }} × {{ guestCount }}
+                </span>
+            
+                <strong>
+                  RM {{ (selectedMenu.price * guestCount).toFixed(2) }}
+                </strong>
+            
               </div>
+            
+            }
+            
+            
+            @if (
+              selectedDiningOption === 'alacarte'
+              && tastingList.length > 0
+            ) {
+            
+              @for (item of groupedTastingList; track item.id) {
+
+                <div class="price-row">
+              
+                  <span>
+                    {{ item.name }}
+                    @if (item.quantity > 1) {
+                      ×{{ item.quantity }}
+                    }
+                    × {{ guestCount }}
+                  </span>
+              
+                  <strong>
+                    RM {{ (item.price * item.quantity * guestCount).toFixed(2) }}
+                  </strong>
+              
+                </div>
+              
+              }
+            
             }
 
             @if (includeBeveragePairing) {
@@ -498,30 +715,11 @@
               <span>Estimated dining subtotal</span>
               <strong>RM {{ diningSubtotal.toFixed(2) }}</strong>
             </div>
-
-            <div class="price-row deposit-row">
-              <span>
-                <span class="material-symbols-outlined">lock</span>
-                Table deposit (RM 25 × {{ guestCount }})
-              </span>
-              <strong>RM {{ depositTotal.toFixed(2) }}</strong>
-            </div>
-
-            <p class="deposit-note">
-              The deposit is an illustrative estimate and is credited
-              towards the final bill, subject to the restaurant's policy.
-            </p>
-          </div>
-
-          <div class="summary-total">
-            <span>Deposit estimate</span>
-            <strong>RM {{ depositTotal.toFixed(2) }}</strong>
           </div>
 
           <p class="summary-disclaimer">
-            This is a reservation preview, not a confirmed booking.
-            Final availability and any deposit payment will be handled
-            by the connected booking system.
+            Reservations are submitted as pending and remain subject
+            to confirmation by the restaurant.
           </p>
         </section>
 
@@ -536,7 +734,10 @@
 
           <form class="guest-form" (ngSubmit)="confirmReservation()">
             <div class="form-field">
-              <label for="guestName">Full Name *</label>
+              <label for="guestName">
+                Full Name <i>*</i>
+              </label>
+          
               <input
                 id="guestName"
                 name="guestName"
@@ -549,7 +750,10 @@
             </div>
 
             <div class="form-field">
-              <label for="guestEmail">Email Address *</label>
+              <label for="guestEmail">
+                Email Address <i>*</i>
+              </label>
+          
               <input
                 id="guestEmail"
                 name="guestEmail"
@@ -562,7 +766,9 @@
             </div>
 
             <div class="form-field">
-              <label for="guestPhone">Phone Number *</label>
+              <label for="guestPhone">
+                Phone Number <i>*</i>
+              </label>
               <input
                 id="guestPhone"
                 name="guestPhone"
@@ -585,34 +791,15 @@
               ></textarea>
             </div>
 
-            @if (errorMessage) {
-              <div class="form-message error-message" role="alert">
-                <span class="material-symbols-outlined">error</span>
-                {{ errorMessage }}
-              </div>
-            }
-
-            @if (isConfirmed) {
-              <div class="form-message success-message" role="status">
-                <span class="material-symbols-outlined">check_circle</span>
-                <div>
-                  <strong>Reservation preview complete</strong>
-                  <span>
-                    Your selections are ready. A real booking will require
-                    backend integration.
-                  </span>
-                </div>
-              </div>
-            }
-
             <button
               type="submit"
               class="confirm-button"
               [disabled]="isSubmitting"
             >
               <span>
-                {{ isSubmitting ? 'Preparing preview...' : 'Review Reservation' }}
+                {{ isSubmitting ? 'Submitting...' : 'Submit Reservation' }}
               </span>
+
               <span class="material-symbols-outlined">
                 {{ isSubmitting ? 'progress_activity' : 'arrow_forward' }}
               </span>
@@ -693,5 +880,119 @@
 
   </section>
 </main>
+
+
+<!-- =====================================================
+RESERVATION SUCCESS
+===================================================== -->
+
+@if (successMessage) {
+
+<div
+class="message-modal-backdrop success-backdrop"
+role="status"
+>
+
+<div class="message-card success-card">
+
+ <div class="success-animation">
+
+   <svg
+     class="success-svg"
+     viewBox="0 0 52 52"
+     aria-hidden="true"
+   >
+
+     <circle
+       class="success-circle"
+       cx="26"
+       cy="26"
+       r="24"
+       fill="none"
+     ></circle>
+
+     <path
+       class="success-check"
+       fill="none"
+       d="M14 27 L22 35 L39 18"
+     ></path>
+
+   </svg>
+
+ </div>
+
+ <div class="message-copy">
+
+   <span class="message-eyebrow success-eyebrow">
+     RESERVATION SUBMITTED
+   </span>
+
+   <h2>
+     {{ successTitle }}
+   </h2>
+
+   <p>
+     {{ successMessage }}
+   </p>
+
+ </div>
+
+</div>
+
+</div>
+
+}
+
+
+<!-- =====================================================
+ERROR MESSAGE
+===================================================== -->
+
+@if (errorMessage) {
+
+<div
+class="message-modal-backdrop error-backdrop"
+role="alert"
+>
+
+<div class="message-card error-card">
+
+ <div class="error-icon">
+
+   <span class="material-symbols-outlined">
+     error
+   </span>
+
+ </div>
+
+ <div class="message-copy">
+
+   <span class="message-eyebrow error-eyebrow">
+     ATTENTION
+   </span>
+
+   <h2>
+     {{ errorTitle }}
+   </h2>
+
+   <p>
+     {{ errorMessage }}
+   </p>
+
+ </div>
+
+ <button
+   type="button"
+   class="button button-light error-close-button"
+   (click)="clearError()"
+ >
+   Close
+ </button>
+
+</div>
+
+</div>
+
+}
 
 <app-footer></app-footer>

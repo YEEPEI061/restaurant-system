@@ -333,7 +333,6 @@
                   <div class="package-cell">
                     <strong>{{ reservation.packageName }}</strong>
                     <span>{{ reservation.guests }} guest(s)</span>
-                    <small>Deposit: RM {{ reservation.deposit }}</small>
                   </div>
                 </td>
   
@@ -658,16 +657,6 @@
                   </select>
                 </label>
   
-                <label class="form-field">
-                  <span>Deposit Paid (RM)</span>
-                  <input
-                    type="number"
-                    name="deposit"
-                    [(ngModel)]="form.deposit"
-                    min="0"
-                    step="10"
-                  />
-                </label>
               </div>
             </section>
   
@@ -694,21 +683,13 @@
                   <strong>RM {{ estimatedTotal | number:'1.2-2' }}</strong>
                 </div>
   
-                <div class="bill-row deposit-row">
-                  <span>Deposit paid</span>
-                  <strong>− RM {{ form.deposit | number:'1.2-2' }}</strong>
-                </div>
   
                 <div class="bill-total">
                   <span>Estimated balance</span>
                   <strong>RM {{ amountDue | number:'1.2-2' }}</strong>
                 </div>
               </div>
-  
-              <p class="helper-text">
-                This is a demo estimate. Final pricing and deposits should be
-                validated against your restaurant's booking rules.
-              </p>
+
             </section>
   
             <!-- Special requests -->

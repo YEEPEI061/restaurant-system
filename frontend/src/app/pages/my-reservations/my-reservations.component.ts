@@ -29,7 +29,6 @@ interface Reservation {
   menu: string;
   menuDescription: string;
   menuPrice: number;
-  deposit: number;
   notes: string;
   dietaryLabel: string;
   courses: CourseItem[];
@@ -79,7 +78,6 @@ export class MyReservationsComponent {
       menu: 'Seven-Course Seasonal Experience',
       menuDescription: 'A curated journey inspired by seasonal ingredients.',
       menuPrice: 320,
-      deposit: 50,
       notes: 'Anniversary dinner — a quiet corner table preferred.',
       dietaryLabel: 'Dietary requests noted',
       courses: [
@@ -112,7 +110,6 @@ export class MyReservationsComponent {
       menu: 'Seasonal Signature Menu',
       menuDescription: 'A selection of Aurelia signature dishes.',
       menuPrice: 280,
-      deposit: 100,
       notes: 'Please seat our group together if possible.',
       dietaryLabel: 'No additional requests',
       courses: [
@@ -143,7 +140,6 @@ export class MyReservationsComponent {
       menu: 'Seasonal Harvest Tasting',
       menuDescription: 'A seasonal multi-course dining experience.',
       menuPrice: 350,
-      deposit: 50,
       notes: 'No additional requests.',
       dietaryLabel: 'Completed seating',
       courses: [],
@@ -165,7 +161,6 @@ export class MyReservationsComponent {
       menu: 'Midsummer Botanical Evening',
       menuDescription: 'A menu inspired by fresh seasonal ingredients.',
       menuPrice: 680,
-      deposit: 100,
       notes: 'A birthday celebration.',
       dietaryLabel: 'Completed seating',
       courses: [],
@@ -187,7 +182,6 @@ export class MyReservationsComponent {
       menu: 'Spring Garden Degustation',
       menuDescription: 'A spring-inspired tasting experience.',
       menuPrice: 320,
-      deposit: 50,
       notes: 'No additional requests.',
       dietaryLabel: 'Completed seating',
       courses: [],
@@ -259,16 +253,6 @@ export class MyReservationsComponent {
     );
   }
 
-  get balanceDue(): number {
-    if (!this.selectedReservation) {
-      return 0;
-    }
-
-    return Math.max(
-      0,
-      this.estimatedTotal - this.selectedReservation.deposit
-    );
-  }
 
   setActiveTab(tab: ReservationTab): void {
     this.activeTab = tab;
@@ -344,7 +328,7 @@ export class MyReservationsComponent {
     this.searchTerm = '';
 
     this.showToast(
-      `${reservation.reference} has been cancelled in this demo. Any deposit refund must be verified by the booking system.`
+      `${reservation.reference} has been cancelled.`
     );
   }
 
@@ -378,6 +362,6 @@ export class MyReservationsComponent {
       0
     );
   
-    return Math.max(0, total - reservation.deposit).toFixed(2);
+    return Math.max(total).toFixed(2);
   }
 }

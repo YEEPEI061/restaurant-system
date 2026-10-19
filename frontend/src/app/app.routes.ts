@@ -14,7 +14,7 @@ import { ReservationManagementComponent } from './pages/reservation-management/r
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'guest-login',
+    redirectTo: 'menu',
     pathMatch: 'full'
   },
   {
