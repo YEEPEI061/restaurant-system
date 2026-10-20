@@ -814,6 +814,15 @@
     height: 1px;
     background: #e4e1e6;
   }
+
+  .dish-quantity {
+    margin-left: 5px;
+  
+    color: #8a9a82;
+  
+    font-size: 12px;
+    font-weight: 600;
+  }
   
   .balance-row {
     display: flex;
@@ -1352,6 +1361,482 @@
   .toast-message button:hover {
     background: rgba(255, 255, 255, 0.12);
   }
+
+  .login-required-state {
+    max-width: 680px;
+    margin: 70px auto 90px;
+    padding: 56px 40px;
+    text-align: center;
+    border: 1px solid rgba(138, 154, 130, 0.22);
+    background: #fafbf8;
+  }
+  
+  .login-required-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 24px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border-radius: 50%;
+    background: rgba(138, 154, 130, 0.12);
+    color: #8a9a82;
+  }
+  
+  .login-required-icon .material-symbols-outlined {
+    font-size: 24px;
+  }
+  
+  .login-required-state .step-label {
+    display: block;
+    margin-bottom: 12px;
+  }
+  
+  .login-required-state h2 {
+    margin: 0;
+    font-family: Georgia, serif;
+    font-size: 30px;
+    font-weight: 500;
+    line-height: 1.25;
+    color: #263126;
+  }
+  
+  .login-required-state p {
+    max-width: 500px;
+    margin: 16px auto 28px;
+  
+    font-size: 14px;
+    line-height: 1.7;
+    color: #6d746d;
+  }
+  
+  .login-required-state .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .login-required-state .button .material-symbols-outlined {
+    font-size: 18px;
+  }
+
+
+  /* =========================================================
+   CENTER MESSAGE MODALS
+   ========================================================= */
+
+.message-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(18, 24, 18, 0.42);
+  backdrop-filter: blur(3px);
+
+  animation: modalBackdropIn 0.2s ease;
+}
+
+
+/* Main card */
+
+.message-card {
+  width: min(420px, 100%);
+  padding: 34px 32px 30px;
+
+  border: 1px solid #ece8ed;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 24px 70px rgba(20, 27, 20, 0.16),
+    0 4px 18px rgba(20, 27, 20, 0.08);
+
+  text-align: center;
+
+  animation: messageCardIn 0.3s ease;
+}
+
+
+/* =========================================================
+   MESSAGE TEXT
+   ========================================================= */
+
+.message-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.message-eyebrow {
+  display: inline-block;
+
+  margin-bottom: 9px;
+
+  color: #8c7d70;
+
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+}
+
+.message-copy h2 {
+  margin: 0 0 10px;
+
+  color: #182418;
+
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.message-copy p {
+  max-width: 330px;
+
+  margin: 0;
+
+  color: #747871;
+
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.message-copy p strong {
+  color: #343a34;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   CANCEL RESERVATION CONFIRMATION
+   ========================================================= */
+
+.cancel-message-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 20px;
+
+  border-radius: 50%;
+
+  background: #fbefef;
+  color: #a65353;
+}
+
+.cancel-message-icon .material-symbols-outlined {
+  font-size: 27px;
+}
+
+
+.cancel-confirm-button {
+  border: 1px solid #9d4e4e;
+  border-radius: 6px;
+
+  background: #9d4e4e;
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.cancel-confirm-button:hover {
+  background: #894242;
+  border-color: #894242;
+}
+
+.cancel-confirm-button:active {
+  transform: scale(0.98);
+}
+
+.cancel-confirm-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancel-confirm-button .material-symbols-outlined {
+  font-size: 17px;
+}
+
+
+.confirmation-details {
+  margin-top: 14px !important;
+  font-size: 13px !important;
+  color: #596159 !important;
+  letter-spacing: 0.01em;
+}
+
+
+.confirmation-note {
+  margin-top: 8px !important;
+  font-size: 13px !important;
+  color: #858b85 !important;
+}
+
+
+.confirmation-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 18px;
+  padding: 10px 12px;
+
+  border: 1px solid rgba(164, 95, 87, 0.18);
+  background: rgba(164, 95, 87, 0.06);
+
+  font-size: 13px;
+  color: #9a514a;
+  text-align: left;
+}
+
+.confirmation-error .material-symbols-outlined {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.message-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+  margin-top: 26px;
+}
+
+
+.modal-button {
+  min-height: 43px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+}
+
+  /* =========================================================
+   SUCCESS
+   ========================================================= */
+
+.success-card {
+  padding-top: 38px;
+  padding-bottom: 38px;
+}
+
+
+.success-animation {
+  width: 70px;
+  height: 70px;
+
+  margin: 0 auto 20px;
+}
+
+
+.success-svg {
+  width: 100%;
+  height: 100%;
+}
+
+
+.success-circle {
+  stroke: #536251;
+  stroke-width: 2;
+
+  stroke-dasharray: 151;
+  stroke-dashoffset: 151;
+
+  animation:
+    drawSuccessCircle 0.35s ease-out forwards;
+}
+
+.success-check {
+  stroke: #536251;
+  stroke-width: 3;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+
+  animation:
+    drawSuccessCheck 0.25s ease-out 0.25s forwards;
+}
+
+
+.success-eyebrow {
+  color: #687866;
+}
+
+
+/* =====================================================
+   ERROR MESSAGE
+   ===================================================== */
+
+.error-backdrop {
+  z-index: 3000;
+}
+
+.error-card {
+  max-width: 420px;
+}
+
+/* Static error icon */
+
+.error-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #fbefef;
+  color: #a64b4b;
+}
+
+.error-icon .material-symbols-outlined {
+  font-size: 34px;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 500,
+    'GRAD' 0,
+    'opsz' 32;
+}
+
+/* Error text */
+
+.error-eyebrow {
+  color: #a64b4b;
+}
+
+/* Close button */
+
+.error-close-button {
+  margin-top: 22px;
+  min-width: 100px;
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes modalBackdropIn {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
+
+
+@keyframes messageCardIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+}
+
+
+@keyframes drawSuccessCircle {
+
+  from {
+    stroke-dashoffset: 151;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+
+}
+
+
+@keyframes drawSuccessCheck {
+
+  from {
+    stroke-dashoffset: 40;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+
+
+/* Animations */
+
+@keyframes drawer-appear {
+  from {
+    opacity: 0.7;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes backdrop-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes toast-appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
   
   /* Responsive layout */
   

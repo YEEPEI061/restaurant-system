@@ -12,7 +12,9 @@
           <span>GEORGE TOWN, PENANG</span>
         </div>
 
-        <h1>Reserve an Intimate Dining Experience</h1>
+        <h1>
+          {{ isEditMode ? 'Modify Your Reservation' : 'Reserve an Intimate Dining Experience' }}
+        </h1>
 
         <p>
           Discover refined French flavours, seasonal ingredients,
@@ -674,32 +676,28 @@
             
             }
             
-            
             @if (
               selectedDiningOption === 'alacarte'
               && tastingList.length > 0
             ) {
-            
+
               @for (item of groupedTastingList; track item.id) {
 
                 <div class="price-row">
-              
+
                   <span>
                     {{ item.name }}
-                    @if (item.quantity > 1) {
-                      ×{{ item.quantity }}
-                    }
-                    × {{ guestCount }}
+                    × {{ item.quantity }}
                   </span>
-              
+
                   <strong>
-                    RM {{ (item.price * item.quantity * guestCount).toFixed(2) }}
+                    RM {{ (item.price * item.quantity).toFixed(2) }}
                   </strong>
-              
+
                 </div>
-              
+
               }
-            
+
             }
 
             @if (includeBeveragePairing) {
@@ -797,9 +795,13 @@
               [disabled]="isSubmitting"
             >
               <span>
-                {{ isSubmitting ? 'Submitting...' : 'Submit Reservation' }}
+                @if (isSubmitting) {
+                  Saving Changes...
+                } @else {
+                  {{ isEditMode ? 'Save Changes' : 'Confirm Reservation' }}
+                }
               </span>
-
+ 
               <span class="material-symbols-outlined">
                 {{ isSubmitting ? 'progress_activity' : 'arrow_forward' }}
               </span>

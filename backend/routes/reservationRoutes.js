@@ -48,13 +48,12 @@ router.get(
 
 /*
  * GET RESERVATION BY ID
- * Admin only
  */
 
 router.get(
   '/:id',
   authenticateToken,
-  authorizeRoles('admin'),
+  authorizeRoles('admin', 'guest'),
   getReservationById
 );
 
@@ -74,13 +73,12 @@ router.post(
 
 /*
  * UPDATE RESERVATION
- * Admin only
  */
 
 router.put(
   '/:id',
   authenticateToken,
-  authorizeRoles('admin'),
+  authorizeRoles('admin', 'guest'),
   updateReservationValidator,
   validateRequest,
   updateReservation
@@ -88,13 +86,14 @@ router.put(
 
 /*
  * UPDATE RESERVATION STATUS
- * Admin only
+ * Admin: can update any reservation status
+ * Guest: can only cancel their own Pending/Confirmed reservation
  */
 
 router.patch(
   '/:id/status',
   authenticateToken,
-  authorizeRoles('admin'),
+  authorizeRoles('admin', 'guest'),
   updateReservationStatus
 );
 

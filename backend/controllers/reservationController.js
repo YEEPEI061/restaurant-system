@@ -43,9 +43,33 @@ async function getReservationById(req, res) {
       });
     }
 
+    /*
+     * GUEST PERMISSION CHECK
+     *
+     * Admin can view any reservation.
+     * Guest can only view their own reservation.
+     */
+    if (req.user.role === 'guest') {
+
+      const guestId =
+        reservation.guest?._id
+          ? reservation.guest._id.toString()
+          : reservation.guest.toString();
+
+      if (
+        guestId !== req.user.userId.toString()
+      ) {
+        return res.status(403).json({
+          message:
+            'You are not allowed to view this reservation'
+        });
+      }
+    }
+
     res.status(200).json({
       reservation
     });
+
   } catch (error) {
     console.error(
       'Get reservation error:',
@@ -250,6 +274,37 @@ async function updateReservation(req, res) {
 
 
     // =========================
+    // GUEST PERMISSION CHECK
+    // =========================
+
+    if (req.user.role === 'guest') {
+
+      // Guest can only modify their own reservation
+      if (
+        reservation.guest.toString() !==
+        req.user.userId.toString()
+      ) {
+        return res.status(403).json({
+          message:
+            'You are not allowed to modify this reservation'
+        });
+      }
+
+
+      // Guest can only modify Pending or Confirmed reservations
+      if (
+        reservation.status !== 'Pending' &&
+        reservation.status !== 'Confirmed'
+      ) {
+        return res.status(403).json({
+          message:
+            'Only pending or confirmed reservations can be modified'
+        });
+      }
+    }
+
+
+    // =========================
     // ALLOWED UPDATE FIELDS
     // =========================
 
@@ -275,10 +330,6 @@ async function updateReservation(req, res) {
 
       'tastingMenu',
 
-      // =========================
-      // SELECTED DISHES
-      // =========================
-
       'selectedDishes',
 
       'beveragePairing',
@@ -287,9 +338,7 @@ async function updateReservation(req, res) {
 
       'table',
 
-      'specialRequests',
-
-      'status'
+      'specialRequests'
 
     ];
 
@@ -405,6 +454,7 @@ async function updateReservationStatus(
       'Cancelled'
     ];
 
+    // Check if status is valid
     if (
       !allowedStatuses.includes(
         status
@@ -418,20 +468,12 @@ async function updateReservationStatus(
 
     }
 
+    // Find reservation first
     const reservation =
-      await Reservation.findOneAndUpdate(
-        {
-          reservationId:
-            req.params.id
-        },
-        {
-          status
-        },
-        {
-          new: true,
-          runValidators: true
-        }
-      );
+      await Reservation.findOne({
+        reservationId:
+          req.params.id
+      });
 
     if (!reservation) {
 
@@ -441,6 +483,55 @@ async function updateReservationStatus(
       });
 
     }
+
+    /*
+     * GUEST PERMISSION CHECK
+     */
+    if (req.user.role === 'guest') {
+
+      // Guest can only modify their own reservation
+      if (
+        reservation.guest.toString() !==
+        req.user.userId.toString()
+      ) {
+
+        return res.status(403).json({
+          message:
+            'You are not allowed to modify this reservation'
+        });
+
+      }
+
+      // Guest can only cancel
+      if (status !== 'Cancelled') {
+
+        return res.status(403).json({
+          message:
+            'Guests can only cancel their reservations'
+        });
+
+      }
+
+      // Guest can only cancel Pending or Confirmed
+      if (
+        reservation.status !== 'Pending' &&
+        reservation.status !== 'Confirmed'
+      ) {
+
+        return res.status(403).json({
+          message:
+            'Only pending or confirmed reservations can be cancelled'
+        });
+
+      }
+
+    }
+
+    // Update status
+    reservation.status =
+      status;
+
+    await reservation.save();
 
     res.status(200).json({
 
@@ -464,6 +555,7 @@ async function updateReservationStatus(
         'Failed to update reservation status'
 
     });
+
   }
 }
 

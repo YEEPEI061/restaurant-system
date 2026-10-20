@@ -3,7 +3,11 @@ import {
   OnInit
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router,
+  RouterLink
+} from '@angular/router';
 
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
@@ -87,6 +91,8 @@ export class ReservationsComponent implements OnInit {
   specialNotes = '';
 
   isSubmitting = false;
+  isEditMode = false;
+  editingReservationId = '';
 
   successMessage = '';
   successTitle = '';
@@ -237,7 +243,8 @@ export class ReservationsComponent implements OnInit {
     private tastingService:
       TastingService,
 
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.rebuildCalendar();
     this.selectFirstAvailableTime();
@@ -245,25 +252,50 @@ export class ReservationsComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // =========================
-    // LOAD SELECTED MENU ITEMS
-    // =========================
-
     this.tastingList =
       this.tastingService.getItems();
-
-
-    // =========================
-    // USE HAND-PICKED DISHES
-    // =========================
-
+  
+    /*
+     * MODIFY EXISTING RESERVATION
+     */
+    const reservation =
+      history.state?.reservation;
+  
+    if (reservation) {
+  
+      this.loadReservationForEditing(
+        reservation
+      );
+  
+      return;
+    }
+  
+    /*
+     * RE-BOOK PREVIOUS RESERVATION
+     */
+    const rebookId =
+      this.route.snapshot.queryParamMap.get(
+        'rebook'
+      );
+  
+    if (rebookId) {
+  
+      this.loadReservationForRebooking(
+        rebookId
+      );
+  
+      return;
+    }
+  
+    /*
+     * NORMAL NEW RESERVATION
+     */
     if (this.tastingList.length > 0) {
-
+  
       this.selectedDiningOption =
         'alacarte';
-
+  
     }
-
   }
 
   private formatDateForApi(
@@ -377,63 +409,46 @@ export class ReservationsComponent implements OnInit {
   }
 
   get diningSubtotal(): number {
-
-    let total = 0;
-
-
-    // =========================
-    // TASTING MENU
-    // =========================
-
-    if (
-      this.selectedDiningOption ===
-      'tasting'
-    ) {
-
-      total =
+    let subtotal = 0;
+  
+    /*
+     * Tasting menu
+     * Price is charged per guest.
+     */
+    if (this.selectedDiningOption === 'tasting') {
+  
+      subtotal +=
         this.selectedMenu.price *
         this.guestCount;
-
     }
-
-
-    // =========================
-    // HAND-PICKED DISHES
-    // =========================
-
-    if (
-      this.selectedDiningOption ===
-      'alacarte'
-    ) {
-
-      total =
+  
+    /*
+     * À la carte
+     * Price is based on the number of dishes selected.
+     * It is NOT multiplied by guest count.
+     */
+    if (this.selectedDiningOption === 'alacarte') {
+  
+      subtotal +=
         this.tastingList.reduce(
-          (sum, item) =>
-            sum + item.price,
+          (total, item) =>
+            total + item.price,
           0
         );
-
-      total *=
-        this.guestCount;
-
     }
-
-
-    // =========================
-    // BEVERAGE PAIRING
-    // =========================
-
-    if (
-      this.includeBeveragePairing
-    ) {
-
-      total +=
+  
+    /*
+     * Beverage pairing
+     * Price is charged per guest.
+     */
+    if (this.includeBeveragePairing) {
+  
+      subtotal +=
         this.beveragePairingPrice *
         this.guestCount;
-
     }
-
-    return total;
+  
+    return subtotal;
   }
 
 
@@ -785,6 +800,418 @@ export class ReservationsComponent implements OnInit {
     this.errorMessage = '';
   }
 
+  private loadReservationForEditing(
+    reservation: any
+  ): void {
+  
+    // =========================
+    // ENABLE EDIT MODE
+    // =========================
+  
+    this.isEditMode = true;
+  
+    // this.editingReservationId =
+    //   reservation._id ||
+    //   reservation.reservationId ||
+    //   '';
+
+    this.editingReservationId =
+    reservation.reservationId || '';
+  
+  
+    // =========================
+    // CONTACT DETAILS
+    // =========================
+  
+    this.guestName =
+      reservation.guestName || '';
+  
+    this.guestEmail =
+      reservation.email || '';
+  
+    this.guestPhone =
+      reservation.phone || '';
+  
+    this.specialNotes =
+      reservation.specialRequests || '';
+  
+  
+    // =========================
+    // SERVICE PERIOD
+    // =========================
+  
+    this.selectedPeriod =
+      reservation.servicePeriod === 'brunch'
+        ? 'brunch'
+        : 'dinner';
+  
+  
+    // =========================
+    // DATE
+    // =========================
+  
+    if (reservation.date) {
+  
+      const date =
+        new Date(
+          reservation.date + 'T00:00:00'
+        );
+  
+      this.selectedDate = date;
+  
+      this.displayedMonth =
+        new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          1
+        );
+  
+      this.rebuildCalendar();
+    }
+  
+  
+    // =========================
+    // TIME
+    // =========================
+  
+    this.selectedTime =
+      reservation.time || '';
+  
+  
+    // =========================
+    // PARTY SIZE
+    // =========================
+  
+    const partySize =
+      Number(reservation.partySize);
+  
+    if (
+      Number.isInteger(partySize) &&
+      partySize >= 7
+    ) {
+  
+      this.partySize = '7+';
+  
+      this.largePartySize =
+        partySize;
+  
+    } else {
+  
+      this.partySize =
+        partySize || 2;
+  
+    }
+  
+  
+    // =========================
+    // SEATING
+    // =========================
+  
+    this.selectedSeating =
+      reservation.seating ||
+      'Main Dining Room';
+  
+  
+    // =========================
+    // DINING OPTION
+    // =========================
+  
+    this.selectedDiningOption =
+      reservation.diningOption ||
+      'tasting';
+  
+  
+    // =========================
+    // TASTING MENU
+    // =========================
+  
+    if (
+      this.selectedDiningOption ===
+      'tasting'
+    ) {
+  
+      this.selectedTastingMenu =
+        reservation.tastingMenu ||
+        reservation.packageName ||
+        'Seven Course Odyssey';
+  
+    }
+  
+  
+    // =========================
+    // À LA CARTE DISHES
+    // =========================
+  
+    if (
+      this.selectedDiningOption ===
+      'alacarte'
+    ) {
+  
+      this.tastingList =
+        (reservation.selectedDishes || [])
+          .map((dish: any) => ({
+            id: dish.id,
+            name: dish.name,
+            price: Number(dish.price)
+          }));
+  
+    }
+  
+  
+    // =========================
+    // BEVERAGE PAIRING
+    // =========================
+  
+    this.includeBeveragePairing =
+      reservation.beveragePairing === true;
+  
+  
+    // =========================
+    // RESTORE ORIGINAL TIME
+    // =========================
+  
+    const matchingTime =
+      this.currentTimes.find(
+        slot =>
+          slot.time === this.selectedTime &&
+          !slot.disabled
+      );
+  
+    if (!matchingTime) {
+  
+      this.selectFirstAvailableTime();
+  
+    }
+  
+  
+    // =========================
+    // CLEAR MESSAGES
+    // =========================
+  
+    this.errorMessage = '';
+    this.errorTitle = '';
+  
+    this.successMessage = '';
+    this.successTitle = '';
+  
+  }
+
+  private loadReservationForRebooking(
+    reservationId: string
+  ): void {
+  
+    this.reservationService
+      .getReservationById(reservationId)
+      .subscribe({
+  
+        next: (response) => {
+  
+          const reservation =
+            response.reservation;
+  
+          /*
+           * IMPORTANT:
+           * Re-booking creates a NEW reservation.
+           * Therefore, keep edit mode disabled.
+           */
+          this.isEditMode = false;
+          this.editingReservationId = '';
+  
+          /*
+           * Guest information
+           */
+          this.guestName =
+            reservation.guestName || '';
+  
+          this.guestEmail =
+            reservation.email || '';
+  
+          this.guestPhone =
+            reservation.phone || '';
+  
+          /*
+           * Special requests
+           */
+          this.specialNotes =
+            reservation.specialRequests || '';
+  
+          /*
+           * Service period
+           */
+          this.selectedPeriod =
+            reservation.servicePeriod === 'brunch'
+              ? 'brunch'
+              : 'dinner';
+  
+          /*
+           * Date
+           *
+           * For re-booking, we should NOT automatically
+           * use the old date because that date may already
+           * have passed.
+           *
+           * Instead, start from the next available date.
+           */
+          this.selectedDate =
+            this.findNextAvailableDate(
+              this.today
+            );
+  
+          this.displayedMonth =
+            new Date(
+              this.selectedDate.getFullYear(),
+              this.selectedDate.getMonth(),
+              1
+            );
+  
+          this.rebuildCalendar();
+  
+          /*
+           * Time
+           *
+           * Try to keep the old time if it is still available.
+           * Otherwise select the first available time.
+           */
+          const matchingTime =
+            this.currentTimes.find(
+              slot =>
+                slot.time === reservation.time &&
+                !slot.disabled
+            );
+  
+          if (matchingTime) {
+  
+            this.selectedTime =
+              reservation.time;
+  
+          } else {
+  
+            this.selectFirstAvailableTime();
+  
+          }
+  
+          /*
+           * Party size
+           */
+          const partySize =
+            Number(reservation.partySize);
+  
+          if (
+            Number.isInteger(partySize) &&
+            partySize >= 7
+          ) {
+  
+            this.partySize = '7+';
+  
+            this.largePartySize =
+              partySize;
+  
+          } else {
+  
+            this.partySize =
+              partySize || 2;
+  
+          }
+  
+          /*
+           * Seating
+           */
+          this.selectedSeating =
+            reservation.seating ||
+            'Main Dining Room';
+  
+          /*
+           * Dining option
+           */
+          this.selectedDiningOption =
+            reservation.diningOption ||
+            'tasting';
+  
+          /*
+           * Tasting menu
+           */
+          if (
+            this.selectedDiningOption ===
+            'tasting'
+          ) {
+  
+            this.selectedTastingMenu =
+              reservation.tastingMenu ||
+              reservation.packageName ||
+              'Seven Course Odyssey';
+  
+          }
+  
+          /*
+           * À LA CARTE dishes
+           */
+          if (
+            this.selectedDiningOption ===
+            'alacarte'
+          ) {
+  
+            this.tastingList =
+              (
+                reservation.selectedDishes ||
+                []
+              ).map((dish: any) => ({
+  
+                id: dish.id,
+  
+                name: dish.name,
+  
+                price:
+                  Number(dish.price)
+  
+              }));
+  
+          } else {
+  
+            /*
+             * Prevent dishes from a previous
+             * TastingService session from appearing
+             * when re-booking another dining option.
+             */
+            this.tastingList = [];
+  
+          }
+  
+          /*
+           * Beverage pairing
+           */
+          this.includeBeveragePairing =
+            reservation.beveragePairing === true;
+  
+          /*
+           * Clear old messages
+           */
+          this.errorMessage = '';
+          this.errorTitle = '';
+  
+          this.successMessage = '';
+          this.successTitle = '';
+  
+        },
+  
+        error: (error) => {
+  
+          console.error(
+            'Failed to load reservation for re-booking:',
+            error
+          );
+  
+          this.errorTitle =
+            'Unable to Re-book';
+  
+          this.errorMessage =
+            error?.error?.message ||
+            'Unable to load the previous reservation details. Please try again.';
+  
+        }
+  
+      });
+  }
+
   confirmReservation(): void {
 
     // =========================
@@ -997,134 +1424,197 @@ export class ReservationsComponent implements OnInit {
     // =========================
     // SUBMIT TO BACKEND
     // =========================
-  
+    
     this.isSubmitting = true;
-  
-    this.reservationService
-      .createReservation(
-        reservationData
-      )
-      .subscribe({
-  
+    
+    const request$ = this.isEditMode
+      ? this.reservationService.updateReservation(
+          this.editingReservationId,
+          reservationData
+        )
+      : this.reservationService.createReservation(
+          reservationData
+        );
+    
+    request$.subscribe({
+    
+      // =========================
+      // SUCCESS
+      // =========================
+    
+      next: (response) => {
+    
+        console.log(
+          this.isEditMode
+            ? 'Reservation updated:'
+            : 'Reservation created:',
+          response.reservation
+        );
+    
+        this.isSubmitting = false;
+    
+        this.errorMessage = '';
+        this.errorTitle = '';
+    
+        // Clear selected dishes only after
+        // the reservation has been saved successfully.
+        this.tastingService.clearItems();
+    
+        this.tastingList = [];
+    
+    
         // =========================
-        // SUCCESS
+        // EDIT SUCCESS
         // =========================
-  
-        next: (response) => {
-
+    
+        if (this.isEditMode) {
+    
+          this.successTitle =
+            'Reservation Updated';
+    
+          this.successMessage =
+            `Reservation ${response.reservation.reservationId} has been updated successfully.`;
+    
+        }
+    
+    
+        // =========================
+        // NEW RESERVATION SUCCESS
+        // =========================
+    
+        else {
+    
           this.createdReservationId =
             response.reservation.reservationId;
-        
-          console.log(
-            'Reservation created:',
-            response.reservation
-          );
-        
-          this.isSubmitting = false;
-        
-          this.errorMessage = '';
-          this.errorTitle = '';
-        
-          // Clear selected dishes only after
-          // the reservation has been saved successfully.
-          this.tastingService.clearItems();
-        
-          this.tastingList = [];
-        
-          // =========================
-          // SHOW SUCCESS MESSAGE
-          // =========================
-
+    
           this.successTitle =
             'Your Table Has Been Reserved';
-
+    
           this.successMessage =
             `Reservation ${this.createdReservationId} has been submitted successfully. ` +
             'Your reservation is currently pending restaurant confirmation.';
-
-          // Keep the success modal visible for 3 seconds.
-          setTimeout(() => {
-
-            this.successMessage = '';
-            this.successTitle = '';
-
-            this.router.navigate([
-              '/my-reservations'
-            ]);
-
-          }, 3000);
-        
-        },
-  
-  
-        // =========================
-        // ERROR
-        // =========================
-  
-        error: (error) => {
-  
-          console.error(
-            'Reservation error:',
-            error
-          );
-        
-          this.isSubmitting = false;
-        
-          this.errorTitle =
-            'Reservation Could Not Be Submitted';
-        
-          this.errorMessage =
-            error?.error?.message ||
-            'Something went wrong while submitting your reservation. Please try again.';
-  
-  
-          // =========================
-          // AUTHENTICATION ERROR
-          // =========================
-  
-          if (error.status === 401) {
-  
-            this.errorTitle =
-              'Login Required';
-  
-            this.errorMessage =
-              'Please log in before making a reservation.';
-  
-            return;
-          }
-  
-  
-          // =========================
-          // VALIDATION ERROR
-          // =========================
-  
-          if (error.status === 400) {
-  
-            this.errorTitle =
-              'Invalid Reservation';
-  
-            this.errorMessage =
-              error?.error?.message ||
-              'Please check your reservation details and try again.';
-  
-            return;
-          }
-  
-  
-          // =========================
-          // GENERAL ERROR
-          // =========================
-  
-          this.errorTitle =
-            'Reservation Could Not Be Submitted';
-  
-          this.errorMessage =
-            error?.error?.message ||
-            'Unable to create your reservation. Please try again.';
-  
+    
         }
-  
-      });
+    
+    
+        // =========================
+        // RETURN TO MY RESERVATIONS
+        // =========================
+    
+        setTimeout(() => {
+    
+          this.successMessage = '';
+          this.successTitle = '';
+    
+          this.router.navigate([
+            '/my-reservations'
+          ]);
+    
+        }, 3000);
+    
+      },
+    
+    
+      // =========================
+      // ERROR
+      // =========================
+    
+      error: (error) => {
+    
+        console.error(
+          'Reservation error:',
+          error
+        );
+    
+        this.isSubmitting = false;
+    
+    
+        // =========================
+        // AUTHENTICATION ERROR
+        // =========================
+    
+        if (error.status === 401) {
+    
+          this.errorTitle =
+            'Login Required';
+    
+          this.errorMessage =
+            'Please log in before making a reservation.';
+    
+          return;
+        }
+    
+    
+        // =========================
+        // VALIDATION ERROR
+        // =========================
+    
+        if (error.status === 400) {
+    
+          this.errorTitle =
+            'Invalid Reservation';
+    
+          this.errorMessage =
+            error?.error?.message ||
+            'Please check your reservation details and try again.';
+    
+          return;
+        }
+    
+    
+        // =========================
+        // FORBIDDEN
+        // =========================
+    
+        if (error.status === 403) {
+    
+          this.errorTitle =
+            'Unable to Modify Reservation';
+    
+          this.errorMessage =
+            error?.error?.message ||
+            'You are not allowed to modify this reservation.';
+    
+          return;
+        }
+    
+    
+        // =========================
+        // NOT FOUND
+        // =========================
+    
+        if (error.status === 404) {
+    
+          this.errorTitle =
+            'Reservation Not Found';
+    
+          this.errorMessage =
+            'The reservation could not be found. Please return to My Reservations.';
+    
+          return;
+        }
+    
+    
+        // =========================
+        // GENERAL ERROR
+        // =========================
+    
+        this.errorTitle =
+          this.isEditMode
+            ? 'Reservation Could Not Be Updated'
+            : 'Reservation Could Not Be Submitted';
+    
+        this.errorMessage =
+          error?.error?.message ||
+          (
+            this.isEditMode
+              ? 'Unable to update your reservation. Please try again.'
+              : 'Unable to create your reservation. Please try again.'
+          );
+    
+      }
+    
+    });
   
   }
 
