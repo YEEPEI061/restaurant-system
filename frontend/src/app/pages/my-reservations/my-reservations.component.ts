@@ -45,29 +45,33 @@ export class MyReservationsComponent implements OnInit {
   successMessage = '';
   successTitle = '';
 
+  errorTitle = '';
   errorMessage = '';
+
+  successTimeout?: ReturnType<typeof setTimeout>;
+  errorTimeout?: ReturnType<typeof setTimeout>;
 
   readonly beveragePairingPrice = 56;
 
   constructor(
     private reservationService: ReservationService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
 
     const token =
       localStorage.getItem('aurelia_token');
-  
+
     this.isLoggedIn = !!token;
-  
+
     if (!this.isLoggedIn) {
       return;
     }
-  
+
     this.loadReservations();
   }
-  
+
 
   // =========================================================
   // LOAD RESERVATIONS FROM DATABASE
@@ -106,13 +110,15 @@ export class MyReservationsComponent implements OnInit {
           this.isLoggedIn = false;
           this.reservations = [];
           this.isLoading = false;
-        
+
           return;
         }
 
-        this.errorMessage =
+        this.showError(
+          'Unable to Load Reservations',
           error?.error?.message ||
-          'Unable to load your reservations. Please try again.';
+          'Unable to load your reservations. Please try again.'
+        );
       }
 
     });
@@ -238,7 +244,8 @@ export class MyReservationsComponent implements OnInit {
     this.activeTab = tab;
 
     this.searchTerm = '';
-    this.errorMessage = '';
+
+    this.clearError();
   }
 
   toggleSort(): void {
@@ -437,7 +444,7 @@ export class MyReservationsComponent implements OnInit {
         }
       }
     );
-  
+
   }
 
   rebookReservation(
@@ -466,7 +473,7 @@ export class MyReservationsComponent implements OnInit {
     this.selectedReservation =
       reservation;
 
-    this.errorMessage = '';
+    this.clearError();
 
     this.showCancelModal = true;
   }
@@ -481,7 +488,7 @@ export class MyReservationsComponent implements OnInit {
 
     this.selectedReservation = null;
 
-    this.errorMessage = '';
+    this.clearError();
   }
 
   confirmCancellation(): void {
@@ -492,62 +499,62 @@ export class MyReservationsComponent implements OnInit {
     ) {
       return;
     }
-  
+
     const reservation =
       this.selectedReservation;
-  
+
     this.isCancelling = true;
-    this.errorMessage = '';
-  
+
+    this.clearError();
+
     this.reservationService
       .updateReservationStatus(
         reservation.reservationId,
         'Cancelled'
       )
       .subscribe({
-  
+
         next: () => {
-  
+
           this.isCancelling = false;
-  
+
           // Close cancellation confirmation
-          this.closeCancelModal();
-  
+          this.showCancelModal = false;
+          this.selectedReservation = null;
+
           // Show success modal
-          this.successTitle =
-            'Reservation Cancelled';
-  
-          this.successMessage =
-            `Reservation ${reservation.reservationId} has been cancelled successfully.`;
-  
-          // Wait before moving to Cancelled tab
+          this.showSuccess(
+            'Reservation Cancelled',
+            `Reservation ${reservation.reservationId} has been cancelled successfully.`
+          );
+
+          // Move to Cancelled tab after success message
           setTimeout(() => {
-  
-            this.successMessage = '';
-            this.successTitle = '';
-  
+
             this.activeTab = 'cancelled';
             this.searchTerm = '';
-  
+
             this.loadReservations();
-  
-          }, 2200);
+
+          }, 1400);
         },
-  
+
         error: (error) => {
-  
+
           console.error(
             'Cancellation failed:',
             error
           );
-  
+
           this.isCancelling = false;
-  
-          this.errorMessage =
+
+          this.showError(
+            'Unable to Cancel Reservation',
             error?.error?.message ||
-            'Unable to cancel this reservation. Please try again.';
+            'Unable to cancel this reservation. Please try again.'
+          );
         }
-  
+
       });
   }
 
@@ -559,7 +566,7 @@ export class MyReservationsComponent implements OnInit {
     price: number;
     quantity: number;
   }> {
-  
+
     const grouped = new Map<
       string,
       {
@@ -569,11 +576,11 @@ export class MyReservationsComponent implements OnInit {
         quantity: number;
       }
     >();
-  
+
     for (const dish of reservation.selectedDishes ?? []) {
-  
+
       const existing = grouped.get(dish.id);
-  
+
       if (existing) {
         existing.quantity += 1;
       } else {
@@ -583,7 +590,7 @@ export class MyReservationsComponent implements OnInit {
         });
       }
     }
-  
+
     return Array.from(grouped.values());
   }
 
@@ -592,5 +599,118 @@ export class MyReservationsComponent implements OnInit {
       reservation.status === 'Pending' ||
       reservation.status === 'Confirmed'
     );
+  }
+
+  // =========================
+  // SUCCESS MESSAGE
+  // =========================
+
+  showSuccess(
+    title: string,
+    message: string
+  ): void {
+
+    // Remove existing error
+    this.clearError();
+
+    // Reset existing timer
+    if (this.successTimeout) {
+      clearTimeout(
+        this.successTimeout
+      );
+    }
+
+    this.successTitle =
+      title;
+
+    this.successMessage =
+      message;
+
+    this.successTimeout =
+      setTimeout(() => {
+
+        this.successMessage =
+          '';
+
+        this.successTitle =
+          '';
+
+      }, 1400);
+  }
+
+  // =========================
+  // ERROR MESSAGE
+  // =========================
+
+
+  showError(
+    title: string,
+    message: string
+  ): void {
+
+    // Remove existing success message
+    this.clearSuccess();
+
+    // Cancel any previous error timer
+    if (this.errorTimeout) {
+      clearTimeout(
+        this.errorTimeout
+      );
+
+      this.errorTimeout =
+        undefined;
+    }
+
+    this.errorTitle =
+      title;
+
+    this.errorMessage =
+      message;
+  }
+
+  // =========================
+  // CLEAR SUCCESS
+  // =========================
+
+  clearSuccess(): void {
+
+    if (this.successTimeout) {
+
+      clearTimeout(
+        this.successTimeout
+      );
+
+      this.successTimeout =
+        undefined;
+    }
+
+    this.successMessage =
+      '';
+
+    this.successTitle =
+      '';
+  }
+
+  // =========================
+  // CLEAR ERROR
+  // =========================
+
+  clearError(): void {
+
+    if (this.errorTimeout) {
+
+      clearTimeout(
+        this.errorTimeout
+      );
+
+      this.errorTimeout =
+        undefined;
+    }
+
+    this.errorMessage =
+      '';
+
+    this.errorTitle =
+      '';
   }
 }

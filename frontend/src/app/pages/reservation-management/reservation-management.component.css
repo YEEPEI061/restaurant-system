@@ -1564,13 +1564,6 @@
 }
 
 
-/* Confirm */
-
-.icon-button:has(.material-symbols-outlined) {
- /* keep neutral by default */
-}
-
-
 /* =========================================================
   EMPTY STATE
   ========================================================= */
