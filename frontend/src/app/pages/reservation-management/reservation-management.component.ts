@@ -1,428 +1,2006 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  Component,
+  OnInit
+} from '@angular/core';
+
+import {
+  CommonModule
+} from '@angular/common';
+
+import {
+  FormsModule
+} from '@angular/forms';
+
+import {
+  ReservationService,
+  Reservation,
+  UpdateReservationRequest,
+  ReservationStatus,
+  SelectedDish
+} from '../../services/reservation.service';
+
+
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 
-type BookingStatus =
+type ReservationFilter =
+  | 'All'
   | 'Pending'
   | 'Confirmed'
   | 'Seated'
   | 'Completed'
   | 'Cancelled';
 
-interface Reservation {
+type DrawerMode =
+  | 'create'
+  | 'edit';
+
+
+interface RestaurantTable {
   id: string;
+  label: string;
+}
+
+
+interface ReservationForm {
+  reservationId: string;
+
   guestName: string;
-  email: string;
   phone: string;
+  email: string;
+
+  partySize: number;
+
   date: string;
   time: string;
-  guests: number;
-  table: string;
+
   packageName: string;
-  status: BookingStatus;
+  table: string;
+
+  selectedDishes: SelectedDish[];
+
+  status: ReservationStatus;
+
   dietaryNotes: string;
   specialRequests: string;
-  vip: boolean;
 }
+
 
 @Component({
   selector: 'app-reservation-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, FooterComponent],
-  templateUrl: './reservation-management.component.html',
-  styleUrl: './reservation-management.component.css'
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    HeaderComponent,
+    FooterComponent
+  ],
+
+  templateUrl:
+    './reservation-management.component.html',
+
+  styleUrl:
+    './reservation-management.component.css'
 })
-export class ReservationManagementComponent {
-  reservations: Reservation[] = [
-    {
-      id: 'AUR-8845',
-      guestName: "Johan Razak",
-      email: 'johan.razak@example.com',
-      phone: '+60 12 348 9921',
-      date: '2026-10-10',
-      time: '20:00',
-      guests: 4,
-      table: 'T-12',
-      packageName: 'Seven-Course Tasting',
-      status: 'Pending',
-      dietaryNotes: 'Shellfish allergy. Confirm with the kitchen before service.',
-      specialRequests: 'Quiet table preferred.',
-      vip: true
-    },
-    {
-      id: 'AUR-8821',
-      guestName: 'Henrik Lindqvist',
-      email: 'henrik.lindqvist@example.com',
-      phone: '+60 12 555 1104',
-      date: '2026-10-10',
-      time: '19:30',
-      guests: 6,
-      table: 'T-08',
-      packageName: 'Seven-Course Tasting',
-      status: 'Confirmed',
-      dietaryNotes: 'One guest is pescatarian. Please confirm suitable alternatives.',
-      specialRequests: 'Anniversary dinner.',
-      vip: true
-    },
-    {
-      id: 'AUR-8814',
-      guestName: 'Milla Soderberg',
-      email: 'milla.soderberg@example.com',
-      phone: '+60 12 444 9122',
-      date: '2026-10-10',
-      time: '18:30',
-      guests: 2,
-      table: 'T-04',
-      packageName: 'Five-Course Tasting',
-      status: 'Seated',
-      dietaryNotes: 'No dietary notes provided.',
-      specialRequests: 'Window seat if available.',
-      vip: false
-    },
-    {
-      id: 'AUR-8819',
-      guestName: 'Kenji Tanaka',
-      email: 'kenji.tanaka@example.com',
-      phone: '+60 12 4120 3844',
-      date: '2026-10-10',
-      time: '19:00',
-      guests: 2,
-      table: 'C-01',
-      packageName: 'Seven-Course Tasting',
-      status: 'Seated',
-      dietaryNotes: 'Please confirm dietary requirements with the guest.',
-      specialRequests: 'Chef counter seating.',
-      vip: false
-    },
-    {
-      id: 'AUR-8824',
-      guestName: 'Astrid Moller',
-      email: 'astrid.moller@example.com',
-      phone: '+60 12 509 8234',
-      date: '2026-10-10',
-      time: '20:00',
-      guests: 4,
-      table: 'T-05',
-      packageName: 'A La Carte',
-      status: 'Confirmed',
-      dietaryNotes: 'Gluten-free requirements. Confirm preparation with kitchen.',
-      specialRequests: 'Birthday dinner.',
-      vip: false
-    },
-    {
-      id: 'AUR-8802',
-      guestName: 'Marcus Hojbjerg',
-      email: 'marcus.h@example.com',
-      phone: '+60 12 312 0490',
-      date: '2026-10-10',
-      time: '18:00',
-      guests: 2,
-      table: '',
-      packageName: 'Five-Course Tasting',
-      status: 'Cancelled',
-      dietaryNotes: 'None recorded.',
-      specialRequests: 'Booking cancelled by guest.',
-      vip: false
-    }
-  ];
+export class ReservationManagementComponent
+  implements OnInit {
 
-  tables = [
-    { id: 'T-01', label: 'T-01 · Main Hall · 2 seats' },
-    { id: 'T-02', label: 'T-02 · Solarium · 2 seats' },
-    { id: 'T-03', label: 'T-03 · Main Hall · 4 seats' },
-    { id: 'T-04', label: 'T-04 · Main Hall · 2 seats' },
-    { id: 'T-05', label: 'T-05 · Garden Room · 4 seats' },
-    { id: 'T-08', label: 'T-08 · Garden Room · 4 seats' },
-    { id: 'T-12', label: 'T-12 · Private Dining · 6 seats' },
-    { id: 'C-01', label: 'C-01 · Chef Counter · 2 seats' }
-  ];
+  /*
+   * --------------------------------------------------
+   * DATA
+   * --------------------------------------------------
+   */
 
-  packages = [
-    'A La Carte',
-    'Five-Course Tasting',
-    'Seven-Course Tasting',
-    'Chef Seasonal Menu'
-  ];
+  reservations: Reservation[] = [];
 
-  statusOptions: BookingStatus[] = [
-    'Pending',
-    'Confirmed',
-    'Seated',
-    'Completed',
-    'Cancelled'
-  ];
+  isLoading = false;
 
-  activeFilter = 'All';
+  /*
+   * --------------------------------------------------
+   * SEARCH / FILTER
+   * --------------------------------------------------
+   */
+
   searchQuery = '';
 
+  activeFilter:
+    ReservationFilter = 'All';
+
+
+  /*
+   * --------------------------------------------------
+   * DRAWER
+   * --------------------------------------------------
+   */
+
   drawerOpen = false;
-  drawerMode: 'create' | 'edit' = 'edit';
-  toastMessage = '';
 
-  form: Reservation = this.emptyReservation();
+  drawerMode:
+    DrawerMode = 'create';
 
-  // constructor() {
-  //   const firstReservation = this.reservations.find(
-  //     reservation => reservation.status === 'Pending'
-  //   );
 
-  //   if (firstReservation) {
-  //     this.openReservation(firstReservation);
-  //   }
-  // }
+  /*
+   * --------------------------------------------------
+   * FORM
+   * --------------------------------------------------
+   */
 
-  get filteredReservations(): Reservation[] {
-    const query = this.searchQuery.trim().toLowerCase();
+  form: ReservationForm =
+    this.createEmptyForm();
 
-    return this.reservations.filter(reservation => {
-      const matchesSearch =
-        !query ||
-        reservation.id.toLowerCase().includes(query) ||
-        reservation.guestName.toLowerCase().includes(query) ||
-        reservation.phone.toLowerCase().includes(query) ||
-        reservation.email.toLowerCase().includes(query);
 
-      const matchesStatus =
-        this.activeFilter === 'All' ||
-        reservation.status === this.activeFilter;
+  /*
+   * --------------------------------------------------
+   * TABLES
+   * --------------------------------------------------
+   */
 
-      return matchesSearch && matchesStatus;
-    });
+  tables: RestaurantTable[] = [
+
+    {
+      id: 'T01',
+      label: 'Table 01'
+    },
+
+    {
+      id: 'T02',
+      label: 'Table 02'
+    },
+
+    {
+      id: 'T03',
+      label: 'Table 03'
+    },
+
+    {
+      id: 'T04',
+      label: 'Table 04'
+    },
+
+    {
+      id: 'T05',
+      label: 'Table 05'
+    },
+
+    {
+      id: 'T06',
+      label: 'Table 06'
+    },
+
+    {
+      id: 'T07',
+      label: 'Table 07'
+    },
+
+    {
+      id: 'T08',
+      label: 'Table 08'
+    },
+
+    {
+      id: 'T09',
+      label: 'Table 09'
+    },
+
+    {
+      id: 'T10',
+      label: 'Table 10'
+    }
+
+  ];
+
+
+  /*
+   * --------------------------------------------------
+   * DINING PACKAGES
+   * --------------------------------------------------
+   */
+
+  packages: string[] = [
+
+    'Seven Course Odyssey',
+
+    'Five Course Prelude',
+
+    'À La Carte',
+
+    'Table Only'
+
+  ];
+
+
+  /*
+   * --------------------------------------------------
+   * RESERVATION STATUSES
+   * --------------------------------------------------
+   */
+
+  statusOptions:
+    ReservationStatus[] = [
+
+      'Pending',
+
+      'Confirmed',
+
+      'Seated',
+
+      'Completed',
+
+      'Cancelled'
+
+    ];
+
+
+    /*
+    * --------------------------------------------------
+    * MESSAGE MODALS
+    * --------------------------------------------------
+    */
+   
+   successMessage = '';
+   successTitle = '';
+
+   private successTimeout?:
+   ReturnType<typeof setTimeout>;
+   
+   errorTitle = '';
+   errorMessage = '';
+
+   private errorTimeout?:
+   ReturnType<typeof setTimeout>;
+
+   
+   cancelConfirmOpen = false;
+   
+   reservationToCancel: Reservation | null = null;
+
+
+  /*
+   * --------------------------------------------------
+   * CONSTRUCTOR
+   * --------------------------------------------------
+   */
+
+  constructor(
+    private reservationService:
+      ReservationService
+  ) {}
+
+
+  /*
+   * --------------------------------------------------
+   * INITIALISE
+   * --------------------------------------------------
+   */
+
+  ngOnInit(): void {
+
+    this.loadReservations();
+
   }
 
-  get totalCount(): number {
-    return this.reservations.filter(r => r.status !== 'Cancelled').length;
+
+  /*
+   * --------------------------------------------------
+   * LOAD RESERVATIONS
+   * --------------------------------------------------
+   */
+
+  loadReservations(): void {
+
+    this.isLoading = true;
+
+    this.errorMessage = '';
+
+    this.reservationService
+      .getReservations()
+      .subscribe({
+
+        next: (response) => {
+
+          this.reservations =
+            response.reservations || [];
+
+          this.isLoading = false;
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to load reservations:',
+            error
+          );
+
+          this.isLoading = false;
+
+          this.errorMessage =
+            error?.error?.message ||
+            'Unable to load reservations. Please try again.';
+
+        }
+
+      });
+
   }
 
-  get pendingCount(): number {
-    return this.reservations.filter(r => r.status === 'Pending').length;
+
+  /*
+   * --------------------------------------------------
+   * EMPTY FORM
+   * --------------------------------------------------
+   */
+
+  private createEmptyForm():
+    ReservationForm {
+
+    const today =
+      new Date();
+
+    const date =
+      this.toDateInputValue(today);
+
+    return {
+
+      reservationId: '',
+
+      guestName: '',
+
+      phone: '',
+
+      email: '',
+
+      partySize: 2,
+
+      date,
+
+      time: '18:00',
+
+      packageName:
+        'Seven Course Odyssey',
+
+      table: '',
+
+      selectedDishes: [],
+
+      status: 'Pending',
+
+      dietaryNotes: '',
+
+      specialRequests: ''
+
+    };
+
   }
 
-  get confirmedCount(): number {
-    return this.reservations.filter(r => r.status === 'Confirmed').length;
-  }
 
-  get seatedCount(): number {
-    return this.reservations.filter(r => r.status === 'Seated').length;
-  }
-
-  get cancelledCount(): number {
-    return this.reservations.filter(r => r.status === 'Cancelled').length;
-  }
-
-  get estimatedTotal(): number {
-    return this.form.guests * this.packagePrice(this.form.packageName);
-  }
-
-  get amountDue(): number {
-    return Math.max(0, this.estimatedTotal);
-  }
-
-  setFilter(filter: string): void {
-    this.activeFilter = filter;
-  }
-
-  openReservation(reservation: Reservation): void {
-    this.drawerMode = 'edit';
-    this.form = { ...reservation };
-    this.drawerOpen = true;
-  }
+  /*
+   * --------------------------------------------------
+   * CREATE DRAWER
+   * --------------------------------------------------
+   */
 
   openCreateDrawer(): void {
+
     this.drawerMode = 'create';
-    this.form = this.emptyReservation();
+
+    this.form =
+      this.createEmptyForm();
+
     this.drawerOpen = true;
+
   }
+
+
+  /*
+   * --------------------------------------------------
+   * OPEN EXISTING RESERVATION
+   * --------------------------------------------------
+   */
+
+  openReservation(
+    reservation: Reservation
+  ): void {
+
+    this.drawerMode = 'edit';
+
+    this.form = {
+
+      reservationId:
+        reservation.reservationId || '',
+
+      guestName:
+        reservation.guestName || '',
+
+      phone:
+        reservation.phone || '',
+
+      email:
+        reservation.email || '',
+
+      partySize:
+        Number(reservation.partySize) || 1,
+
+      date:
+        this.formatDateForInput(
+          reservation.date
+        ),
+
+      time:
+        reservation.time || '18:00',
+
+      packageName:
+        reservation.packageName ||
+        this.getPackageName(
+          reservation
+        ),
+
+      selectedDishes:
+        reservation.selectedDishes || [],
+
+      table:
+        reservation.table || '',
+
+      status:
+        reservation.status ||
+        'Pending',
+
+      dietaryNotes:
+        (reservation as any).dietaryNotes ||
+        '',
+
+      specialRequests:
+        reservation.specialRequests ||
+        ''
+
+    };
+
+    this.drawerOpen = true;
+
+  }
+
+
+  /*
+   * --------------------------------------------------
+   * CLOSE DRAWER
+   * --------------------------------------------------
+   */
 
   closeDrawer(): void {
+
     this.drawerOpen = false;
+
+    this.form =
+      this.createEmptyForm();
+
   }
 
+
+  /*
+   * --------------------------------------------------
+   * FILTER
+   * --------------------------------------------------
+   */
+
+  setFilter(
+    filter: ReservationFilter
+  ): void {
+
+    this.activeFilter =
+      filter;
+
+  }
+
+
+  /*
+   * --------------------------------------------------
+   * FILTERED RESERVATIONS
+   * --------------------------------------------------
+   */
+
+  get filteredReservations():
+    Reservation[] {
+
+    const query =
+      this.searchQuery
+        .trim()
+        .toLowerCase();
+
+
+    return this.reservations.filter(
+      reservation => {
+
+        /*
+         * Status filter
+         */
+
+        if (
+          this.activeFilter !== 'All' &&
+          reservation.status !==
+            this.activeFilter
+        ) {
+
+          return false;
+
+        }
+
+
+        /*
+         * Search filter
+         */
+
+        if (!query) {
+
+          return true;
+
+        }
+
+
+        const searchableText = [
+
+          reservation.reservationId,
+
+          reservation.guestName,
+
+          reservation.phone,
+
+          reservation.email,
+
+          reservation.packageName,
+
+          reservation.table
+
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+
+
+        return searchableText
+          .includes(query);
+
+      }
+    );
+
+  }
+
+
+  /*
+   * --------------------------------------------------
+   * COUNTS
+   * --------------------------------------------------
+   */
+
+  get totalCount(): number {
+
+    return this.reservations.filter(
+      reservation =>
+        reservation.status !==
+        'Cancelled'
+    ).length;
+
+  }
+
+
+  get pendingCount(): number {
+
+    return this.reservations.filter(
+      reservation =>
+        reservation.status ===
+        'Pending'
+    ).length;
+
+  }
+
+
+  get confirmedCount(): number {
+
+    return this.reservations.filter(
+      reservation =>
+        reservation.status ===
+        'Confirmed'
+    ).length;
+
+  }
+
+
+  get seatedCount(): number {
+
+    return this.reservations.filter(
+      reservation =>
+        reservation.status ===
+        'Seated'
+    ).length;
+
+  }
+
+
+  get cancelledCount(): number {
+
+    return this.reservations.filter(
+      reservation =>
+        reservation.status ===
+        'Cancelled'
+    ).length;
+
+  }
+
+
+  /*
+   * --------------------------------------------------
+   * STATUS CLASS
+   * --------------------------------------------------
+   */
+
+  getStatusClass(
+    status: ReservationStatus
+  ): string {
+
+    switch (status) {
+
+      case 'Pending':
+        return 'status-pending';
+
+      case 'Confirmed':
+        return 'status-confirmed';
+
+      case 'Seated':
+        return 'status-seated';
+
+      case 'Completed':
+        return 'status-completed';
+
+      case 'Cancelled':
+        return 'status-cancelled';
+
+      default:
+        return '';
+
+    }
+
+  }
+
+
+  /*
+   * --------------------------------------------------
+   * TABLE ASSIGNMENT
+   * --------------------------------------------------
+   */
+
+  /*
+ * --------------------------------------------------
+ * TABLE ASSIGNMENT
+ * --------------------------------------------------
+ */
+
+assignTable(
+  reservation: Reservation,
+  tableId: string
+): void {
+
+  /*
+   * Check whether the selected table is already
+   * occupied at the same date and time.
+   */
+  if (
+    tableId &&
+    this.isTableOccupied(
+      tableId,
+      reservation.date,
+      reservation.time,
+      reservation.reservationId
+    )
+  ) {
+
+    this.showError(
+      'Table Unavailable',
+      `${tableId} is already occupied at ${reservation.time} on ${reservation.date}.`
+    );
+
+    return;
+  }
+
+
+  const previousTable =
+    reservation.table || '';
+
+  reservation.table =
+    tableId;
+
+
+  const update:
+    UpdateReservationRequest = {
+
+    table: tableId
+
+  };
+
+
+  this.reservationService
+    .updateReservation(
+      reservation.reservationId,
+      update
+    )
+    .subscribe({
+
+      next: () => {
+
+        this.showSuccess(
+          'Table Assigned',
+          tableId
+            ? `${reservation.reservationId} has been assigned to ${tableId}.`
+            : `${reservation.reservationId} table assignment has been removed.`
+        );
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Table assignment failed:',
+          error
+        );
+
+        reservation.table =
+          previousTable;
+
+          this.showError(
+            'Unable to Assign Table',
+            error?.error?.message ||
+            'Unable to update table assignment.'
+          );
+      }
+
+    });
+
+}
+
+
+  /*
+   * --------------------------------------------------
+   * UPDATE STATUS
+   * --------------------------------------------------
+   */
+
+  /*
+ * --------------------------------------------------
+ * UPDATE STATUS
+ * --------------------------------------------------
+ */
+
+updateStatus(
+  reservation: Reservation,
+  status: ReservationStatus
+): void {
+
+  /*
+   * Cancellation requires confirmation.
+   */
+  if (status === 'Cancelled') {
+
+    this.reservationToCancel =
+      reservation;
+
+    this.cancelConfirmOpen =
+      true;
+
+    return;
+  }
+
+
+  /*
+   * All other status changes can
+   * happen immediately.
+   */
+
+  this.reservationService
+    .updateReservationStatus(
+      reservation.reservationId,
+      status
+    )
+    .subscribe({
+
+      next: (response) => {
+
+        const updated =
+          response.reservation;
+
+
+        const index =
+          this.reservations.findIndex(
+            item =>
+              item.reservationId ===
+              reservation.reservationId
+          );
+
+
+        if (index !== -1) {
+
+          this.reservations[index] =
+            updated;
+
+        }
+
+
+        this.showSuccess(
+          this.getStatusSuccessTitle(status),
+          this.getStatusSuccessMessage(
+            reservation.reservationId,
+            status
+          )
+        );
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Status update failed:',
+          error
+        );
+
+        this.showError(
+          'Unable to Update Reservation',
+          error?.error?.message ||
+          'Unable to update reservation status.'
+        );
+
+      }
+
+    });
+
+}
+
+/*
+ * --------------------------------------------------
+ * CANCEL CONFIRMATION
+ * --------------------------------------------------
+ */
+
+cancelReservation(): void {
+
+  if (!this.reservationToCancel) {
+    return;
+  }
+
+
+  const reservation =
+    this.reservationToCancel;
+
+
+  this.reservationService
+    .updateReservationStatus(
+      reservation.reservationId,
+      'Cancelled'
+    )
+    .subscribe({
+
+      next: (response) => {
+
+        const updated =
+          response.reservation;
+
+
+        const index =
+          this.reservations.findIndex(
+            item =>
+              item.reservationId ===
+              reservation.reservationId
+          );
+
+
+        if (index !== -1) {
+
+          this.reservations[index] =
+            updated;
+
+        }
+
+
+        this.cancelConfirmOpen =
+          false;
+
+        this.reservationToCancel =
+          null;
+
+
+        this.showSuccess(
+          'Reservation Cancelled',
+          `${reservation.reservationId} has been cancelled successfully.`
+        );
+
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Cancellation failed:',
+          error
+        );
+
+
+        this.cancelConfirmOpen =
+          false;
+
+        this.reservationToCancel =
+          null;
+
+
+        this.showError(
+          'Unable to Cancel Reservation',
+          error?.error?.message ||
+          'Unable to cancel this reservation.'
+        );
+
+      }
+
+    });
+
+}
+
+
+closeCancelConfirmation(): void {
+
+  this.cancelConfirmOpen =
+    false;
+
+  this.reservationToCancel =
+    null;
+
+}
+
+/*
+ * --------------------------------------------------
+ * SUCCESS MESSAGE
+ * --------------------------------------------------
+ */
+
+
+showSuccess(
+  title: string,
+  message: string
+): void {
+
+  // Remove existing error
+  this.clearError();
+
+  // Reset existing timer
+  if (this.successTimeout) {
+    clearTimeout(
+      this.successTimeout
+    );
+  }
+
+  this.successTitle =
+    title;
+
+  this.successMessage =
+    message;
+
+  this.successTimeout =
+    setTimeout(() => {
+
+      this.successMessage =
+        '';
+
+      this.successTitle =
+        '';
+
+    }, 1400);
+}
+
+  // =========================
+  // ERROR MESSAGE
+  // =========================
+
+  
+  showError(
+    title: string,
+    message: string
+  ): void {
+  
+    // Remove existing success message
+    this.clearSuccess();
+  
+    // Cancel any previous error timer
+    if (this.errorTimeout) {
+      clearTimeout(
+        this.errorTimeout
+      );
+  
+      this.errorTimeout =
+        undefined;
+    }
+  
+    this.errorTitle =
+      title;
+  
+    this.errorMessage =
+      message;
+  }
+
+  // =========================
+  // CLEAR SUCCESS
+  // =========================
+
+  clearSuccess(): void {
+
+    if (this.successTimeout) {
+
+      clearTimeout(
+        this.successTimeout
+      );
+
+      this.successTimeout =
+        undefined;
+    }
+
+    this.successMessage =
+      '';
+
+    this.successTitle =
+      '';
+  }
+
+  // =========================
+  // CLEAR ERROR
+  // =========================
+
+  clearError(): void {
+
+    if (this.errorTimeout) {
+
+      clearTimeout(
+        this.errorTimeout
+      );
+
+      this.errorTimeout =
+        undefined;
+    }
+
+    this.errorMessage =
+      '';
+
+    this.errorTitle =
+      '';
+  }
+
+
+/*
+ * --------------------------------------------------
+ * STATUS SUCCESS TITLE
+ * --------------------------------------------------
+ */
+
+private getStatusSuccessTitle(
+  status: ReservationStatus
+): string {
+
+  switch (status) {
+
+    case 'Confirmed':
+      return 'Reservation Confirmed';
+
+    case 'Seated':
+      return 'Guest Seated';
+
+    case 'Completed':
+      return 'Reservation Completed';
+
+    case 'Pending':
+      return 'Reservation Reopened';
+
+    default:
+      return 'Reservation Updated';
+
+  }
+
+}
+
+
+/*
+ * --------------------------------------------------
+ * STATUS SUCCESS MESSAGE
+ * --------------------------------------------------
+ */
+
+private getStatusSuccessMessage(
+  reservationId: string,
+  status: ReservationStatus
+): string {
+
+  switch (status) {
+
+    case 'Confirmed':
+      return `${reservationId} has been confirmed successfully.`;
+
+    case 'Seated':
+      return `${reservationId} has been marked as seated.`;
+
+    case 'Completed':
+      return `${reservationId} has been completed successfully.`;
+
+    case 'Pending':
+      return `${reservationId} has been reopened as pending.`;
+
+    default:
+      return `${reservationId} has been updated successfully.`;
+
+  }
+
+}
+
+  /*
+   * --------------------------------------------------
+   * SAVE RESERVATION
+   * --------------------------------------------------
+   */
+
   saveReservation(): void {
+
+    /*
+     * Basic validation
+     */
+
     if (
       !this.form.guestName.trim() ||
       !this.form.phone.trim() ||
       !this.form.date ||
       !this.form.time ||
-      this.form.guests < 1
+      !this.form.partySize
     ) {
-      this.showToast('Please complete all required booking details.');
-      return;
-    }
 
-    if (this.drawerMode === 'create') {
-      const nextNumber =
-        Math.max(
-          0,
-          ...this.reservations.map(r => Number(r.id.split('-')[1]) || 0)
-        ) + 1;
-
-      this.form.id = `AUR-${nextNumber}`;
-      this.reservations = [
-        { ...this.form },
-        ...this.reservations
-      ];
-
-      this.showToast('New reservation created successfully.');
-    } else {
-      this.reservations = this.reservations.map(reservation =>
-        reservation.id === this.form.id
-          ? { ...this.form }
-          : reservation
+      this.showError(
+        'Incomplete Booking Details',
+        'Please complete all required booking details.'
       );
 
-      this.showToast('Reservation changes saved.');
+      return;
+
     }
 
-    this.drawerOpen = false;
+    /*
+    * Table availability validation
+    */
+
+    if (
+      this.form.table &&
+      !this.isTableAvailable(
+        this.form.table
+      )
+    ) {
+
+      this.showError(
+        'Table Unavailable',
+        `${this.form.table} is already occupied at ${this.form.time} on ${this.form.date}.`
+      );
+
+      return;
+
+    }
+
+
+    /*
+     * CREATE
+     */
+
+    if (
+      this.drawerMode ===
+      'create'
+    ) {
+
+      const request:
+        any = {
+
+        guestName:
+          this.form.guestName.trim(),
+
+        phone:
+          this.form.phone.trim(),
+
+        email:
+          this.form.email.trim(),
+
+        date:
+          this.form.date,
+
+        time:
+          this.form.time,
+
+        partySize:
+          Number(this.form.partySize),
+
+        seating:
+          'Main Dining Room',
+
+        servicePeriod:
+          'dinner',
+
+        diningOption:
+          this.getDiningOption(
+            this.form.packageName
+          ),
+
+        tastingMenu:
+          this.form.packageName,
+
+        selectedDishes:
+          [],
+
+        beveragePairing:
+          false,
+
+        packageName:
+          this.form.packageName,
+
+        table:
+          this.form.table,
+
+        dietaryNotes:
+          this.form.dietaryNotes.trim(),
+
+        specialRequests:
+          this.form.specialRequests.trim()
+
+      };
+
+
+      this.reservationService
+        .createReservation(request)
+        .subscribe({
+
+          next: (response) => {
+
+            this.reservations = [
+
+              response.reservation,
+
+              ...this.reservations
+
+            ];
+
+
+            this.closeDrawer();
+
+
+            this.showSuccess(
+              'Reservation Created',
+              `Reservation ${response.reservation.reservationId} has been created successfully.`
+            );
+
+          },
+
+          error: (error) => {
+
+            console.error(
+              'Create reservation failed:',
+              error
+            );
+
+            this.showError(
+              'Unable to Create Reservation',
+              error?.error?.message ||
+              'Unable to create reservation.'
+            );
+
+          }
+
+        });
+
+      return;
+
+    }
+
+
+    /*
+     * UPDATE
+     */
+
+    const update:
+      any = {
+
+      guestName:
+        this.form.guestName.trim(),
+
+      phone:
+        this.form.phone.trim(),
+
+      email:
+        this.form.email.trim(),
+
+      date:
+        this.form.date,
+
+      time:
+        this.form.time,
+
+      partySize:
+        Number(this.form.partySize),
+
+      packageName:
+        this.form.packageName,
+
+      table:
+        this.form.table,
+
+      status:
+        this.form.status,
+
+      dietaryNotes:
+        this.form.dietaryNotes.trim(),
+
+      specialRequests:
+        this.form.specialRequests.trim()
+
+    };
+
+
+    this.reservationService
+      .updateReservation(
+        this.form.reservationId,
+        update
+      )
+      .subscribe({
+
+        next: (response) => {
+
+          const index =
+            this.reservations.findIndex(
+              reservation =>
+                reservation.reservationId ===
+                this.form.reservationId
+            );
+
+
+          if (index !== -1) {
+
+            this.reservations[index] =
+              response.reservation;
+
+          }
+
+
+          this.closeDrawer();
+
+
+          this.showSuccess(
+            'Reservation Updated',
+            `Reservation ${response.reservation.reservationId} has been updated successfully.`
+          );
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Update reservation failed:',
+            error
+          );
+
+          this.showError(
+            'Unable to Update Reservation',
+            error?.error?.message ||
+            'Unable to update reservation.'
+          );
+
+        }
+
+      });
+
   }
 
-  updateStatus(
-    reservation: Reservation,
-    status: BookingStatus
-  ): void {
-    reservation.status = status;
 
-    if (this.form.id === reservation.id) {
-      this.form = { ...reservation };
+  /*
+   * --------------------------------------------------
+   * PACKAGE PRICES
+   * --------------------------------------------------
+   */
+
+  packagePrice(
+    packageName: string
+  ): number {
+
+    switch (packageName) {
+
+      case 'Seven Course Odyssey':
+        return 175;
+
+      case 'Five Course Prelude':
+        return 125;
+
+      case 'À La Carte':
+        return 0;
+
+      case 'Table Only':
+        return 0;
+
+      default:
+        return 0;
+
     }
 
-    this.showToast(`${reservation.id} updated to ${status}.`);
   }
 
-  assignTable(reservation: Reservation, tableId: string): void {
-    reservation.table = tableId;
 
-    if (this.form.id === reservation.id) {
-      this.form.table = tableId;
+  /*
+   * --------------------------------------------------
+   * ESTIMATED TOTAL
+   * --------------------------------------------------
+   */
+
+  get estimatedTotal(): number {
+
+    if (this.form.packageName === 'À La Carte') {
+  
+      return this.groupedSelectedDishes.reduce(
+        (total, dish) =>
+          total + (dish.price * dish.quantity),
+        0
+      );
+  
     }
-
-    this.showToast(
-      tableId
-        ? `Table ${tableId} assigned to ${reservation.id}.`
-        : `Table assignment removed for ${reservation.id}.`
+  
+    return (
+      this.packagePrice(this.form.packageName) *
+      this.form.partySize
     );
   }
 
-  getStatusClass(status: BookingStatus): string {
-    switch (status) {
-      case 'Pending':
-        return 'status-pending';
-      case 'Confirmed':
-        return 'status-confirmed';
-      case 'Seated':
-        return 'status-seated';
-      case 'Completed':
-        return 'status-completed';
-      case 'Cancelled':
-        return 'status-cancelled';
-      default:
-        return '';
-    }
+
+  /*
+   * --------------------------------------------------
+   * AMOUNT DUE
+   * --------------------------------------------------
+   *
+   * Currently uses the same estimated amount.
+   * This can later be changed if Aurelia
+   * introduces deposits/payments.
+   * --------------------------------------------------
+   */
+
+  get amountDue(): number {
+
+    return this.estimatedTotal;
+
   }
 
-  packagePrice(packageName: string): number {
+
+  /*
+   * --------------------------------------------------
+   * PACKAGE NAME FALLBACK
+   * --------------------------------------------------
+   */
+
+  private getPackageName(
+    reservation: Reservation
+  ): string {
+
+    if (
+      reservation.packageName
+    ) {
+
+      return reservation.packageName;
+
+    }
+
+
+    if (
+      reservation.tastingMenu
+    ) {
+
+      return reservation.tastingMenu;
+
+    }
+
+
+    return 'À La Carte';
+
+  }
+
+
+  /*
+   * --------------------------------------------------
+   * DINING OPTION
+   * --------------------------------------------------
+   */
+
+  private getDiningOption(
+    packageName: string
+  ): 'tasting' | 'alacarte' | 'table' {
+
     switch (packageName) {
-      case 'Five-Course Tasting':
-        return 150;
-      case 'Seven-Course Tasting':
-        return 175;
-      case 'Chef Seasonal Menu':
-        return 200;
+
+      case 'À La Carte':
+        return 'alacarte';
+
+      case 'Table Only':
+        return 'table';
+
       default:
-        return 100;
+        return 'tasting';
+
     }
+
   }
 
-  exportCsv(): void {
-    const headers = [
-      'Booking Reference',
-      'Guest Name',
-      'Email',
-      'Phone',
-      'Date',
-      'Time',
-      'Guests',
-      'Table',
-      'Package',
-      'Status'
-    ];
 
-    const rows = this.filteredReservations.map(r => [
-      r.id,
-      r.guestName,
-      r.email,
-      r.phone,
-      r.date,
-      r.time,
-      String(r.guests),
-      r.table,
-      r.packageName,
-      r.status
-    ]);
+  /*
+  * --------------------------------------------------
+  * FLOOR MATRIX / TABLE AVAILABILITY
+  * --------------------------------------------------
+  */
 
-    const escapeCsv = (value: string): string =>
-      `"${value.replace(/"/g, '""')}"`;
-
-    const csv = [
-      headers.map(escapeCsv).join(','),
-      ...rows.map(row => row.map(escapeCsv).join(','))
-    ].join('\r\n');
-
-    const blob = new Blob(['\uFEFF' + csv], {
-      type: 'text/csv;charset=utf-8;'
-    });
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-
-    link.href = url;
-    link.download = 'aurelia-reservations.csv';
-    link.click();
-
-    URL.revokeObjectURL(url);
-    this.showToast('Reservation CSV exported.');
+  hasSeatedReservation(
+    tableId: string
+  ): boolean {
+  
+    return this.getTableReservations(
+      tableId
+    ).some(
+      reservation =>
+        reservation.status === 'Seated'
+    );
   }
-
-  showAuditLog(): void {
-    this.showToast('Audit log will be connected to the backend later.');
-  }
-
+  
+  floorMatrixOpen = false;
+  
   showFloorMatrix(): void {
-    this.showToast('Floor matrix will be available in a future update.');
+    this.floorMatrixOpen = true;
   }
-
-  trackById(_: number, reservation: Reservation): string {
-    return reservation.id;
+  
+  closeFloorMatrix(): void {
+    this.floorMatrixOpen = false;
   }
-
-  private emptyReservation(): Reservation {
-    return {
-      id: '',
-      guestName: '',
-      email: '',
-      phone: '',
-      date: '2026-10-10',
-      time: '19:00',
-      guests: 2,
-      table: '',
-      packageName: 'A La Carte',
-      status: 'Pending',
-      dietaryNotes: '',
-      specialRequests: '',
-      vip: false
-    };
-  }
-
-  private showToast(message: string): void {
-    this.toastMessage = message;
-
-    setTimeout(() => {
-      if (this.toastMessage === message) {
-        this.toastMessage = '';
+  
+  
+  /*
+    * Check whether a table is occupied
+    * at a specific date and time.
+    */
+  isTableOccupied(
+    tableId: string,
+    date: string,
+    time: string,
+    excludeReservationId?: string
+  ): boolean {
+  
+    const requestedTime =
+      this.timeToMinutes(time);
+  
+    return this.reservations.some(
+      reservation => {
+  
+        if (
+          reservation.reservationId ===
+          excludeReservationId
+        ) {
+          return false;
+        }
+  
+        if (
+          reservation.table !== tableId
+        ) {
+          return false;
+        }
+  
+        if (
+          reservation.date !== date
+        ) {
+          return false;
+        }
+  
+        if (
+          reservation.status === 'Cancelled' ||
+          reservation.status === 'Completed'
+        ) {
+          return false;
+        }
+  
+        const reservationTime =
+          this.timeToMinutes(
+            reservation.time
+          );
+  
+        /*
+          * Table is occupied for one hour
+          * from the reservation time.
+          *
+          * Example:
+          * 18:30 → occupied until 19:30
+          */
+  
+        return (
+          requestedTime >= reservationTime &&
+          requestedTime < reservationTime + 60
+        );
+  
       }
-    }, 3000);
+    );
+  
   }
+  
+  
+  /*
+    * Check whether a table can be assigned
+    * to the current drawer form.
+    */
+  isTableAvailable(
+    tableId: string
+  ): boolean {
+  
+    if (
+      !this.form.date ||
+      !this.form.time
+    ) {
+      return true;
+    }
+  
+    return !this.isTableOccupied(
+      tableId,
+      this.form.date,
+      this.form.time,
+      this.drawerMode === 'edit'
+        ? this.form.reservationId
+        : undefined
+    );
+  
+  }
+  
+  
+  /*
+    * Get the reservation currently occupying
+    * a table at a specific date/time.
+    */
+  getTableReservationAtTime(
+    tableId: string,
+    date: string,
+    time: string
+  ): Reservation | undefined {
+  
+    const requestedTime =
+      this.timeToMinutes(time);
+  
+    return this.reservations.find(
+      reservation => {
+  
+        if (
+          reservation.table !== tableId
+        ) {
+          return false;
+        }
+  
+        if (
+          reservation.date !== date
+        ) {
+          return false;
+        }
+  
+        if (
+          reservation.status === 'Cancelled' ||
+          reservation.status === 'Completed'
+        ) {
+          return false;
+        }
+  
+        const reservationTime =
+          this.timeToMinutes(
+            reservation.time
+          );
+  
+        return (
+          requestedTime >= reservationTime &&
+          requestedTime < reservationTime + 60
+        );
+  
+      }
+    );
+  
+  }
+  
+  
+  /*
+    * Convert HH:mm to minutes.
+    */
+  private timeToMinutes(
+    time: string
+  ): number {
+  
+    if (!time) {
+      return 0;
+    }
+  
+    const [
+      hours,
+      minutes
+    ] = time
+      .split(':')
+      .map(Number);
+  
+    return (
+      hours * 60 +
+      minutes
+    );
+  
+  }
+  
+  
+  /*
+    * Add one hour to a reservation time.
+    */
+  getEndTime(
+    time: string
+  ): string {
+  
+    const totalMinutes =
+      this.timeToMinutes(time) + 60;
+  
+    const hours =
+      Math.floor(
+        totalMinutes / 60
+      ) % 24;
+  
+    const minutes =
+      totalMinutes % 60;
+  
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  
+  }
+  
+  
+  /*
+    * Return the reservation occupying
+    * a table on a particular date.
+    */
+  getTableReservations(
+    tableId: string
+  ): Reservation[] {
+  
+    return this.reservations
+      .filter(
+        reservation =>
+          reservation.table === tableId &&
+          reservation.status !== 'Cancelled' &&
+          reservation.status !== 'Completed'
+      )
+      .sort(
+        (a, b) =>
+          this.timeToMinutes(a.time) -
+          this.timeToMinutes(b.time)
+      );
+  
+  }
+  
+  getTableStatus(tableId: string): 'Available' | 'Reserved' | 'Seated' {
+  
+    const reservation =
+      this.reservations.find(
+        reservation =>
+          reservation.table === tableId &&
+          reservation.status !== 'Cancelled' &&
+          reservation.status !== 'Completed'
+      );
+  
+    if (!reservation) {
+      return 'Available';
+    }
+  
+    if (reservation.status === 'Seated') {
+      return 'Seated';
+    }
+  
+    return 'Reserved';
+  }
+ 
+
+  /*
+   * --------------------------------------------------
+   * DATE HELPERS
+   * --------------------------------------------------
+   */
+
+  private toDateInputValue(
+    date: Date
+  ): string {
+
+    const year =
+      date.getFullYear();
+
+    const month =
+      String(
+        date.getMonth() + 1
+      ).padStart(2, '0');
+
+    const day =
+      String(
+        date.getDate()
+      ).padStart(2, '0');
+
+
+    return `${year}-${month}-${day}`;
+
+  }
+
+
+  private formatDateForInput(
+    value: string
+  ): string {
+
+    if (!value) {
+
+      return '';
+
+    }
+
+
+    /*
+     * Already YYYY-MM-DD
+     */
+
+    if (
+      /^\d{4}-\d{2}-\d{2}$/
+        .test(value)
+    ) {
+
+      return value;
+
+    }
+
+
+    const date =
+      new Date(value);
+
+
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
+
+      return '';
+
+    }
+
+
+    return this.toDateInputValue(
+      date
+    );
+
+  }
+
+
+  /*
+   * --------------------------------------------------
+   * SERVICE DATE
+   * --------------------------------------------------
+   */
+
+  get serviceDate(): string {
+
+    const activeReservations =
+      this.reservations
+        .filter(
+          reservation =>
+            reservation.status !==
+            'Cancelled'
+        );
+
+
+    if (
+      activeReservations.length === 0
+    ) {
+
+      return this.formatDisplayDate(
+        new Date()
+      );
+
+    }
+
+
+    const dates =
+      activeReservations
+        .map(
+          reservation =>
+            new Date(
+              reservation.date
+            )
+        )
+        .filter(
+          date =>
+            !Number.isNaN(
+              date.getTime()
+            )
+        )
+        .sort(
+          (a, b) =>
+            a.getTime() -
+            b.getTime()
+        );
+
+
+    if (
+      dates.length === 0
+    ) {
+
+      return this.formatDisplayDate(
+        new Date()
+      );
+
+    }
+
+
+    return this.formatDisplayDate(
+      dates[0]
+    );
+
+  }
+
+  
+  get groupedSelectedDishes(): Array<{
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+  }> {
+  
+    const grouped =
+      new Map<
+        string,
+        {
+          id: string;
+          name: string;
+          price: number;
+          quantity: number;
+        }
+      >();
+  
+      for (const dish of this.form.selectedDishes) {
+  
+      const existing =
+        grouped.get(dish.id);
+  
+      if (existing) {
+  
+        existing.quantity += 1;
+  
+      } else {
+  
+        grouped.set(dish.id, {
+          id: dish.id,
+          name: dish.name,
+          price: dish.price,
+          quantity: 1
+        });
+  
+      }
+  
+    }
+  
+    return Array.from(grouped.values());
+  }
+
+
+
+  private formatDisplayDate(
+    date: Date
+  ): string {
+
+    return new Intl.DateTimeFormat(
+      'en-GB',
+      {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }
+    ).format(date);
+
+  }
+
+  get isReservationEditable(): boolean {
+
+    return this.form.status === 'Pending';
+  
+  }
+
+  
 }
