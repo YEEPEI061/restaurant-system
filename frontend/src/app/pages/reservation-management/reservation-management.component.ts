@@ -669,10 +669,10 @@ export class ReservationManagementComponent
    */
 
   /*
- * --------------------------------------------------
- * TABLE ASSIGNMENT
- * --------------------------------------------------
- */
+  * --------------------------------------------------
+  * TABLE ASSIGNMENT
+  * --------------------------------------------------
+  */
 
   assignTable(
     reservation: Reservation,
@@ -680,8 +680,7 @@ export class ReservationManagementComponent
   ): void {
 
     /*
-     * Check whether the selected table is already
-     * occupied at the same date and time.
+     * Check table availability first.
      */
     if (
       tableId &&
@@ -705,29 +704,145 @@ export class ReservationManagementComponent
     const previousTable =
       reservation.table || '';
 
-    reservation.table =
-      tableId;
+    const previousStatus =
+      reservation.status;
 
 
-    const update:
-      UpdateReservationRequest = {
-
-      table: tableId
-
-    };
-
-
+    /*
+     * First update the table assignment.
+     */
     this.reservationService
       .updateReservation(
         reservation.reservationId,
-        update
+        {
+          table: tableId
+        }
       )
       .subscribe({
 
-        next: () => {
+        next: (tableResponse) => {
+
+          /*
+           * If a Pending reservation receives
+           * a table, confirm it automatically.
+           */
+          if (
+            previousStatus === 'Pending' &&
+            tableId
+          ) {
+
+            this.reservationService
+              .updateReservationStatus(
+                reservation.reservationId,
+                'Confirmed'
+              )
+              .subscribe({
+
+                next: (statusResponse) => {
+
+                  const updated =
+                    statusResponse.reservation;
+
+
+                  const index =
+                    this.reservations.findIndex(
+                      item =>
+                        item.reservationId ===
+                        reservation.reservationId
+                    );
+
+
+                  if (index !== -1) {
+
+                    this.reservations[index] =
+                      updated;
+
+                  }
+
+
+                  this.showSuccess(
+                    'Table Assigned',
+                    `${reservation.reservationId} has been assigned to ${tableId} and confirmed.`
+                  );
+
+                },
+
+                error: (error) => {
+
+                  console.error(
+                    'Status update after table assignment failed:',
+                    error
+                  );
+
+
+                  /*
+                   * Try to restore the previous
+                   * table assignment if confirmation fails.
+                   */
+                  this.reservationService
+                    .updateReservation(
+                      reservation.reservationId,
+                      {
+                        table: previousTable
+                      }
+                    )
+                    .subscribe({
+
+                      next: () => {
+                        this.loadReservations();
+                      },
+
+                      error: () => {
+                        this.loadReservations();
+                      }
+
+                    });
+
+
+                  this.showError(
+                    'Unable to Confirm Reservation',
+                    error?.error?.message ||
+                    'The table was assigned, but the reservation could not be confirmed.'
+                  );
+
+                }
+
+              });
+
+
+            return;
+          }
+
+
+          /*
+           * For reservations that were already
+           * Confirmed, Seated, etc., only update
+           * the table.
+           */
+          const updated =
+            tableResponse.reservation;
+
+
+          const index =
+            this.reservations.findIndex(
+              item =>
+                item.reservationId ===
+                reservation.reservationId
+            );
+
+
+          if (index !== -1) {
+
+            this.reservations[index] =
+              updated;
+
+          }
+
 
           this.showSuccess(
-            'Table Assigned',
+            tableId
+              ? 'Table Assigned'
+              : 'Table Assignment Removed',
             tableId
               ? `${reservation.reservationId} has been assigned to ${tableId}.`
               : `${reservation.reservationId} table assignment has been removed.`
@@ -742,20 +857,18 @@ export class ReservationManagementComponent
             error
           );
 
-          reservation.table =
-            previousTable;
 
           this.showError(
             'Unable to Assign Table',
             error?.error?.message ||
             'Unable to update table assignment.'
           );
+
         }
 
       });
 
   }
-
 
   /*
    * --------------------------------------------------

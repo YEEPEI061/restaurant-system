@@ -29,654 +29,649 @@
 
     </section>
 
-    <!-- Summary cards -->
-    <section class="metrics-grid">
+    <!-- =====================================================
+    SUMMARY CARDS
+    ===================================================== -->
 
-      <article class="metric-card metric-primary">
+    <section class="stats-grid" aria-label="Reservation summary">
 
-        <div>
+      <!-- Active Bookings -->
 
-          <span class="metric-label">
-            Active Bookings
-          </span>
+      <article class="stat-card">
 
-          <strong class="metric-value">
-            {{ totalCount }}
-          </strong>
-
-          <span class="metric-caption">
-            Excluding cancelled
-          </span>
-
-        </div>
-
-        <div class="metric-icon">
+        <div class="stat-top">
+          <span>Active Bookings</span>
 
           <span class="material-symbols-outlined">
             book_online
           </span>
+        </div>
 
+        <div class="stat-value">
+          {{ totalCount }}
+        </div>
+
+        <div class="stat-foot">
+          Excluding cancelled
         </div>
 
       </article>
 
 
-      <article class="metric-card metric-pending">
+      <!-- Pending Requests -->
 
-        <div>
+      <article class="stat-card">
 
-          <span class="metric-label">
-            Pending Requests
-          </span>
-
-          <strong class="metric-value">
-            {{ pendingCount }}
-          </strong>
-
-          <span class="metric-caption">
-            Awaiting confirmation
-          </span>
-
-        </div>
-
-        <div class="metric-icon">
+        <div class="stat-top">
+          <span>Pending Requests</span>
 
           <span class="material-symbols-outlined">
             pending_actions
           </span>
+        </div>
 
+        <div class="stat-value">
+          {{ pendingCount }}
+        </div>
+
+        <div class="stat-foot">
+          Awaiting confirmation
         </div>
 
       </article>
 
 
-      <article class="metric-card metric-confirmed">
+      <!-- Confirmed -->
 
-        <div>
+      <article class="stat-card">
 
-          <span class="metric-label">
-            Confirmed
-          </span>
-
-          <strong class="metric-value">
-            {{ confirmedCount }}
-          </strong>
-
-          <span class="metric-caption">
-            Bookings confirmed
-          </span>
-
-        </div>
-
-        <div class="metric-icon">
+        <div class="stat-top">
+          <span>Confirmed</span>
 
           <span class="material-symbols-outlined">
             check_circle
           </span>
+        </div>
 
+        <div class="stat-value">
+          {{ confirmedCount }}
+        </div>
+
+        <div class="stat-foot">
+          Bookings confirmed
         </div>
 
       </article>
 
 
-      <article class="metric-card metric-seated">
+      <!-- Currently Seated -->
 
-        <div>
+      <article class="stat-card">
 
-          <span class="metric-label">
-            Currently Seated
-          </span>
-
-          <strong class="metric-value">
-            {{ seatedCount }}
-          </strong>
-
-          <span class="metric-caption">
-            Guests being served
-          </span>
-
-        </div>
-
-        <div class="metric-icon">
+        <div class="stat-top">
+          <span>Currently Seated</span>
 
           <span class="material-symbols-outlined">
             table_restaurant
           </span>
+        </div>
 
+        <div class="stat-value">
+          {{ seatedCount }}
+        </div>
+
+        <div class="stat-foot">
+          Guests being served
         </div>
 
       </article>
 
 
-      <article class="metric-card metric-cancelled">
+      <!-- Cancelled -->
 
-        <div>
+      <article class="stat-card">
 
-          <span class="metric-label">
-            Cancelled
-          </span>
+        <div class="stat-top">
+          <span>Cancelled</span>
 
-          <strong class="metric-value">
-            {{ cancelledCount }}
-          </strong>
-
-          <span class="metric-caption">
-            Cancelled bookings
-          </span>
-
-        </div>
-
-        <div class="metric-icon">
-
-          <span class="material-symbols-outlined">
+          <span class="material-symbols-outlined warning-icon">
             event_busy
           </span>
+        </div>
 
+        <div class="stat-value warning-value">
+          {{ cancelledCount }}
+        </div>
+
+        <div class="stat-foot">
+          Cancelled bookings
         </div>
 
       </article>
 
     </section>
 
+    <!-- Reservation directory -->
+    <section class="directory-section">
 
-    <!-- Search and filters -->
-    <section class="filter-panel">
+      <!-- Section heading -->
+      <div class="section-heading">
 
-      <div class="filter-toolbar">
+        <div>
+          <h2>Reservation Directory</h2>
 
-        <label class="search-box">
+          <p>
+            Search bookings, manage table assignments and update reservation status.
+          </p>
+        </div>
 
-          <span class="material-symbols-outlined">
-            search
-          </span>
+        <span class="result-count">
+          {{ filteredReservations.length }}
+          <span class="result-label">shown</span>
+        </span>
 
-          <input type="search" [(ngModel)]="searchQuery" placeholder="Search guest, phone or booking reference..."
-            aria-label="Search reservations" />
+      </div>
 
-          @if (searchQuery) {
 
-          <button type="button" class="search-clear" aria-label="Clear search" (click)="searchQuery = ''">
-            <span class="material-symbols-outlined">
-              close
+      <!-- Search and filters -->
+      <section class="filter-panel">
+
+        <!-- Status filters -->
+        <div class="filter-tabs" aria-label="Filter reservations by status">
+
+          <button type="button" [class.active]="activeFilter === 'All'" (click)="setFilter('All')">
+            All Bookings
+
+            <span class="filter-count">
+              {{ reservations.length }}
             </span>
           </button>
 
-          }
 
-        </label>
+          <button type="button" class="pending-tab" [class.active]="activeFilter === 'Pending'"
+            (click)="setFilter('Pending')">
+            Pending
 
-
-        <div class="toolbar-actions">
-
-          <button class="button button-light" type="button" (click)="showFloorMatrix()">
-            <span class="material-symbols-outlined">
-              grid_view
+            <span class="filter-count">
+              {{ pendingCount }}
             </span>
-
-            Floor Matrix
           </button>
 
 
+          <button type="button" [class.active]="activeFilter === 'Confirmed'" (click)="setFilter('Confirmed')">
+            Confirmed
+
+            <span class="filter-count">
+              {{ confirmedCount }}
+            </span>
+          </button>
+
+
+          <button type="button" [class.active]="activeFilter === 'Seated'" (click)="setFilter('Seated')">
+            Seated
+
+            <span class="filter-count">
+              {{ seatedCount }}
+            </span>
+          </button>
+
+
+          <button type="button" [class.active]="activeFilter === 'Completed'" (click)="setFilter('Completed')">
+            Completed
+          </button>
+
+
+          <button type="button" [class.active]="activeFilter === 'Cancelled'" (click)="setFilter('Cancelled')">
+            Cancelled
+
+            <span class="filter-count">
+              {{ cancelledCount }}
+            </span>
+          </button>
 
         </div>
 
-      </div>
 
+        <!-- Search and actions -->
+        <div class="filter-toolbar">
 
-      <!-- Status filters -->
-      <div class="filter-tabs" aria-label="Filter reservations by status">
+          <label class="search-box">
 
-        <button type="button" [class.active]="activeFilter === 'All'" (click)="setFilter('All')">
-          All Bookings
+            <span class="material-symbols-outlined">
+              search
+            </span>
 
-          <span class="filter-count">
-            {{ reservations.length }}
-          </span>
-        </button>
+            <input type="search" [(ngModel)]="searchQuery" placeholder="Search guest, phone or booking reference..."
+              aria-label="Search reservations" />
 
+            @if (searchQuery) {
 
-        <button type="button" class="pending-tab" [class.active]="activeFilter === 'Pending'"
-          (click)="setFilter('Pending')">
-          Pending
-
-          <span class="filter-count">
-            {{ pendingCount }}
-          </span>
-        </button>
-
-
-        <button type="button" [class.active]="activeFilter === 'Confirmed'" (click)="setFilter('Confirmed')">
-          Confirmed
-
-          <span class="filter-count">
-            {{ confirmedCount }}
-          </span>
-        </button>
-
-
-        <button type="button" [class.active]="activeFilter === 'Seated'" (click)="setFilter('Seated')">
-          Seated
-
-          <span class="filter-count">
-            {{ seatedCount }}
-          </span>
-        </button>
-
-
-        <button type="button" [class.active]="activeFilter === 'Completed'" (click)="setFilter('Completed')">
-          Completed
-        </button>
-
-
-        <button type="button" [class.active]="activeFilter === 'Cancelled'" (click)="setFilter('Cancelled')">
-          Cancelled
-
-          <span class="filter-count">
-            {{ cancelledCount }}
-          </span>
-        </button>
-
-      </div>
-
-    </section>
-
-
-    <!-- Reservation table -->
-    <div class="table-card">
-
-      <div class="table-scroll">
-
-        <table class="reservation-table">
-
-          <thead>
-
-            <tr>
-
-              <th>
-                Booking
-              </th>
-
-              <th>
-                Guest
-              </th>
-
-              <th>
-                Date &amp; Time
-              </th>
-
-              <th>
-                Table
-              </th>
-
-              <th>
-                Dining Package
-              </th>
-
-              <th>
-                Status
-              </th>
-
-              <th class="actions-column">
-                Actions
-              </th>
-
-            </tr>
-
-          </thead>
-
-
-          <tbody>
-
-            @for (
-            reservation of filteredReservations;
-            track reservation.reservationId
-            ) {
-
-            <tr (click)="openReservation(reservation)" (keydown.enter)="openReservation(reservation)" tabindex="0"
-              role="button" [attr.aria-label]="
-                  'Edit reservation ' +
-                  reservation.reservationId
-                ">
-
-              <!-- Booking -->
-              <td>
-
-                <div class="reservation-identity">
-
-                  <div class="reservation-icon">
-
-                    <span class="material-symbols-outlined">
-                      event
-                    </span>
-
-                  </div>
-
-                  <div class="reservation-details">
-
-                    <strong>
-                      {{ reservation.reservationId }}
-                    </strong>
-
-                    <span>
-                      Reservation
-                    </span>
-
-                  </div>
-
-                </div>
-
-              </td>
-
-
-              <!-- Guest -->
-              <td>
-
-                <div class="guest-details">
-
-                  <strong>
-                    {{ reservation.guestName }}
-                  </strong>
-
-                  <span>
-                    {{ reservation.phone }}
-                  </span>
-
-                  <small>
-                    {{ reservation.email }}
-                  </small>
-
-                </div>
-
-              </td>
-
-
-              <!-- Date and time -->
-              <td>
-
-                <div class="reservation-datetime">
-
-                  <strong>
-                    {{ reservation.time }}
-                  </strong>
-
-                  <span>
-                    {{ reservation.date | date:'dd MMM yyyy' }}
-                  </span>
-
-                </div>
-
-              </td>
-
-
-              <!-- Table -->
-              <td (click)="$event.stopPropagation()">
-
-                <select class="table-select" [ngModel]="reservation.table" [ngModelOptions]="{ standalone: true }"
-                  [attr.aria-label]="
-                      'Assign table for ' +
-                      reservation.reservationId
-                    " (ngModelChange)="
-                      assignTable(reservation, $event)
-                    ">
-
-                  <option value="">
-                    Unassigned
-                  </option>
-
-                  @for (
-                  table of tables;
-                  track table.id
-                  ) {
-
-                  <option [value]="table.id" [disabled]="
-                          isTableOccupied(
-                            table.id,
-                            reservation.date,
-                            reservation.time,
-                            reservation.reservationId
-                          )
-                        ">
-                    {{ table.id }}
-
-                    @if (
-                    isTableOccupied(
-                    table.id,
-                    reservation.date,
-                    reservation.time,
-                    reservation.reservationId
-                    )
-                    ) {
-                    — Occupied
-                    }
-
-                  </option>
-
-                  }
-                </select>
-
-              </td>
-
-
-              <!-- Dining package -->
-              <td>
-                <div class="package-details">
-
-                  @if (reservation.diningOption === 'alacarte') {
-
-                  <strong>
-                    À La Carte
-                  </strong>
-
-                  } @else if (reservation.diningOption === 'tasting') {
-
-                  <strong>
-                    {{ reservation.tastingMenu || reservation.packageName || 'Tasting Menu' }}
-                  </strong>
-
-                  } @else if (reservation.diningOption === 'table') {
-
-                  <strong>
-                    Table Only
-                  </strong>
-
-                  } @else {
-
-                  <strong>
-                    Dining Reservation
-                  </strong>
-
-                  }
-
-                  <span>
-                    {{ reservation.partySize }}
-                    {{
-                    reservation.partySize === 1
-                    ? 'guest'
-                    : 'guests'
-                    }}
-                  </span>
-
-                </div>
-              </td>
-
-
-              <!-- Status -->
-              <td>
-
-                <span class="status-pill" [attr.data-status]="reservation.status">
-
-                  <i class="status-dot" [class.status-pending]="
-                        reservation.status === 'Pending'
-                      " [class.status-confirmed]="
-                        reservation.status === 'Confirmed'
-                      " [class.status-seated]="
-                        reservation.status === 'Seated'
-                      " [class.status-completed]="
-                        reservation.status === 'Completed'
-                      " [class.status-cancelled]="
-                        reservation.status === 'Cancelled'
-                      "></i>
-
-                  {{ reservation.status }}
-
-                </span>
-
-              </td>
-
-
-              <!-- Actions -->
-              <td class="actions-column">
-
-                <div class="row-actions">
-
-
-                  <!-- Pending → Confirm -->
-                  @if (
-                  reservation.status === 'Pending'
-                  ) {
-
-                  <button class="icon-button icon-confirm" type="button" title="Confirm reservation"
-                    aria-label="Confirm reservation"
-                    (click)="$event.stopPropagation(); updateStatus(reservation, 'Confirmed')">
-                    <span class="material-symbols-outlined">
-                      check
-                    </span>
-                  </button>
-
-                  }
-
-
-                  <!-- Confirmed → Seat -->
-                  @if (
-                  reservation.status === 'Confirmed'
-                  ) {
-
-                  <button class="icon-button icon-seat" type="button" title="Seat guests" aria-label="Seat guests"
-                    (click)="$event.stopPropagation(); updateStatus(reservation, 'Seated')">
-                    <span class="material-symbols-outlined">
-                      chair
-                    </span>
-                  </button>
-
-                  }
-
-
-                  <!-- Seated → Complete -->
-                  @if (
-                  reservation.status === 'Seated'
-                  ) {
-
-                  <button class="icon-button icon-complete" type="button" title="Complete booking"
-                    aria-label="Complete booking"
-                    (click)="$event.stopPropagation(); updateStatus(reservation, 'Completed')">
-                    <span class="material-symbols-outlined">
-                      task_alt
-                    </span>
-                  </button>
-
-                  }
-
-
-                  <!-- Cancelled → Reopen -->
-                  @if (
-                  reservation.status === 'Cancelled'
-                  ) {
-
-                  <button class="icon-button icon-reopen" type="button" title="Reopen booking"
-                    aria-label="Reopen booking"
-                    (click)="$event.stopPropagation(); updateStatus(reservation, 'Pending')">
-                    <span class="material-symbols-outlined">
-                      lock_open
-                    </span>
-                  </button>
-
-                  }
-
-
-                  <!-- View / edit -->
-                  <button class="icon-button icon-edit" type="button" title="Edit reservation"
-                    aria-label="Edit reservation" (click)="$event.stopPropagation(); openReservation(reservation)">
-                    <span class="material-symbols-outlined">
-                      edit
-                    </span>
-                  </button>
-
-
-                  <!-- Cancel -->
-                  @if (
-                  reservation.status !== 'Cancelled' &&
-                  reservation.status !== 'Completed'
-                  ) {
-
-                  <button class="icon-button icon-cancel" type="button" title="Cancel reservation"
-                    aria-label="Cancel reservation"
-                    (click)="$event.stopPropagation(); updateStatus(reservation, 'Cancelled')">
-                    <span class="material-symbols-outlined">
-                      event_busy
-                    </span>
-                  </button>
-
-                  }
-
-                </div>
-
-              </td>
-
-            </tr>
-
-            } @empty {
-
-            <tr>
-
-              <td class="empty-state" colspan="7">
-
-                <span class="material-symbols-outlined">
-                  event_busy
-                </span>
-
-                <strong>
-                  No reservations found
-                </strong>
-
-                <span>
-                  Try changing your search or filters.
-                </span>
-
-              </td>
-
-            </tr>
+            <button type="button" class="search-clear" aria-label="Clear search" (click)="searchQuery = ''">
+              <span class="material-symbols-outlined">
+                close
+              </span>
+            </button>
 
             }
 
-          </tbody>
+          </label>
 
-        </table>
 
+          <div class="toolbar-actions">
+
+            <button class="button button-light" type="button" (click)="showFloorMatrix()">
+              <span class="material-symbols-outlined">
+                grid_view
+              </span>
+
+              Floor Matrix
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- Reservation table -->
+      <div class="table-card">
+
+        <div class="table-scroll">
+  
+          <table class="reservation-table">
+  
+            <thead>
+  
+              <tr>
+  
+                <th>
+                  Booking
+                </th>
+  
+                <th>
+                  Guest
+                </th>
+  
+                <th>
+                  Date &amp; Time
+                </th>
+  
+                <th>
+                  Table
+                </th>
+  
+                <th>
+                  Dining Package
+                </th>
+  
+                <th>
+                  Status
+                </th>
+  
+                <th class="actions-column">
+                  Actions
+                </th>
+  
+              </tr>
+  
+            </thead>
+  
+  
+            <tbody>
+  
+              @for (
+              reservation of filteredReservations;
+              track reservation.reservationId
+              ) {
+  
+              <tr (click)="openReservation(reservation)" (keydown.enter)="openReservation(reservation)" tabindex="0"
+                role="button" [attr.aria-label]="
+                    'Edit reservation ' +
+                    reservation.reservationId
+                  ">
+  
+                <!-- Booking -->
+                <td>
+  
+                  <div class="reservation-identity">
+  
+                    <div class="reservation-icon">
+  
+                      <span class="material-symbols-outlined">
+                        event
+                      </span>
+  
+                    </div>
+  
+                    <div class="reservation-details">
+  
+                      <strong>
+                        {{ reservation.reservationId }}
+                      </strong>
+  
+                      <span>
+                        Reservation
+                      </span>
+  
+                    </div>
+  
+                  </div>
+  
+                </td>
+  
+  
+                <!-- Guest -->
+                <td>
+  
+                  <div class="guest-details">
+  
+                    <strong>
+                      {{ reservation.guestName }}
+                    </strong>
+  
+                    <span>
+                      {{ reservation.phone }}
+                    </span>
+  
+                    <small>
+                      {{ reservation.email }}
+                    </small>
+  
+                  </div>
+  
+                </td>
+  
+  
+                <!-- Date and time -->
+                <td>
+  
+                  <div class="reservation-datetime">
+  
+                    <strong>
+                      {{ reservation.time }}
+                    </strong>
+  
+                    <span>
+                      {{ reservation.date | date:'dd MMM yyyy' }}
+                    </span>
+  
+                  </div>
+  
+                </td>
+  
+  
+                <!-- Table -->
+                <td (click)="$event.stopPropagation()">
+  
+                  <select class="table-select" [ngModel]="reservation.table" [ngModelOptions]="{ standalone: true }"
+                    [attr.aria-label]="
+                        'Assign table for ' +
+                        reservation.reservationId
+                      " (ngModelChange)="
+                        assignTable(reservation, $event)
+                      ">
+  
+                    <option value="">
+                      Unassigned
+                    </option>
+  
+                    @for (
+                    table of tables;
+                    track table.id
+                    ) {
+  
+                    <option [value]="table.id" [disabled]="
+                            isTableOccupied(
+                              table.id,
+                              reservation.date,
+                              reservation.time,
+                              reservation.reservationId
+                            )
+                          ">
+                      {{ table.id }}
+  
+                      @if (
+                      isTableOccupied(
+                      table.id,
+                      reservation.date,
+                      reservation.time,
+                      reservation.reservationId
+                      )
+                      ) {
+                      — Occupied
+                      }
+  
+                    </option>
+  
+                    }
+                  </select>
+  
+                </td>
+  
+  
+                <!-- Dining package -->
+                <td>
+                  <div class="package-details">
+  
+                    @if (reservation.diningOption === 'alacarte') {
+  
+                    <strong>
+                      À La Carte
+                    </strong>
+  
+                    } @else if (reservation.diningOption === 'tasting') {
+  
+                    <strong>
+                      {{ reservation.tastingMenu || reservation.packageName || 'Tasting Menu' }}
+                    </strong>
+  
+                    } @else if (reservation.diningOption === 'table') {
+  
+                    <strong>
+                      Table Only
+                    </strong>
+  
+                    } @else {
+  
+                    <strong>
+                      Dining Reservation
+                    </strong>
+  
+                    }
+  
+                    <span>
+                      {{ reservation.partySize }}
+                      {{
+                      reservation.partySize === 1
+                      ? 'guest'
+                      : 'guests'
+                      }}
+                    </span>
+  
+                  </div>
+                </td>
+  
+  
+                <!-- Status -->
+                <td>
+  
+                  <span class="status-pill" [attr.data-status]="reservation.status">
+  
+                    <i class="status-dot" [class.status-pending]="
+                          reservation.status === 'Pending'
+                        " [class.status-confirmed]="
+                          reservation.status === 'Confirmed'
+                        " [class.status-seated]="
+                          reservation.status === 'Seated'
+                        " [class.status-completed]="
+                          reservation.status === 'Completed'
+                        " [class.status-cancelled]="
+                          reservation.status === 'Cancelled'
+                        "></i>
+  
+                    {{ reservation.status }}
+  
+                  </span>
+  
+                </td>
+  
+  
+                <!-- Actions -->
+                <td class="actions-column">
+  
+                  <div class="row-actions">
+  
+  
+                    <!-- Pending → Confirm -->
+                    @if (
+                    reservation.status === 'Pending'
+                    ) {
+  
+                    <button class="icon-button icon-confirm" type="button" title="Confirm reservation"
+                      aria-label="Confirm reservation"
+                      (click)="$event.stopPropagation(); updateStatus(reservation, 'Confirmed')">
+                      <span class="material-symbols-outlined">
+                        check
+                      </span>
+                    </button>
+  
+                    }
+  
+  
+                    <!-- Confirmed → Seat -->
+                    @if (
+                    reservation.status === 'Confirmed'
+                    ) {
+  
+                    <button class="icon-button icon-seat" type="button" title="Seat guests" aria-label="Seat guests"
+                      (click)="$event.stopPropagation(); updateStatus(reservation, 'Seated')">
+                      <span class="material-symbols-outlined">
+                        chair
+                      </span>
+                    </button>
+  
+                    }
+  
+  
+                    <!-- Seated → Complete -->
+                    @if (
+                    reservation.status === 'Seated'
+                    ) {
+  
+                    <button class="icon-button icon-complete" type="button" title="Complete booking"
+                      aria-label="Complete booking"
+                      (click)="$event.stopPropagation(); updateStatus(reservation, 'Completed')">
+                      <span class="material-symbols-outlined">
+                        task_alt
+                      </span>
+                    </button>
+  
+                    }
+  
+  
+                    <!-- Cancelled → Reopen -->
+                    @if (
+                    reservation.status === 'Cancelled'
+                    ) {
+  
+                    <button class="icon-button icon-reopen" type="button" title="Reopen booking"
+                      aria-label="Reopen booking"
+                      (click)="$event.stopPropagation(); updateStatus(reservation, 'Pending')">
+                      <span class="material-symbols-outlined">
+                        lock_open
+                      </span>
+                    </button>
+  
+                    }
+  
+  
+                    <!-- View / edit -->
+                    <button class="icon-button icon-edit" type="button" title="Edit reservation"
+                      aria-label="Edit reservation" (click)="$event.stopPropagation(); openReservation(reservation)">
+                      <span class="material-symbols-outlined">
+                        edit
+                      </span>
+                    </button>
+  
+  
+                    <!-- Cancel -->
+                    @if (
+                    reservation.status !== 'Cancelled' &&
+                    reservation.status !== 'Completed'
+                    ) {
+  
+                    <button class="icon-button icon-cancel" type="button" title="Cancel reservation"
+                      aria-label="Cancel reservation"
+                      (click)="$event.stopPropagation(); updateStatus(reservation, 'Cancelled')">
+                      <span class="material-symbols-outlined">
+                        event_busy
+                      </span>
+                    </button>
+  
+                    }
+  
+                  </div>
+  
+                </td>
+  
+              </tr>
+  
+              } @empty {
+  
+              <tr>
+  
+                <td class="empty-state" colspan="7">
+  
+                  <span class="material-symbols-outlined">
+                    event_busy
+                  </span>
+  
+                  <strong>
+                    No reservations found
+                  </strong>
+  
+                  <span>
+                    Try changing your search or filters.
+                  </span>
+  
+                </td>
+  
+              </tr>
+  
+              }
+  
+            </tbody>
+  
+          </table>
+  
+        </div>
+  
+  
+        <!-- Table footer -->
+        <div class="table-footer">
+  
+          <span>
+            Showing
+            <strong>
+              {{ filteredReservations.length }}
+            </strong>
+            of
+            <strong>
+              {{ reservations.length }}
+            </strong>
+            reservations
+          </span>
+  
+          <span class="demo-note">
+            Reservation directory
+          </span>
+  
+        </div>
+  
       </div>
 
-
-      <!-- Table footer -->
-      <div class="table-footer">
-
-        <span>
-          Showing
-          <strong>
-            {{ filteredReservations.length }}
-          </strong>
-          of
-          <strong>
-            {{ reservations.length }}
-          </strong>
-          reservations
-        </span>
-
-        <span class="demo-note">
-          Reservation directory
-        </span>
-
-      </div>
-
-    </div>
+    </section>
 
   </div>
 

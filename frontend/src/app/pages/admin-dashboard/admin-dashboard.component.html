@@ -3,402 +3,791 @@
 <main class="admin-page">
 
   <div class="page-container dashboard-content">
-    <!-- Page heading -->
+
     <section class="page-heading">
+
       <div class="heading-copy">
-        <div class="section-label">
-          <span class="material-symbols-outlined">admin_panel_settings</span>
-          Restaurant Management Console
+
+        <div class="eyebrow">
+          <span class="material-symbols-outlined">
+            admin_panel_settings
+          </span>
+
+          RESTAURANT MANAGEMENT CONSOLE
         </div>
 
-        <h1>Staff Operations Portal</h1>
+        <h1>
+          Staff Operations Portal
+        </h1>
 
         <p>
-          An overview of today's bookings, pending reservation requests,
-          menu management and table operations.
+          An overview of today's service, guest arrivals,
+          table assignments and operational attention.
         </p>
+
       </div>
 
-      <div class="quick-actions">
-        <button class="button button-primary" (click)="openWalkInModal()">
-          <span class="material-symbols-outlined">person_add</span>
-          New Walk-In
-        </button>
 
-        <a class="button button-secondary" routerLink="/reservations-mgmt">
-          <span class="material-symbols-outlined">calendar_month</span>
+      <div class="heading-actions">
+
+        <a class="button button-secondary" routerLink="/reservation-management">
+          <span class="material-symbols-outlined">
+            calendar_month
+          </span>
+
           All Bookings
         </a>
 
+
         <a class="button button-light" routerLink="/menu-management">
-          <span class="material-symbols-outlined">restaurant_menu</span>
+          <span class="material-symbols-outlined">
+            restaurant_menu
+          </span>
+
           Manage Menu
         </a>
 
       </div>
+
     </section>
 
-    <!-- Summary cards -->
-    <section class="metrics-grid" aria-label="Reservation summary">
-      <article class="metric-card">
-        <div class="metric-top">
-          <span class="metric-label">Today's Reservations</span>
-          <span class="material-symbols-outlined">book_online</span>
+    <!-- =====================================================
+    SUMMARY CARDS
+    ===================================================== -->
+
+    <section class="stats-grid" aria-label="Today's service summary">
+
+      <!-- Today's Reservations -->
+
+      <article class="stat-card">
+
+        <div class="stat-top">
+
+          <span>Today's Reservations</span>
+
+          <span class="material-symbols-outlined">
+            book_online
+          </span>
+
         </div>
 
-        <div class="metric-value">
+        <div class="stat-value">
           {{ totalBookings }}
-          <span>Bookings</span>
         </div>
 
-        <div class="metric-footer">
-          <span>{{ totalCovers }} covers in total</span>
-          <span>Today's service</span>
+        <div class="stat-foot">
+          {{ totalCovers }} covers in total
         </div>
+
       </article>
 
-      <article class="metric-card">
-        <div class="metric-top">
-          <span class="metric-label">Confirmed / Seated</span>
-          <span class="material-symbols-outlined">check_circle</span>
+
+      <!-- Confirmed / Seated -->
+
+      <article class="stat-card">
+
+        <div class="stat-top">
+
+          <span>Confirmed / Seated</span>
+
+          <span class="material-symbols-outlined">
+            check_circle
+          </span>
+
         </div>
 
-        <div class="metric-value">
+        <div class="stat-value">
           {{ confirmedBookings }}
-          <span>Bookings</span>
         </div>
 
-        <div class="metric-footer">
-          <span>Confirmed or seated</span>
-          <span class="positive-text">Ready to serve</span>
+        <div class="stat-foot">
+          Confirmed or seated
         </div>
+
       </article>
 
-      <article class="metric-card">
-        <div class="metric-top">
-          <span class="metric-label">Pending Requests</span>
-          <span class="material-symbols-outlined warning-icon">pending_actions</span>
+
+      <!-- Pending Requests -->
+
+      <article class="stat-card">
+
+        <div class="stat-top">
+
+          <span>Pending Requests</span>
+
+          <span class="material-symbols-outlined warning-icon">
+            pending_actions
+          </span>
+
         </div>
 
-        <div class="metric-value warning-number">
+        <div class="stat-value warning-value">
           {{ pendingBookings }}
-          <span>Need review</span>
         </div>
 
-        <div class="metric-footer">
-          <span>Review requested bookings</span>
-          <span class="warning-text">Action required</span>
+        <div class="stat-foot">
+          Awaiting confirmation
         </div>
+
       </article>
 
-      <article class="metric-card">
-        <div class="metric-top">
-          <span class="metric-label">Menu Catalogue</span>
-          <span class="material-symbols-outlined">menu_book</span>
+
+      <!-- Menu Catalogue -->
+      <article class="stat-card">
+
+        <div class="stat-top">
+          <span>Menu Catalogue</span>
+
+          <span class="material-symbols-outlined">
+            menu_book
+          </span>
         </div>
 
-        <div class="metric-value">
-          <span class="metric-placeholder">Manage</span>
+        <div class="stat-value">
+          {{ menuItemCount }}
         </div>
 
-        <div class="metric-footer">
-          <span>Menu items and availability</span>
-          <a routerLink="/menu-management">Open menu</a>
+        <div class="stat-foot">
+          <span>
+            {{ availableMenuItemCount }} available to guests
+          </span>
+
+          <a routerLink="/menu-management">
+            View menu
+          </a>
         </div>
+
       </article>
+
     </section>
 
-    <!-- Reservations table -->
-    <section class="reservations-panel">
+    <!-- =====================================================
+         TODAY'S SERVICE OVERVIEW
+         ===================================================== -->
+
+    <section class="service-overview-panel">
+
       <div class="panel-heading">
+
         <div>
-          <h2>Today's Reservations &amp; Requests</h2>
+
+          <h2>
+            Today's Service Overview
+          </h2>
+
           <p>
-            Review guest bookings, confirm requests and manage seating.
+            Monitor upcoming arrivals, operational attention
+            and current table assignments.
           </p>
+
         </div>
 
-        <span class="record-count">
-          {{ filteredReservations.length }} records
-        </span>
+
+        <a class="button button-primary" routerLink="/reservation-management">
+
+          <span class="material-symbols-outlined">
+            open_in_new
+          </span>
+
+          View All Bookings
+
+        </a>
+
       </div>
 
-      <!-- Filters -->
-      <div class="toolbar">
-        <div class="filter-tabs" aria-label="Filter reservations">
-          <button
-            type="button"
-            [class.active]="activeFilter === 'All'"
-            (click)="setFilter('All')"
-          >
-            All
-            <span>{{ totalBookings }}</span>
-          </button>
 
-          <button
-            type="button"
-            [class.active]="activeFilter === 'Confirmed'"
-            (click)="setFilter('Confirmed')"
-          >
-            Confirmed
-            <span>{{ confirmedBookings }}</span>
-          </button>
+      <!-- =====================================================
+           OVERVIEW GRID
+           ===================================================== -->
 
-          <button
-            type="button"
-            [class.active]="activeFilter === 'Pending'"
-            (click)="setFilter('Pending')"
-          >
-            Pending
-            <span>{{ pendingBookings }}</span>
-          </button>
-        </div>
+      <div class="service-overview-grid">
 
-        <label class="search-box">
-          <span class="material-symbols-outlined">search</span>
-          <input
-            type="search"
-            name="reservationSearch"
-            placeholder="Search guest or reference..."
-            [(ngModel)]="searchTerm"
-            aria-label="Search reservations"
-          />
-        </label>
-      </div>
 
-      <!-- Responsive table -->
-      <div class="table-wrapper">
-        <table class="reservations-table">
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>Guest / Reference</th>
-              <th>Party Size</th>
-              <th>Table</th>
-              <th>Dining Package</th>
-              <th>Status</th>
-              <th class="actions-heading">Actions</th>
-            </tr>
-          </thead>
+        <!-- =================================================
+             UPCOMING ARRIVALS
+             ================================================= -->
 
-          <tbody>
-            @for (reservation of filteredReservations; track reservation.id) {
-              <tr>
-                <td class="time-cell">{{ reservation.time }}</td>
+        <article class="overview-card">
 
-                <td>
-                  <div class="guest-name">
-                    {{ reservation.customer }}
+          <div class="overview-card-heading">
 
-                    @if (reservation.vip) {
-                      <span class="vip-badge">VIP</span>
-                    }
-                  </div>
+            <div>
 
-                  <div class="guest-reference">{{ reservation.id }}</div>
-                  <div class="guest-note">{{ reservation.note }}</div>
-                </td>
+              <span class="overview-eyebrow">
+                NEXT ARRIVALS
+              </span>
 
-                <td class="nowrap">
-                  {{ reservation.guests }}
-                  {{ reservation.guests === 1 ? 'guest' : 'guests' }}
-                </td>
+              <h3>
+                Upcoming Guests
+              </h3>
 
-                <td class="table-cell">{{ reservation.table }}</td>
+            </div>
 
-                <td class="package-cell">{{ reservation.package }}</td>
 
-                <td>
-                  <span
-                    class="status-badge"
-                    [class.status-confirmed]="reservation.status === 'Confirmed'"
-                    [class.status-pending]="reservation.status === 'Pending'"
-                    [class.status-seated]="reservation.status === 'Seated'"
-                  >
-                    <span class="status-dot"></span>
-                    {{ reservation.status }}
+            <span class="material-symbols-outlined">
+              schedule
+            </span>
+
+          </div>
+
+
+          @if (isLoading) {
+
+          <div class="overview-empty">
+            Loading today's arrivals...
+          </div>
+
+          } @else if (upcomingArrivals.length === 0) {
+
+          <div class="overview-empty">
+
+            <span class="material-symbols-outlined">
+              event_available
+            </span>
+
+            <strong>
+              No upcoming arrivals
+            </strong>
+
+            <span>
+              There are no pending or confirmed arrivals
+              remaining for today's service.
+            </span>
+
+          </div>
+
+          } @else {
+
+          <div class="arrival-list">
+
+            @for (
+            reservation of upcomingArrivals;
+            track reservation.reservationId
+            ) {
+
+            <div class="arrival-item">
+
+              <div class="arrival-time">
+                {{ reservation.time }}
+              </div>
+
+
+              <div class="arrival-details">
+
+                <div class="arrival-name">
+                  {{ reservation.guestName }}
+                </div>
+
+                <div class="arrival-meta">
+
+                  <span>
+                    {{ reservation.partySize }}
+                    {{
+                    reservation.partySize === 1
+                    ? 'guest'
+                    : 'guests'
+                    }}
                   </span>
-                </td>
 
-                <td>
-                  <div class="row-actions">
-                    @if (reservation.status === 'Pending') {
-                      <button
-                        type="button"
-                        class="small-button confirm-button"
-                        (click)="confirmReservation(reservation)"
-                      >
-                        Confirm
-                      </button>
-                    }
+                  <span>
+                    {{ reservation.reservationId }}
+                  </span>
 
-                    @if (reservation.status === 'Confirmed') {
-                      <button
-                        type="button"
-                        class="small-button seat-button"
-                        (click)="seatReservation(reservation)"
-                      >
-                        Seat
-                      </button>
-                    }
+                </div>
 
-                    <button
-                      type="button"
-                      class="small-button details-button"
-                      (click)="viewDetails(reservation)"
-                    >
-                      Details
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="7" class="empty-cell">
-                  <span class="material-symbols-outlined">event_busy</span>
-                  <strong>No reservations found</strong>
-                  <span>Try another filter or search term.</span>
-                </td>
-              </tr>
+              </div>
+
+
+              <div class="arrival-status">
+
+                <span class="status-badge" [class.status-confirmed]="
+                        reservation.status === 'Confirmed'
+                      " [class.status-pending]="
+                        reservation.status === 'Pending'
+                      ">
+
+                  <span class="status-dot"></span>
+
+                  {{ reservation.status }}
+
+                </span>
+
+              </div>
+
+            </div>
+
             }
-          </tbody>
-        </table>
+
+          </div>
+
+          }
+
+        </article>
+
+
+        <!-- =================================================
+             SERVICE ATTENTION
+             ================================================= -->
+
+        <article class="overview-card">
+
+          <div class="overview-card-heading">
+
+            <div>
+
+              <span class="overview-eyebrow">
+                SERVICE ATTENTION
+              </span>
+
+              <h3>
+                Requires Attention
+              </h3>
+
+            </div>
+
+
+            <span class="material-symbols-outlined">
+              notifications_active
+            </span>
+
+          </div>
+
+
+          @if (isLoading) {
+
+          <div class="overview-empty">
+            Checking today's service...
+          </div>
+
+          } @else if (
+          pendingAttention.length === 0 &&
+          specialRequestReservations.length === 0 &&
+          unassignedReservations.length === 0
+          ) {
+
+          <div class="overview-empty">
+
+            <span class="material-symbols-outlined">
+              task_alt
+            </span>
+
+            <strong>
+              Service looks clear
+            </strong>
+
+            <span>
+              No pending requests, special requests or
+              unassigned tables require attention.
+            </span>
+
+          </div>
+
+          } @else {
+
+          <div class="attention-list">
+
+
+            <!-- PENDING -->
+
+            @for (
+            reservation of pendingAttention;
+            track reservation.reservationId
+            ) {
+
+            <div class="attention-item">
+
+              <span class="material-symbols-outlined attention-icon warning">
+                pending_actions
+              </span>
+
+              <div>
+
+                <strong>
+                  Pending reservation
+                </strong>
+
+                <span>
+                  {{ reservation.guestName }}
+                  · {{ reservation.reservationId }}
+                </span>
+
+              </div>
+
+            </div>
+
+            }
+
+
+            <!-- SPECIAL REQUEST -->
+
+            @for (
+            reservation of specialRequestReservations;
+            track reservation.reservationId
+            ) {
+
+            <div class="attention-item">
+
+              <span class="material-symbols-outlined attention-icon">
+                notes
+              </span>
+
+              <div>
+
+                <strong>
+                  Guest request
+                </strong>
+
+                <span>
+                  {{ reservation.guestName }}
+                  · {{ reservation.specialRequests }}
+                </span>
+
+              </div>
+
+            </div>
+
+            }
+
+
+            <!-- UNASSIGNED TABLE -->
+
+            @for (
+            reservation of unassignedReservations;
+            track reservation.reservationId
+            ) {
+
+            <div class="attention-item">
+
+              <span class="material-symbols-outlined attention-icon">
+                table_restaurant
+              </span>
+
+              <div>
+
+                <strong>
+                  Table unassigned
+                </strong>
+
+                <span>
+                  {{ reservation.guestName }}
+                  · {{ reservation.reservationId }}
+                </span>
+
+              </div>
+
+            </div>
+
+            }
+
+          </div>
+
+          }
+
+        </article>
+
+
+        <!-- =================================================
+             TABLE / SEATING OVERVIEW
+             ================================================= -->
+
+        <article class="overview-card">
+
+          <div class="overview-card-heading">
+
+            <div>
+
+              <span class="overview-eyebrow">
+                FLOOR STATUS
+              </span>
+
+              <h3>
+                Table Assignments
+              </h3>
+
+            </div>
+
+
+            <span class="material-symbols-outlined">
+              table_restaurant
+            </span>
+
+          </div>
+
+
+          <div class="table-summary">
+
+
+            <div class="table-summary-item">
+
+              <span class="table-summary-icon occupied">
+                <span class="material-symbols-outlined">
+                  event_seat
+                </span>
+              </span>
+
+              <div>
+
+                <strong>
+                  {{ occupiedTables }}
+                </strong>
+
+                <span>
+                  Occupied
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="table-summary-item">
+
+              <span class="table-summary-icon reserved">
+                <span class="material-symbols-outlined">
+                  bookmark
+                </span>
+              </span>
+
+              <div>
+
+                <strong>
+                  {{ reservedTables }}
+                </strong>
+
+                <span>
+                  Reserved
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="table-summary-item">
+
+              <span class="table-summary-icon pending">
+                <span class="material-symbols-outlined">
+                  schedule
+                </span>
+              </span>
+
+              <div>
+
+                <strong>
+                  {{ pendingTables }}
+                </strong>
+
+                <span>
+                  Pending
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="assignment-list">
+
+            @if (assignedReservations.length === 0) {
+
+            <div class="overview-empty compact">
+
+              <span class="material-symbols-outlined">
+                table_restaurant
+              </span>
+
+              No table assignments recorded for today.
+
+            </div>
+
+            } @else {
+
+            @for (
+            reservation of assignedReservations.slice(0, 5);
+            track reservation.reservationId
+            ) {
+
+            <div class="assignment-item">
+
+              <div class="assignment-table">
+                {{ reservation.table }}
+              </div>
+
+
+              <div class="assignment-details">
+
+                <strong>
+                  {{ reservation.guestName }}
+                </strong>
+
+                <span>
+                  {{ reservation.time }}
+                  ·
+                  {{ reservation.partySize }}
+                  {{
+                  reservation.partySize === 1
+                  ? 'guest'
+                  : 'guests'
+                  }}
+                </span>
+
+              </div>
+
+
+              <span class="status-badge" [class.status-confirmed]="
+                      reservation.status === 'Confirmed'
+                    " [class.status-pending]="
+                      reservation.status === 'Pending'
+                    " [class.status-seated]="
+                      reservation.status === 'Seated'
+                    ">
+
+                <span class="status-dot"></span>
+
+                {{ reservation.status }}
+
+              </span>
+
+            </div>
+
+            }
+
+            }
+
+          </div>
+
+        </article>
+
       </div>
 
-      <div class="panel-footer">
-        <span>
-          Showing {{ filteredReservations.length }} of {{ totalBookings }}
-          demo reservations
-        </span>
 
-        <span class="demo-note">
-          <span class="material-symbols-outlined">info</span>
-          Demo data — not connected to the database yet
-        </span>
+      <!-- =====================================================
+           DINING MIX
+           ===================================================== -->
+
+      <div class="dining-summary">
+
+        <div class="dining-summary-heading">
+
+          <div>
+
+            <span class="overview-eyebrow">
+              SERVICE MIX
+            </span>
+
+            <h3>
+              Today's Dining Profile
+            </h3>
+
+          </div>
+
+        </div>
+
+
+        <div class="dining-metrics">
+
+          <div class="dining-metric">
+
+            <span class="material-symbols-outlined">
+              restaurant
+            </span>
+
+            <div>
+
+              <strong>
+                {{ tastingBookings }}
+              </strong>
+
+              <span>
+                Tasting Menu
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="dining-metric">
+
+            <span class="material-symbols-outlined">
+              restaurant_menu
+            </span>
+
+            <div>
+
+              <strong>
+                {{ aLaCarteBookings }}
+              </strong>
+
+              <span>
+                À La Carte
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="dining-metric">
+
+            <span class="material-symbols-outlined">
+              table_restaurant
+            </span>
+
+            <div>
+
+              <strong>
+                {{ tableOnlyBookings }}
+              </strong>
+
+              <span>
+                Table Only
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
+
     </section>
+
   </div>
+
 </main>
 
-<!-- New walk-in modal -->
-@if (showWalkInModal) {
-  <div class="modal-backdrop" (click)="closeWalkInModal()">
-    <section
-      class="modal-card"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="walkin-title"
-      (click)="$event.stopPropagation()"
-    >
-      <div class="modal-heading">
-        <div class="modal-title-group">
-          <span class="material-symbols-outlined">person_add</span>
-          <div>
-            <span class="section-label">Guest Seating</span>
-            <h2 id="walkin-title">New Walk-In</h2>
-          </div>
-        </div>
 
-        <button
-          type="button"
-          class="icon-button"
-          aria-label="Close modal"
-          (click)="closeWalkInModal()"
-        >
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
+<!-- =====================================================
+     TOAST
+     ===================================================== -->
 
-      <p class="modal-description">
-        Add a walk-in guest to the service list and assign a seating area.
-      </p>
-
-      <form (submit)="$event.preventDefault(); confirmWalkIn()">
-        <div class="form-field">
-          <label for="walkin-name">Guest Name</label>
-          <input
-            id="walkin-name"
-            name="walkinName"
-            type="text"
-            [(ngModel)]="walkInName"
-            placeholder="Enter guest or party name"
-            required
-          />
-        </div>
-
-        <div class="form-grid">
-          <div class="form-field">
-            <label for="walkin-guests">Party Size</label>
-            <select
-              id="walkin-guests"
-              name="walkinGuests"
-              [(ngModel)]="walkInGuests"
-            >
-              <option [ngValue]="1">1 guest</option>
-              <option [ngValue]="2">2 guests</option>
-              <option [ngValue]="3">3 guests</option>
-              <option [ngValue]="4">4 guests</option>
-              <option [ngValue]="5">5 guests</option>
-              <option [ngValue]="6">6 guests</option>
-              <option [ngValue]="8">8 guests</option>
-            </select>
-          </div>
-
-          <div class="form-field">
-            <label for="walkin-table">Seating Area</label>
-            <select
-              id="walkin-table"
-              name="walkinTable"
-              [(ngModel)]="walkInTable"
-            >
-              <option value="Counter 05">Counter 05</option>
-              <option value="Counter 06">Counter 06</option>
-              <option value="Table 02">Table 02</option>
-              <option value="Table 05">Table 05</option>
-              <option value="Table 09">Table 09</option>
-              <option value="Unassigned">Unassigned</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-field">
-          <label for="walkin-notes">Service Notes (Optional)</label>
-          <textarea
-            id="walkin-notes"
-            name="walkinNotes"
-            [(ngModel)]="walkInNotes"
-            rows="3"
-            placeholder="Dietary requirements or seating preferences"
-          ></textarea>
-        </div>
-
-        <div class="modal-actions">
-          <button
-            type="button"
-            class="button button-light"
-            (click)="closeWalkInModal()"
-          >
-            Cancel
-          </button>
-
-          <button type="submit" class="button button-primary">
-            Add Walk-In
-          </button>
-        </div>
-      </form>
-    </section>
-  </div>
-}
-
-<!-- Toast notification -->
 @if (toastMessage) {
-  <div class="toast-message" role="status">
-    <span class="material-symbols-outlined">info</span>
-    <span>{{ toastMessage }}</span>
-    <button type="button" (click)="dismissToast()" aria-label="Dismiss notification">
-      <span class="material-symbols-outlined">close</span>
-    </button>
-  </div>
+
+<div class="toast-message" role="status">
+
+  <span class="material-symbols-outlined">
+    info
+  </span>
+
+  <span>
+    {{ toastMessage }}
+  </span>
+
+  <button type="button" (click)="dismissToast()" aria-label="Dismiss notification">
+
+    <span class="material-symbols-outlined">
+      close
+    </span>
+
+  </button>
+
+</div>
+
 }
+
 
 <app-footer></app-footer>

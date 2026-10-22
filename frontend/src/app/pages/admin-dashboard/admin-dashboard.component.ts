@@ -1,245 +1,498 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 
-type BookingStatus = 'Confirmed' | 'Pending' | 'Seated';
+import { MenuService } from '../../services/menu.service';
 
-interface Reservation {
-  id: string;
-  time: string;
-  customer: string;
-  email: string;
-  guests: number;
-  table: string;
-  package: string;
-  status: BookingStatus;
-  note: string;
-  vip?: boolean;
-}
+import {
+  Reservation,
+  ReservationService
+} from '../../services/reservation.service';
+
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, FooterComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    HeaderComponent,
+    FooterComponent
+  ],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
-export class AdminDashboardComponent {
-  readonly todayLabel = 'Friday, 9 October 2026';
+export class AdminDashboardComponent implements OnInit {
 
-  activeFilter: 'All' | 'Confirmed' | 'Pending' = 'All';
-  searchTerm = '';
+  // =========================
+  // RESERVATIONS
+  // =========================
+
+  reservations: Reservation[] = [];
+  menuItems: any[] = [];
+
+  isLoading = true;
+  loadError = '';
+
+
+  // =========================
+  // WALK-IN
+  // =========================
 
   showWalkInModal = false;
-  toastMessage = '';
 
   walkInName = '';
   walkInGuests = 2;
-  walkInTable = 'Counter 05';
+  walkInTable = 'Unassigned';
   walkInNotes = '';
 
-  reservations: Reservation[] = [
-    {
-      id: 'AUR-9042',
-      time: '17:30',
-      customer: 'Danish Embassy Delegation',
-      email: 'delegation@example.com',
-      guests: 6,
-      table: 'Table 12',
-      package: 'Signature Seasonal Menu',
-      status: 'Confirmed',
-      note: 'Please prepare a quiet seating area.',
-      vip: true
-    },
-    {
-      id: 'AUR-9187',
-      time: '18:15',
-      customer: 'Magnus & Astrid Lindqvist',
-      email: 'magnus@example.com',
-      guests: 2,
-      table: 'Unassigned',
-      package: 'Autumn Harvest Tasting',
-      status: 'Pending',
-      note: 'Window-side table requested for an anniversary.'
-    },
-    {
-      id: 'AUR-9201',
-      time: '19:00',
-      customer: 'Dr. Soren Møller',
-      email: 'soren@example.com',
-      guests: 2,
-      table: 'Table 04',
-      package: 'Seasonal Tasting Menu',
-      status: 'Confirmed',
-      note: 'One guest is pescatarian.'
-    },
-    {
-      id: 'AUR-9215',
-      time: '19:45',
-      customer: 'Camilla Schou Group',
-      email: 'camilla@example.com',
-      guests: 8,
-      table: 'Table 18 (Hold)',
-      package: 'Group Dining Experience',
-      status: 'Pending',
-      note: 'Please confirm the group seating arrangement.'
-    },
-    {
-      id: 'AUR-9228',
-      time: '20:00',
-      customer: 'Elena Rostov & Guest',
-      email: 'elena@example.com',
-      guests: 2,
-      table: 'Counter 03–04',
-      package: 'Chef’s Counter Experience',
-      status: 'Confirmed',
-      note: 'Important: shellfish allergy.'
-    },
-    {
-      id: 'AUR-9240',
-      time: '20:15',
-      customer: 'Klaus Hedegaard',
-      email: 'klaus@example.com',
-      guests: 4,
-      table: 'Table 09',
-      package: 'Signature Seasonal Menu',
-      status: 'Confirmed',
-      note: 'Seasonal non-alcoholic beverage pairing.'
-    }
-  ];
 
-  get filteredReservations(): Reservation[] {
-    const term = this.searchTerm.trim().toLowerCase();
+  // =========================
+  // TOAST
+  // =========================
 
-    return this.reservations.filter((reservation) => {
-      const matchesFilter =
-        this.activeFilter === 'All' ||
-        reservation.status === this.activeFilter;
+  toastMessage = '';
 
-      const searchableText = [
-        reservation.id,
-        reservation.customer,
-        reservation.email,
-        reservation.table,
-        reservation.package,
-        reservation.status
-      ].join(' ').toLowerCase();
 
-      return matchesFilter && searchableText.includes(term);
+  constructor(
+    private reservationService: ReservationService,
+    private menuService: MenuService
+  ) { }
+
+
+  // =========================
+  // INITIALISE
+  // =========================
+
+  ngOnInit(): void {
+    this.loadReservations();
+    this.loadMenuItems();
+  }
+
+
+  // =========================
+  // LOAD RESERVATIONS
+  // =========================
+
+  loadReservations(): void {
+
+    this.isLoading = true;
+    this.loadError = '';
+
+    this.reservationService
+      .getReservations()
+      .subscribe({
+
+        next: (response) => {
+
+          this.reservations =
+            response.reservations || [];
+
+          this.isLoading = false;
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Failed to load dashboard reservations:',
+            error
+          );
+
+          this.isLoading = false;
+
+          this.loadError =
+            error?.error?.message ||
+            'Unable to load today\'s reservation data.';
+        }
+
+      });
+  }
+
+  // =========================
+  // LOAD MENU ITEMS
+  // =========================
+  loadMenuItems(): void {
+    this.menuService.getMenuItems().subscribe({
+      next: (response) => {
+        this.menuItems = response.menuItems || [];
+      },
+      error: (error) => {
+        console.error(
+          'Failed to load menu items:',
+          error
+        );
+  
+        this.menuItems = [];
+      }
     });
   }
 
-  get totalBookings(): number {
-    return this.reservations.length;
+  get menuItemCount(): number {
+    return this.menuItems.length;
+  }
+  
+  get availableMenuItemCount(): number {
+    return this.menuItems.filter(
+      item => item.available
+    ).length;
   }
 
+
+  // =========================
+  // TODAY
+  // =========================
+
+  get todayDate(): string {
+
+    const today = new Date();
+
+    const year =
+      today.getFullYear();
+
+    const month =
+      String(today.getMonth() + 1).padStart(2, '0');
+
+    const day =
+      String(today.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+
+  get todayLabel(): string {
+
+    const today = new Date();
+
+    return today.toLocaleDateString(
+      'en-GB',
+      {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }
+    );
+  }
+
+
+  // =========================
+  // TODAY'S RESERVATIONS
+  // =========================
+
+  get todayReservations(): Reservation[] {
+
+    return this.reservations
+      .filter(
+        reservation =>
+          reservation.date === this.todayDate
+      )
+      .sort(
+        (a, b) =>
+          this.timeToMinutes(a.time) -
+          this.timeToMinutes(b.time)
+      );
+  }
+
+
+  // =========================
+  // SUMMARY
+  // =========================
+
+  get totalBookings(): number {
+
+    return this.todayReservations.length;
+  }
+
+
+  get totalCovers(): number {
+
+    return this.todayReservations.reduce(
+      (total, reservation) =>
+        total + reservation.partySize,
+      0
+    );
+  }
+
+
   get confirmedBookings(): number {
-    return this.reservations.filter(
-      (reservation) =>
+
+    return this.todayReservations.filter(
+      reservation =>
         reservation.status === 'Confirmed' ||
         reservation.status === 'Seated'
     ).length;
   }
 
+
   get pendingBookings(): number {
-    return this.reservations.filter(
-      (reservation) => reservation.status === 'Pending'
+
+    return this.todayReservations.filter(
+      reservation =>
+        reservation.status === 'Pending'
     ).length;
   }
 
-  get totalCovers(): number {
-    return this.reservations.reduce(
-      (total, reservation) => total + reservation.guests,
-      0
+
+  // =========================
+  // UPCOMING ARRIVALS
+  // =========================
+
+  get upcomingArrivals(): Reservation[] {
+
+    return this.todayReservations
+      .filter(
+        reservation =>
+          reservation.status === 'Pending' ||
+          reservation.status === 'Confirmed'
+      )
+      .slice(0, 5);
+  }
+
+
+  // =========================
+  // SERVICE ATTENTION
+  // =========================
+
+  get pendingAttention(): Reservation[] {
+
+    return this.todayReservations
+      .filter(
+        reservation =>
+          reservation.status === 'Pending'
+      )
+      .slice(0, 5);
+  }
+
+
+  get specialRequestReservations(): Reservation[] {
+
+    return this.todayReservations
+      .filter(
+        reservation =>
+          !!reservation.specialRequests?.trim()
+      )
+      .slice(0, 5);
+  }
+
+
+  get unassignedReservations(): Reservation[] {
+
+    return this.todayReservations
+      .filter(
+        reservation =>
+          !reservation.table ||
+          reservation.table.trim() === ''
+      )
+      .filter(
+        reservation =>
+          reservation.status !== 'Cancelled'
+      )
+      .slice(0, 5);
+  }
+
+
+  // =========================
+  // TABLE / SEATING OVERVIEW
+  // =========================
+
+  get assignedReservations(): Reservation[] {
+
+    return this.todayReservations
+      .filter(
+        reservation =>
+          !!reservation.table &&
+          reservation.table.trim() !== ''
+      );
+  }
+
+
+  get occupiedTables(): number {
+
+    return this.assignedReservations.filter(
+      reservation =>
+        reservation.status === 'Seated'
+    ).length;
+  }
+
+
+  get reservedTables(): number {
+
+    return this.assignedReservations.filter(
+      reservation =>
+        reservation.status === 'Confirmed'
+    ).length;
+  }
+
+
+  get pendingTables(): number {
+
+    return this.assignedReservations.filter(
+      reservation =>
+        reservation.status === 'Pending'
+    ).length;
+  }
+
+
+  // =========================
+  // DINING OPTIONS
+  // =========================
+
+  get tastingBookings(): number {
+
+    return this.todayReservations.filter(
+      reservation =>
+        reservation.diningOption === 'tasting'
+    ).length;
+  }
+
+
+  get aLaCarteBookings(): number {
+
+    return this.todayReservations.filter(
+      reservation =>
+        reservation.diningOption === 'alacarte'
+    ).length;
+  }
+
+
+  get tableOnlyBookings(): number {
+
+    return this.todayReservations.filter(
+      reservation =>
+        reservation.diningOption === 'table' ||
+        reservation.packageName === 'Table Only'
+    ).length;
+  }
+
+
+  // =========================
+  // TIME HELPERS
+  // =========================
+
+  private timeToMinutes(
+    time: string
+  ): number {
+
+    const [hours, minutes] =
+      time.split(':').map(Number);
+
+    return (
+      (hours * 60) +
+      minutes
     );
   }
 
-  setFilter(filter: 'All' | 'Confirmed' | 'Pending'): void {
-    this.activeFilter = filter;
+
+  // =========================
+  // STATUS LABEL
+  // =========================
+
+  getStatusClass(
+    status: Reservation['status']
+  ): string {
+
+    return status
+      .toLowerCase()
+      .replace(/\s+/g, '-');
   }
 
+
+  // =========================
+  // WALK-IN MODAL
+  // =========================
+
   openWalkInModal(): void {
+
     this.walkInName = '';
     this.walkInGuests = 2;
-    this.walkInTable = 'Counter 05';
+    this.walkInTable = 'Unassigned';
     this.walkInNotes = '';
+
     this.showWalkInModal = true;
   }
 
+
   closeWalkInModal(): void {
+
     this.showWalkInModal = false;
   }
 
+
   confirmWalkIn(): void {
-    const name = this.walkInName.trim();
+
+    const name =
+      this.walkInName.trim();
 
     if (!name) {
-      this.showToast('Please enter the guest name.');
+
+      this.showToast(
+        'Please enter the guest name.'
+      );
+
       return;
     }
 
-    const newReservation: Reservation = {
-      id: `AUR-${Math.floor(1000 + Math.random() * 9000)}`,
-      time: new Date().toLocaleTimeString('en-GB', {
-        hour: '2-digit',
-        minute: '2-digit'
-      }),
-      customer: name,
-      email: 'Walk-in guest',
-      guests: Number(this.walkInGuests),
-      table: this.walkInTable,
-      package: 'Walk-In Dining',
-      status: 'Seated',
-      note: this.walkInNotes.trim() || 'Walk-in booking.'
-    };
+    /*
+     * Walk-in creation is currently kept
+     * as a dashboard UI action.
+     *
+     * A backend walk-in endpoint can be
+     * connected later if required.
+     */
 
-    this.reservations = [newReservation, ...this.reservations];
     this.showWalkInModal = false;
-    this.activeFilter = 'All';
-    this.searchTerm = '';
-
-    this.showToast(`${name} has been added to today's bookings.`);
-  }
-
-  confirmReservation(reservation: Reservation): void {
-    this.updateReservationStatus(reservation, 'Confirmed');
-    this.showToast(`Reservation ${reservation.id} confirmed.`);
-  }
-
-  seatReservation(reservation: Reservation): void {
-    this.updateReservationStatus(reservation, 'Seated');
-    this.showToast(`${reservation.customer} has been marked as seated.`);
-  }
-
-  private updateReservationStatus(
-    target: Reservation,
-    status: BookingStatus
-  ): void {
-    this.reservations = this.reservations.map((reservation) =>
-      reservation.id === target.id
-        ? { ...reservation, status }
-        : reservation
-    );
-  }
-
-  viewDetails(reservation: Reservation): void {
-    const note = reservation.note
-      ? `\n\nSpecial notes: ${reservation.note}`
-      : '';
 
     this.showToast(
-      `${reservation.id} · ${reservation.customer}${note}`
+      `${name} has been added to the service list.`
     );
   }
 
-  showToast(message: string): void {
+
+  // =========================
+  // VIEW DETAILS
+  // =========================
+
+  viewDetails(
+    reservation: Reservation
+  ): void {
+
+    const details = [
+      reservation.reservationId,
+      reservation.guestName,
+      `${reservation.partySize} ${reservation.partySize === 1
+        ? 'guest'
+        : 'guests'
+      }`,
+      reservation.time,
+      reservation.packageName ||
+      'Dining service'
+    ].join(' · ');
+
+    this.showToast(details);
+  }
+
+
+  // =========================
+  // TOAST
+  // =========================
+
+  showToast(
+    message: string
+  ): void {
+
     this.toastMessage = message;
   }
 
+
   dismissToast(): void {
+
     this.toastMessage = '';
   }
+
+
 }

@@ -436,24 +436,34 @@
             } @else {
             
               <div class="selection-notice">
-            
-                <div>
-                  <span class="eyebrow">DINING</span>
-            
-                  <h4>Order from the Menu</h4>
-            
-                  <p>
+
+                <span class="selection-icon material-symbols-outlined">
+                  restaurant_menu
+                </span>
+              
+                <div class="selection-copy">
+              
+                  <strong>
+                    Order from the Menu
+                  </strong>
+              
+                  <span>
                     Browse our menu and select your dishes before your visit.
-                  </p>
+                  </span>
+              
                 </div>
-            
-                <a routerLink="/menu">
+              
+                <a
+                  routerLink="/menu"
+                  class="selection-action"
+                >
                   Explore Menu
+              
                   <span class="material-symbols-outlined">
                     arrow_forward
                   </span>
                 </a>
-            
+              
               </div>
             
             }
