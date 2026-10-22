@@ -30,12 +30,23 @@ export class GuestLoginComponent {
   showPassword = false;
   isSigningIn = false;
 
+  successMessage = '';
+  successTitle = '';
+
   errorMessage = '';
+  errorTitle = '';
+
+  private successTimeout:
+    ReturnType<typeof setTimeout> | undefined;
+
+  private errorTimeout:
+    ReturnType<typeof setTimeout> | undefined;
+
 
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
 
   // =========================
@@ -43,7 +54,8 @@ export class GuestLoginComponent {
   // =========================
 
   togglePassword(): void {
-    this.showPassword = !this.showPassword;
+    this.showPassword =
+      !this.showPassword;
   }
 
 
@@ -53,7 +65,8 @@ export class GuestLoginComponent {
 
   signIn(): void {
 
-    this.errorMessage = '';
+    this.clearError();
+    this.clearSuccess();
 
     const email =
       this.email.trim().toLowerCase();
@@ -67,8 +80,11 @@ export class GuestLoginComponent {
     // =========================
 
     if (!email || !password) {
-      this.errorMessage =
-        'Please enter your email address and password.';
+
+      this.showError(
+        'Incomplete Information',
+        'Please enter your email address and password.'
+      );
 
       return;
     }
@@ -87,13 +103,30 @@ export class GuestLoginComponent {
       })
       .subscribe({
 
-        next: () => {
+        next: (response) => {
 
-          this.isSigningIn = false;
+          console.log(
+            'Guest login successful:',
+            response
+          );
 
-          this.router.navigate([
-            '/reservations'
-          ]);
+          this.isSigningIn =
+            false;
+
+          this.showSuccess(
+            'Welcome Back',
+            'You have signed in successfully. Redirecting to your reservations...'
+          );
+
+          setTimeout(() => {
+
+            this.clearSuccess();
+
+            this.router.navigate([
+              '/reservations'
+            ]);
+
+          }, 1400);
         },
 
         error: (error) => {
@@ -103,13 +136,127 @@ export class GuestLoginComponent {
             error
           );
 
-          this.isSigningIn = false;
+          this.isSigningIn =
+            false;
 
-          this.errorMessage =
+          this.showError(
+            'Unable to Sign In',
             error?.error?.message ||
-            'Unable to sign in. Please try again.';
+            'The email or password you entered is incorrect. Please try again.'
+          );
         }
+
       });
+  }
+
+
+  // =========================
+  // SUCCESS MESSAGE
+  // =========================
+
+  showSuccess(
+    title: string,
+    message: string
+  ): void {
+
+    // Remove existing error
+    this.clearError();
+
+    // Reset existing timer
+    if (this.successTimeout) {
+
+      clearTimeout(
+        this.successTimeout
+      );
+
+      this.successTimeout =
+        undefined;
+    }
+
+    this.successTitle =
+      title;
+
+    this.successMessage =
+      message;
+  }
+
+
+  // =========================
+  // ERROR MESSAGE
+  // =========================
+
+  showError(
+    title: string,
+    message: string
+  ): void {
+
+    // Remove existing success message
+    this.clearSuccess();
+
+    // Cancel previous error timer
+    if (this.errorTimeout) {
+
+      clearTimeout(
+        this.errorTimeout
+      );
+
+      this.errorTimeout =
+        undefined;
+    }
+
+    this.errorTitle =
+      title;
+
+    this.errorMessage =
+      message;
+  }
+
+
+  // =========================
+  // CLEAR SUCCESS
+  // =========================
+
+  clearSuccess(): void {
+
+    if (this.successTimeout) {
+
+      clearTimeout(
+        this.successTimeout
+      );
+
+      this.successTimeout =
+        undefined;
+    }
+
+    this.successMessage =
+      '';
+
+    this.successTitle =
+      '';
+  }
+
+
+  // =========================
+  // CLEAR ERROR
+  // =========================
+
+  clearError(): void {
+
+    if (this.errorTimeout) {
+
+      clearTimeout(
+        this.errorTimeout
+      );
+
+      this.errorTimeout =
+        undefined;
+    }
+
+    this.errorMessage =
+      '';
+
+    this.errorTitle =
+      '';
   }
 
 
@@ -117,9 +264,13 @@ export class GuestLoginComponent {
   // SOCIAL LOGIN
   // =========================
 
-  socialLogin(provider: string): void {
+  socialLogin(
+    provider: string
+  ): void {
+
     console.log(
       `${provider} login selected`
     );
   }
+
 }

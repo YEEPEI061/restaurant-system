@@ -232,28 +232,28 @@ export class ReservationManagementComponent
     ];
 
 
-    /*
-    * --------------------------------------------------
-    * MESSAGE MODALS
-    * --------------------------------------------------
-    */
-   
-   successMessage = '';
-   successTitle = '';
+  /*
+  * --------------------------------------------------
+  * MESSAGE MODALS
+  * --------------------------------------------------
+  */
 
-   private successTimeout?:
-   ReturnType<typeof setTimeout>;
-   
-   errorTitle = '';
-   errorMessage = '';
+  successMessage = '';
+  successTitle = '';
 
-   private errorTimeout?:
-   ReturnType<typeof setTimeout>;
+  private successTimeout?:
+    ReturnType<typeof setTimeout>;
 
-   
-   cancelConfirmOpen = false;
-   
-   reservationToCancel: Reservation | null = null;
+  errorTitle = '';
+  errorMessage = '';
+
+  private errorTimeout?:
+    ReturnType<typeof setTimeout>;
+
+
+  cancelConfirmOpen = false;
+
+  reservationToCancel: Reservation | null = null;
 
 
   /*
@@ -265,7 +265,7 @@ export class ReservationManagementComponent
   constructor(
     private reservationService:
       ReservationService
-  ) {}
+  ) { }
 
 
   /*
@@ -518,7 +518,7 @@ export class ReservationManagementComponent
         if (
           this.activeFilter !== 'All' &&
           reservation.status !==
-            this.activeFilter
+          this.activeFilter
         ) {
 
           return false;
@@ -674,87 +674,87 @@ export class ReservationManagementComponent
  * --------------------------------------------------
  */
 
-assignTable(
-  reservation: Reservation,
-  tableId: string
-): void {
+  assignTable(
+    reservation: Reservation,
+    tableId: string
+  ): void {
 
-  /*
-   * Check whether the selected table is already
-   * occupied at the same date and time.
-   */
-  if (
-    tableId &&
-    this.isTableOccupied(
-      tableId,
-      reservation.date,
-      reservation.time,
-      reservation.reservationId
-    )
-  ) {
+    /*
+     * Check whether the selected table is already
+     * occupied at the same date and time.
+     */
+    if (
+      tableId &&
+      this.isTableOccupied(
+        tableId,
+        reservation.date,
+        reservation.time,
+        reservation.reservationId
+      )
+    ) {
 
-    this.showError(
-      'Table Unavailable',
-      `${tableId} is already occupied at ${reservation.time} on ${reservation.date}.`
-    );
+      this.showError(
+        'Table Unavailable',
+        `${tableId} is already occupied at ${reservation.time} on ${reservation.date}.`
+      );
 
-    return;
-  }
-
-
-  const previousTable =
-    reservation.table || '';
-
-  reservation.table =
-    tableId;
+      return;
+    }
 
 
-  const update:
-    UpdateReservationRequest = {
+    const previousTable =
+      reservation.table || '';
 
-    table: tableId
+    reservation.table =
+      tableId;
 
-  };
+
+    const update:
+      UpdateReservationRequest = {
+
+      table: tableId
+
+    };
 
 
-  this.reservationService
-    .updateReservation(
-      reservation.reservationId,
-      update
-    )
-    .subscribe({
+    this.reservationService
+      .updateReservation(
+        reservation.reservationId,
+        update
+      )
+      .subscribe({
 
-      next: () => {
+        next: () => {
 
-        this.showSuccess(
-          'Table Assigned',
-          tableId
-            ? `${reservation.reservationId} has been assigned to ${tableId}.`
-            : `${reservation.reservationId} table assignment has been removed.`
-        );
+          this.showSuccess(
+            'Table Assigned',
+            tableId
+              ? `${reservation.reservationId} has been assigned to ${tableId}.`
+              : `${reservation.reservationId} table assignment has been removed.`
+          );
 
-      },
+        },
 
-      error: (error) => {
+        error: (error) => {
 
-        console.error(
-          'Table assignment failed:',
-          error
-        );
+          console.error(
+            'Table assignment failed:',
+            error
+          );
 
-        reservation.table =
-          previousTable;
+          reservation.table =
+            previousTable;
 
           this.showError(
             'Unable to Assign Table',
             error?.error?.message ||
             'Unable to update table assignment.'
           );
-      }
+        }
 
-    });
+      });
 
-}
+  }
 
 
   /*
@@ -769,253 +769,253 @@ assignTable(
  * --------------------------------------------------
  */
 
-updateStatus(
-  reservation: Reservation,
-  status: ReservationStatus
-): void {
+  updateStatus(
+    reservation: Reservation,
+    status: ReservationStatus
+  ): void {
+
+    /*
+     * Cancellation requires confirmation.
+     */
+    if (status === 'Cancelled') {
+
+      this.reservationToCancel =
+        reservation;
+
+      this.cancelConfirmOpen =
+        true;
+
+      return;
+    }
+
+
+    /*
+     * All other status changes can
+     * happen immediately.
+     */
+
+    this.reservationService
+      .updateReservationStatus(
+        reservation.reservationId,
+        status
+      )
+      .subscribe({
+
+        next: (response) => {
+
+          const updated =
+            response.reservation;
+
+
+          const index =
+            this.reservations.findIndex(
+              item =>
+                item.reservationId ===
+                reservation.reservationId
+            );
+
+
+          if (index !== -1) {
+
+            this.reservations[index] =
+              updated;
+
+          }
+
+
+          this.showSuccess(
+            this.getStatusSuccessTitle(status),
+            this.getStatusSuccessMessage(
+              reservation.reservationId,
+              status
+            )
+          );
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Status update failed:',
+            error
+          );
+
+          this.showError(
+            'Unable to Update Reservation',
+            error?.error?.message ||
+            'Unable to update reservation status.'
+          );
+
+        }
+
+      });
+
+  }
 
   /*
-   * Cancellation requires confirmation.
+   * --------------------------------------------------
+   * CANCEL CONFIRMATION
+   * --------------------------------------------------
    */
-  if (status === 'Cancelled') {
 
-    this.reservationToCancel =
-      reservation;
+  cancelReservation(): void {
+
+    if (!this.reservationToCancel) {
+      return;
+    }
+
+
+    const reservation =
+      this.reservationToCancel;
+
+
+    this.reservationService
+      .updateReservationStatus(
+        reservation.reservationId,
+        'Cancelled'
+      )
+      .subscribe({
+
+        next: (response) => {
+
+          const updated =
+            response.reservation;
+
+
+          const index =
+            this.reservations.findIndex(
+              item =>
+                item.reservationId ===
+                reservation.reservationId
+            );
+
+
+          if (index !== -1) {
+
+            this.reservations[index] =
+              updated;
+
+          }
+
+
+          this.cancelConfirmOpen =
+            false;
+
+          this.reservationToCancel =
+            null;
+
+
+          this.showSuccess(
+            'Reservation Cancelled',
+            `${reservation.reservationId} has been cancelled successfully.`
+          );
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Cancellation failed:',
+            error
+          );
+
+
+          this.cancelConfirmOpen =
+            false;
+
+          this.reservationToCancel =
+            null;
+
+
+          this.showError(
+            'Unable to Cancel Reservation',
+            error?.error?.message ||
+            'Unable to cancel this reservation.'
+          );
+
+        }
+
+      });
+
+  }
+
+
+  closeCancelConfirmation(): void {
 
     this.cancelConfirmOpen =
-      true;
+      false;
 
-    return;
+    this.reservationToCancel =
+      null;
+
   }
-
 
   /*
-   * All other status changes can
-   * happen immediately.
+   * --------------------------------------------------
+   * SUCCESS MESSAGE
+   * --------------------------------------------------
    */
 
-  this.reservationService
-    .updateReservationStatus(
-      reservation.reservationId,
-      status
-    )
-    .subscribe({
 
-      next: (response) => {
+  showSuccess(
+    title: string,
+    message: string
+  ): void {
 
-        const updated =
-          response.reservation;
+    // Remove existing error
+    this.clearError();
 
+    // Reset existing timer
+    if (this.successTimeout) {
+      clearTimeout(
+        this.successTimeout
+      );
+    }
 
-        const index =
-          this.reservations.findIndex(
-            item =>
-              item.reservationId ===
-              reservation.reservationId
-          );
+    this.successTitle =
+      title;
 
+    this.successMessage =
+      message;
 
-        if (index !== -1) {
+    this.successTimeout =
+      setTimeout(() => {
 
-          this.reservations[index] =
-            updated;
+        this.successMessage =
+          '';
 
-        }
+        this.successTitle =
+          '';
 
-
-        this.showSuccess(
-          this.getStatusSuccessTitle(status),
-          this.getStatusSuccessMessage(
-            reservation.reservationId,
-            status
-          )
-        );
-
-      },
-
-      error: (error) => {
-
-        console.error(
-          'Status update failed:',
-          error
-        );
-
-        this.showError(
-          'Unable to Update Reservation',
-          error?.error?.message ||
-          'Unable to update reservation status.'
-        );
-
-      }
-
-    });
-
-}
-
-/*
- * --------------------------------------------------
- * CANCEL CONFIRMATION
- * --------------------------------------------------
- */
-
-cancelReservation(): void {
-
-  if (!this.reservationToCancel) {
-    return;
+      }, 1400);
   }
-
-
-  const reservation =
-    this.reservationToCancel;
-
-
-  this.reservationService
-    .updateReservationStatus(
-      reservation.reservationId,
-      'Cancelled'
-    )
-    .subscribe({
-
-      next: (response) => {
-
-        const updated =
-          response.reservation;
-
-
-        const index =
-          this.reservations.findIndex(
-            item =>
-              item.reservationId ===
-              reservation.reservationId
-          );
-
-
-        if (index !== -1) {
-
-          this.reservations[index] =
-            updated;
-
-        }
-
-
-        this.cancelConfirmOpen =
-          false;
-
-        this.reservationToCancel =
-          null;
-
-
-        this.showSuccess(
-          'Reservation Cancelled',
-          `${reservation.reservationId} has been cancelled successfully.`
-        );
-
-      },
-
-      error: (error) => {
-
-        console.error(
-          'Cancellation failed:',
-          error
-        );
-
-
-        this.cancelConfirmOpen =
-          false;
-
-        this.reservationToCancel =
-          null;
-
-
-        this.showError(
-          'Unable to Cancel Reservation',
-          error?.error?.message ||
-          'Unable to cancel this reservation.'
-        );
-
-      }
-
-    });
-
-}
-
-
-closeCancelConfirmation(): void {
-
-  this.cancelConfirmOpen =
-    false;
-
-  this.reservationToCancel =
-    null;
-
-}
-
-/*
- * --------------------------------------------------
- * SUCCESS MESSAGE
- * --------------------------------------------------
- */
-
-
-showSuccess(
-  title: string,
-  message: string
-): void {
-
-  // Remove existing error
-  this.clearError();
-
-  // Reset existing timer
-  if (this.successTimeout) {
-    clearTimeout(
-      this.successTimeout
-    );
-  }
-
-  this.successTitle =
-    title;
-
-  this.successMessage =
-    message;
-
-  this.successTimeout =
-    setTimeout(() => {
-
-      this.successMessage =
-        '';
-
-      this.successTitle =
-        '';
-
-    }, 1400);
-}
 
   // =========================
   // ERROR MESSAGE
   // =========================
 
-  
+
   showError(
     title: string,
     message: string
   ): void {
-  
+
     // Remove existing success message
     this.clearSuccess();
-  
+
     // Cancel any previous error timer
     if (this.errorTimeout) {
       clearTimeout(
         this.errorTimeout
       );
-  
+
       this.errorTimeout =
         undefined;
     }
-  
+
     this.errorTitle =
       title;
-  
+
     this.errorMessage =
       message;
   }
@@ -1067,69 +1067,69 @@ showSuccess(
   }
 
 
-/*
- * --------------------------------------------------
- * STATUS SUCCESS TITLE
- * --------------------------------------------------
- */
+  /*
+   * --------------------------------------------------
+   * STATUS SUCCESS TITLE
+   * --------------------------------------------------
+   */
 
-private getStatusSuccessTitle(
-  status: ReservationStatus
-): string {
+  private getStatusSuccessTitle(
+    status: ReservationStatus
+  ): string {
 
-  switch (status) {
+    switch (status) {
 
-    case 'Confirmed':
-      return 'Reservation Confirmed';
+      case 'Confirmed':
+        return 'Reservation Confirmed';
 
-    case 'Seated':
-      return 'Guest Seated';
+      case 'Seated':
+        return 'Guest Seated';
 
-    case 'Completed':
-      return 'Reservation Completed';
+      case 'Completed':
+        return 'Reservation Completed';
 
-    case 'Pending':
-      return 'Reservation Reopened';
+      case 'Pending':
+        return 'Reservation Reopened';
 
-    default:
-      return 'Reservation Updated';
+      default:
+        return 'Reservation Updated';
 
-  }
-
-}
-
-
-/*
- * --------------------------------------------------
- * STATUS SUCCESS MESSAGE
- * --------------------------------------------------
- */
-
-private getStatusSuccessMessage(
-  reservationId: string,
-  status: ReservationStatus
-): string {
-
-  switch (status) {
-
-    case 'Confirmed':
-      return `${reservationId} has been confirmed successfully.`;
-
-    case 'Seated':
-      return `${reservationId} has been marked as seated.`;
-
-    case 'Completed':
-      return `${reservationId} has been completed successfully.`;
-
-    case 'Pending':
-      return `${reservationId} has been reopened as pending.`;
-
-    default:
-      return `${reservationId} has been updated successfully.`;
+    }
 
   }
 
-}
+
+  /*
+   * --------------------------------------------------
+   * STATUS SUCCESS MESSAGE
+   * --------------------------------------------------
+   */
+
+  private getStatusSuccessMessage(
+    reservationId: string,
+    status: ReservationStatus
+  ): string {
+
+    switch (status) {
+
+      case 'Confirmed':
+        return `${reservationId} has been confirmed successfully.`;
+
+      case 'Seated':
+        return `${reservationId} has been marked as seated.`;
+
+      case 'Completed':
+        return `${reservationId} has been completed successfully.`;
+
+      case 'Pending':
+        return `${reservationId} has been reopened as pending.`;
+
+      default:
+        return `${reservationId} has been updated successfully.`;
+
+    }
+
+  }
 
   /*
    * --------------------------------------------------
@@ -1432,15 +1432,15 @@ private getStatusSuccessMessage(
   get estimatedTotal(): number {
 
     if (this.form.packageName === 'À La Carte') {
-  
+
       return this.groupedSelectedDishes.reduce(
         (total, dish) =>
           total + (dish.price * dish.quantity),
         0
       );
-  
+
     }
-  
+
     return (
       this.packagePrice(this.form.packageName) *
       this.form.partySize
@@ -1534,7 +1534,7 @@ private getStatusSuccessMessage(
   hasSeatedReservation(
     tableId: string
   ): boolean {
-  
+
     return this.getTableReservations(
       tableId
     ).some(
@@ -1542,18 +1542,18 @@ private getStatusSuccessMessage(
         reservation.status === 'Seated'
     );
   }
-  
+
   floorMatrixOpen = false;
-  
+
   showFloorMatrix(): void {
     this.floorMatrixOpen = true;
   }
-  
+
   closeFloorMatrix(): void {
     this.floorMatrixOpen = false;
   }
-  
-  
+
+
   /*
     * Check whether a table is occupied
     * at a specific date and time.
@@ -1564,44 +1564,44 @@ private getStatusSuccessMessage(
     time: string,
     excludeReservationId?: string
   ): boolean {
-  
+
     const requestedTime =
       this.timeToMinutes(time);
-  
+
     return this.reservations.some(
       reservation => {
-  
+
         if (
           reservation.reservationId ===
           excludeReservationId
         ) {
           return false;
         }
-  
+
         if (
           reservation.table !== tableId
         ) {
           return false;
         }
-  
+
         if (
           reservation.date !== date
         ) {
           return false;
         }
-  
+
         if (
           reservation.status === 'Cancelled' ||
           reservation.status === 'Completed'
         ) {
           return false;
         }
-  
+
         const reservationTime =
           this.timeToMinutes(
             reservation.time
           );
-  
+
         /*
           * Table is occupied for one hour
           * from the reservation time.
@@ -1609,18 +1609,18 @@ private getStatusSuccessMessage(
           * Example:
           * 18:30 → occupied until 19:30
           */
-  
+
         return (
           requestedTime >= reservationTime &&
           requestedTime < reservationTime + 60
         );
-  
+
       }
     );
-  
+
   }
-  
-  
+
+
   /*
     * Check whether a table can be assigned
     * to the current drawer form.
@@ -1628,14 +1628,14 @@ private getStatusSuccessMessage(
   isTableAvailable(
     tableId: string
   ): boolean {
-  
+
     if (
       !this.form.date ||
       !this.form.time
     ) {
       return true;
     }
-  
+
     return !this.isTableOccupied(
       tableId,
       this.form.date,
@@ -1644,10 +1644,10 @@ private getStatusSuccessMessage(
         ? this.form.reservationId
         : undefined
     );
-  
+
   }
-  
-  
+
+
   /*
     * Get the reservation currently occupying
     * a table at a specific date/time.
@@ -1657,97 +1657,97 @@ private getStatusSuccessMessage(
     date: string,
     time: string
   ): Reservation | undefined {
-  
+
     const requestedTime =
       this.timeToMinutes(time);
-  
+
     return this.reservations.find(
       reservation => {
-  
+
         if (
           reservation.table !== tableId
         ) {
           return false;
         }
-  
+
         if (
           reservation.date !== date
         ) {
           return false;
         }
-  
+
         if (
           reservation.status === 'Cancelled' ||
           reservation.status === 'Completed'
         ) {
           return false;
         }
-  
+
         const reservationTime =
           this.timeToMinutes(
             reservation.time
           );
-  
+
         return (
           requestedTime >= reservationTime &&
           requestedTime < reservationTime + 60
         );
-  
+
       }
     );
-  
+
   }
-  
-  
+
+
   /*
     * Convert HH:mm to minutes.
     */
   private timeToMinutes(
     time: string
   ): number {
-  
+
     if (!time) {
       return 0;
     }
-  
+
     const [
       hours,
       minutes
     ] = time
       .split(':')
       .map(Number);
-  
+
     return (
       hours * 60 +
       minutes
     );
-  
+
   }
-  
-  
+
+
   /*
     * Add one hour to a reservation time.
     */
   getEndTime(
     time: string
   ): string {
-  
+
     const totalMinutes =
       this.timeToMinutes(time) + 60;
-  
+
     const hours =
       Math.floor(
         totalMinutes / 60
       ) % 24;
-  
+
     const minutes =
       totalMinutes % 60;
-  
+
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-  
+
   }
-  
-  
+
+
   /*
     * Return the reservation occupying
     * a table on a particular date.
@@ -1755,7 +1755,7 @@ private getStatusSuccessMessage(
   getTableReservations(
     tableId: string
   ): Reservation[] {
-  
+
     return this.reservations
       .filter(
         reservation =>
@@ -1768,11 +1768,11 @@ private getStatusSuccessMessage(
           this.timeToMinutes(a.time) -
           this.timeToMinutes(b.time)
       );
-  
+
   }
-  
+
   getTableStatus(tableId: string): 'Available' | 'Reserved' | 'Seated' {
-  
+
     const reservation =
       this.reservations.find(
         reservation =>
@@ -1780,18 +1780,18 @@ private getStatusSuccessMessage(
           reservation.status !== 'Cancelled' &&
           reservation.status !== 'Completed'
       );
-  
+
     if (!reservation) {
       return 'Available';
     }
-  
+
     if (reservation.status === 'Seated') {
       return 'Seated';
     }
-  
+
     return 'Reserved';
   }
- 
+
 
   /*
    * --------------------------------------------------
@@ -1935,14 +1935,14 @@ private getStatusSuccessMessage(
 
   }
 
-  
+
   get groupedSelectedDishes(): Array<{
     id: string;
     name: string;
     price: number;
     quantity: number;
   }> {
-  
+
     const grouped =
       new Map<
         string,
@@ -1953,29 +1953,29 @@ private getStatusSuccessMessage(
           quantity: number;
         }
       >();
-  
-      for (const dish of this.form.selectedDishes) {
-  
+
+    for (const dish of this.form.selectedDishes) {
+
       const existing =
         grouped.get(dish.id);
-  
+
       if (existing) {
-  
+
         existing.quantity += 1;
-  
+
       } else {
-  
+
         grouped.set(dish.id, {
           id: dish.id,
           name: dish.name,
           price: dish.price,
           quantity: 1
         });
-  
+
       }
-  
+
     }
-  
+
     return Array.from(grouped.values());
   }
 
@@ -1999,8 +1999,8 @@ private getStatusSuccessMessage(
   get isReservationEditable(): boolean {
 
     return this.form.status === 'Pending';
-  
+
   }
 
-  
+
 }

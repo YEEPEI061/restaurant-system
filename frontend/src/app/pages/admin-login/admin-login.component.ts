@@ -26,68 +26,196 @@ export class AdminLoginComponent {
 
   showPassword = false;
   isSigningIn = false;
-  isAuthenticated = false;
+
+  // =========================
+  // SUCCESS / ERROR MESSAGE
+  // =========================
+
+  successMessage = '';
+  successTitle = '';
 
   errorMessage = '';
+  errorTitle = '';
+
+  private successTimeout:
+    ReturnType<typeof setTimeout> | undefined;
+
+  private errorTimeout:
+    ReturnType<typeof setTimeout> | undefined;
+
 
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
+
+
+  // =========================
+  // TOGGLE PASSWORD
+  // =========================
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  signIn(): void {
+
+  // =========================
+  // SHOW SUCCESS
+  // =========================
+
+  showSuccess(
+    title: string,
+    message: string
+  ): void {
+
+    this.clearError();
+
+    if (this.successTimeout) {
+      clearTimeout(this.successTimeout);
+      this.successTimeout = undefined;
+    }
+
+    this.successTitle = title;
+    this.successMessage = message;
+  }
+
+
+  // =========================
+  // SHOW ERROR
+  // =========================
+
+  showError(
+    title: string,
+    message: string
+  ): void {
+
+    this.clearSuccess();
+
+    if (this.errorTimeout) {
+      clearTimeout(this.errorTimeout);
+      this.errorTimeout = undefined;
+    }
+
+    this.errorTitle = title;
+    this.errorMessage = message;
+  }
+
+
+  // =========================
+  // CLEAR SUCCESS
+  // =========================
+
+  clearSuccess(): void {
+
+    if (this.successTimeout) {
+      clearTimeout(this.successTimeout);
+      this.successTimeout = undefined;
+    }
+
+    this.successMessage = '';
+    this.successTitle = '';
+  }
+
+
+  // =========================
+  // CLEAR ERROR
+  // =========================
+
+  clearError(): void {
+
+    if (this.errorTimeout) {
+      clearTimeout(this.errorTimeout);
+      this.errorTimeout = undefined;
+    }
 
     this.errorMessage = '';
+    this.errorTitle = '';
+  }
 
-    const email = this.staffIdentifier.trim();
-    const password = this.password;
 
+  // =========================
+  // SIGN IN
+  // =========================
+
+  signIn(): void {
+
+    this.clearError();
+    this.clearSuccess();
+
+    const email =
+      this.staffIdentifier.trim().toLowerCase();
+
+    const password =
+      this.password;
+
+
+    // FRONTEND VALIDATION
     if (!email || !password) {
-      this.errorMessage =
-        'Please enter your email and password.';
+
+      this.showError(
+        'Incomplete Information',
+        'Please enter your work email or staff ID and password.'
+      );
+
       return;
     }
 
+
+    // LOGIN REQUEST
     this.isSigningIn = true;
 
-    this.authService.adminLogin({
-      email,
-      password
-    }).subscribe({
+    this.authService
+      .adminLogin({
+        email,
+        password
+      })
+      .subscribe({
 
-      next: (response) => {
+        next: (response) => {
 
-        this.isSigningIn = false;
-        this.isAuthenticated = true;
+          console.log(
+            'Admin login successful:',
+            response.user
+          );
 
-        console.log(
-          'Admin login successful:',
-          response.user
-        );
+          this.isSigningIn = false;
 
-        setTimeout(() => {
-          this.router.navigate(['/admin-dashboard']);
-        }, 900);
-      },
+          this.showSuccess(
+            'Access Granted',
+            'Your staff credentials have been verified. Redirecting to Service & Floor Operations...'
+          );
 
-      error: (error) => {
 
-        this.isSigningIn = false;
-        this.isAuthenticated = false;
+          // REDIRECT AFTER SUCCESS MESSAGE
+          this.successTimeout =
+            setTimeout(() => {
 
-        console.error(
-          'Admin login failed:',
-          error
-        );
+              this.clearSuccess();
 
-        this.errorMessage =
-          error?.error?.message ||
-          'Invalid email or password.';
-      }
-    });
+              this.router.navigate([
+                '/admin-dashboard'
+              ]);
+
+            }, 1400);
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            'Admin login failed:',
+            error
+          );
+
+          this.isSigningIn = false;
+
+          this.showError(
+            'Unable to Sign In',
+            error?.error?.message ||
+            'The staff credentials you entered are incorrect. Please try again.'
+          );
+        }
+
+      });
   }
 }

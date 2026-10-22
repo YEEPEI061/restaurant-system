@@ -47,10 +47,7 @@
 
           <div class="restaurant-image">
 
-            <img
-              src="/images/aurelia-restaurant.png"
-              alt="Aurelia French Restaurant"
-            />
+            <img src="/images/aurelia-restaurant.png" alt="Aurelia French Restaurant" />
 
             <div class="image-overlay"></div>
 
@@ -109,53 +106,9 @@
         </div>
 
 
-        <!-- Social Registration -->
-        <div class="social-login">
-
-          <button
-            type="button"
-            class="social-button"
-            (click)="socialRegister('Google')"
-          >
-
-            <span class="google-icon">
-              G
-            </span>
-
-            <span>
-              Google
-            </span>
-
-          </button>
-
-
-          <button
-            type="button"
-            class="social-button"
-            (click)="socialRegister('Apple')"
-          >
-
-            <span class="apple-icon">
-              ●
-            </span>
-
-            <span>
-              Apple ID
-            </span>
-
-          </button>
-
-        </div>
-
 
         <!-- Divider -->
         <div class="divider">
-
-          <span></span>
-
-          <p>
-            or with credentials
-          </p>
 
           <span></span>
 
@@ -163,10 +116,7 @@
 
 
         <!-- Registration Form -->
-        <form
-          class="register-form"
-          (ngSubmit)="createAccount()"
-        >
+        <form class="register-form" (ngSubmit)="createAccount()">
 
 
           <!-- First + Last Name -->
@@ -176,20 +126,13 @@
             <div class="form-group">
 
               <label for="firstName">
-                First Name
+                First Name<i>*</i>
               </label>
 
               <div class="input-wrapper">
 
-                <input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  [(ngModel)]="firstName"
-                  placeholder="e.g. Amelia"
-                  autocomplete="given-name"
-                  required
-                />
+                <input id="firstName" name="firstName" type="text" [(ngModel)]="firstName" placeholder="e.g. Amelia"
+                  autocomplete="given-name" required />
 
                 <span class="material-symbols-outlined input-icon">
                   person
@@ -204,20 +147,13 @@
             <div class="form-group">
 
               <label for="lastName">
-                Last Name
+                Last Name<i>*</i>
               </label>
 
               <div class="input-wrapper">
 
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  [(ngModel)]="lastName"
-                  placeholder="e.g. Laurent"
-                  autocomplete="family-name"
-                  required
-                />
+                <input id="lastName" name="lastName" type="text" [(ngModel)]="lastName" placeholder="e.g. Laurent"
+                  autocomplete="family-name" required />
 
                 <span class="material-symbols-outlined input-icon">
                   person
@@ -234,20 +170,13 @@
           <div class="form-group">
 
             <label for="email">
-              Email Address
+              Email Address<i>*</i>
             </label>
 
             <div class="input-wrapper">
 
-              <input
-                id="email"
-                name="email"
-                type="email"
-                [(ngModel)]="email"
-                placeholder="guest&#64;aurelia.com"
-                autocomplete="email"
-                required
-              />
+              <input id="email" name="email" type="email" [(ngModel)]="email" placeholder="guest&#64;aurelia.com"
+                autocomplete="email" required />
 
               <span class="material-symbols-outlined input-icon">
                 mail
@@ -267,22 +196,12 @@
                 Phone Number
               </label>
 
-              <span class="optional-label">
-                Optional
-              </span>
-
             </div>
 
             <div class="input-wrapper">
 
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                [(ngModel)]="phone"
-                placeholder="+60 12 345 6789"
-                autocomplete="tel"
-              />
+              <input id="phone" name="phone" type="tel" [(ngModel)]="phone" placeholder="+60 12 345 6789"
+                autocomplete="tel" />
 
               <span class="material-symbols-outlined input-icon">
                 smartphone
@@ -299,7 +218,7 @@
             <div class="label-row">
 
               <label for="password">
-                Create Password
+                Password<i>*</i>
               </label>
 
               <span class="password-hint">
@@ -310,23 +229,11 @@
 
             <div class="input-wrapper">
 
-              <input
-                id="password"
-                name="password"
-                [(ngModel)]="password"
-                [type]="showPassword ? 'text' : 'password'"
-                placeholder="••••••••"
-                minlength="8"
-                autocomplete="new-password"
-                required
-              />
+              <input id="password" name="password" [(ngModel)]="password" [type]="showPassword ? 'text' : 'password'"
+                placeholder="••••••••" minlength="8" autocomplete="new-password" required />
 
-              <button
-                type="button"
-                class="password-toggle"
-                aria-label="Toggle password visibility"
-                (click)="togglePassword()"
-              >
+              <button type="button" class="password-toggle" aria-label="Toggle password visibility"
+                (click)="togglePassword()">
 
                 <span class="material-symbols-outlined">
                   {{ showPassword ? 'visibility_off' : 'visibility' }}
@@ -345,7 +252,7 @@
             <div class="label-row">
 
               <label for="confirmPassword">
-                Confirm Password
+                Confirm Password<i>*</i>
               </label>
 
               <span class="password-hint">
@@ -356,23 +263,12 @@
 
             <div class="input-wrapper">
 
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                [(ngModel)]="confirmPassword"
-                [type]="showConfirmPassword ? 'text' : 'password'"
-                placeholder="Re-enter password"
-                minlength="8"
-                autocomplete="new-password"
-                required
-              />
+              <input id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword"
+                [type]="showConfirmPassword ? 'text' : 'password'" placeholder="Re-enter password" minlength="8"
+                autocomplete="new-password" required />
 
-              <button
-                type="button"
-                class="password-toggle"
-                aria-label="Toggle confirm password visibility"
-                (click)="toggleConfirmPassword()"
-              >
+              <button type="button" class="password-toggle" aria-label="Toggle confirm password visibility"
+                (click)="toggleConfirmPassword()">
 
                 <span class="material-symbols-outlined">
                   {{ showConfirmPassword ? 'visibility_off' : 'visibility' }}
@@ -390,12 +286,7 @@
 
             <label class="terms-label">
 
-              <input
-                type="checkbox"
-                name="agreeToTerms"
-                [(ngModel)]="agreeToTerms"
-                required
-              />
+              <input type="checkbox" name="agreeToTerms" [(ngModel)]="agreeToTerms" required />
 
               <span class="custom-checkbox">
 
@@ -426,39 +317,25 @@
           <!-- Create Account -->
           <div class="submit-area">
 
-            <button
-              type="submit"
-              class="submit-button"
-              [disabled]="isCreatingAccount"
-            >
+            <button type="submit" class="submit-button" [disabled]="isCreatingAccount">
 
               @if (isCreatingAccount) {
 
-                <span class="loading-spinner"></span>
+              <span class="loading-spinner"></span>
 
-                <span>
-                  Creating Account...
-                </span>
-
-              } @else if (accountCreated) {
-
-                <span class="material-symbols-outlined">
-                  check_circle
-                </span>
-
-                <span>
-                  Account Created
-                </span>
+              <span>
+                Creating Account...
+              </span>
 
               } @else {
 
-                <span>
-                  Create Account
-                </span>
+              <span>
+                Create Account
+              </span>
 
-                <span class="material-symbols-outlined">
-                  arrow_forward
-                </span>
+              <span class="material-symbols-outlined">
+                arrow_forward
+              </span>
 
               }
 
@@ -467,24 +344,6 @@
           </div>
 
         </form>
-
-
-        <!-- Success Message -->
-        @if (accountCreated) {
-
-          <div class="success-alert">
-
-            <span class="material-symbols-outlined">
-              verified
-            </span>
-
-            <span>
-              Account created successfully. Welcome to Aurelia.
-            </span>
-
-          </div>
-
-        }
 
 
         <!-- Already Have Account -->
@@ -508,5 +367,98 @@
   </section>
 
 </main>
+
+<!-- =====================================================
+SUCCESS MESSAGE
+===================================================== -->
+
+@if (successMessage) {
+
+<div class="message-modal-backdrop success-backdrop" role="status">
+
+  <div class="message-card success-card">
+
+    <div class="success-animation">
+
+      <svg class="success-svg" viewBox="0 0 52 52" aria-hidden="true">
+
+        <circle class="success-circle" cx="26" cy="26" r="24" fill="none"></circle>
+
+        <path class="success-check" fill="none" d="M14 27 L22 35 L39 18"></path>
+
+      </svg>
+
+    </div>
+
+    <div class="message-copy">
+
+      <span class="message-eyebrow success-eyebrow">
+        SUCCESS
+      </span>
+
+      <h2>
+        {{ successTitle }}
+      </h2>
+
+      <p>
+        {{ successMessage }}
+      </p>
+
+    </div>
+
+    <button type="button" class="button button-light error-close-button" (click)="continueToLogin()">
+      Continue to Sign In
+    </button>
+
+  </div>
+
+</div>
+
+}
+
+
+<!-- =====================================================
+ERROR MESSAGE
+===================================================== -->
+
+@if (errorMessage) {
+
+<div class="message-modal-backdrop error-backdrop" role="alert">
+
+  <div class="message-card error-card">
+
+    <div class="error-icon">
+
+      <span class="material-symbols-outlined">
+        error
+      </span>
+
+    </div>
+
+    <div class="message-copy">
+
+      <span class="message-eyebrow error-eyebrow">
+        ATTENTION
+      </span>
+
+      <h2>
+        {{ errorTitle }}
+      </h2>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+    </div>
+
+    <button type="button" class="button button-light error-close-button" (click)="clearError()">
+      Close
+    </button>
+
+  </div>
+
+</div>
+
+}
 
 <app-footer></app-footer>
