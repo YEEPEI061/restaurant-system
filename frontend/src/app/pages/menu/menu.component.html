@@ -65,10 +65,7 @@
                   Cellar Pairing: +RM 75
                 </span>
 
-                <button
-                  type="button"
-                  (click)="selectTastingMenu('5-course')"
-                >
+                <button type="button" (click)="selectTastingMenu('5-course')">
                   Select
 
                   <span class="material-symbols-outlined">
@@ -115,10 +112,7 @@
                   Prestige Pairing: +RM 115
                 </span>
 
-                <button
-                  type="button"
-                  (click)="selectTastingMenu('7-course')"
-                >
+                <button type="button" (click)="selectTastingMenu('7-course')">
                   Select
 
                   <span class="material-symbols-outlined">
@@ -141,8 +135,7 @@
 
             <img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhv4ydzEARlEiuYPWz-ed5tgFP2L8IIeJZAG4K1zXdUV4AGRBVYCjXSMe8axUczMTj06_NQRubYF9EhfU3sb2Nue6fe3h8-xzp-NNFQD3a41gOsIfnKgEP-qjOY9GZ0n55TQ-xZ6Xmr77XhzTljqNzaMwYEj6d2YVBzFwASOpk2HpTJdaQRBEr8sLYlFYHA7hpzZLGUPtM68__gzafoJd9WFM96TDj5rF5OQoCSKR1J4lozCBJfzyX"
-              alt="Aurelia signature dish"
-            >
+              alt="Aurelia signature dish">
 
             <div class="hero-image-overlay"></div>
 
@@ -186,13 +179,10 @@
 
           @for (category of categories; track category.value) {
 
-            <button
-              type="button"
-              [class.active]="activeCategory === category.value"
-              (click)="selectCategory(category.value)"
-            >
-              {{ category.label }}
-            </button>
+          <button type="button" [class.active]="activeCategory === category.value"
+            (click)="selectCategory(category.value)">
+            {{ category.label }}
+          </button>
 
           }
 
@@ -201,11 +191,7 @@
 
         <div class="menu-tools">
 
-          <button
-            type="button"
-            class="tasting-button"
-            (click)="openTastingDrawer()"
-          >
+          <button type="button" class="tasting-button" (click)="openTastingDrawer()">
 
             <span class="material-symbols-outlined">
               restaurant_menu
@@ -237,20 +223,16 @@
 
           @for (filter of dietaryFilters; track filter.value) {
 
-            <button
-              type="button"
-              class="filter-chip"
-              [class.active]="isFilterActive(filter.value)"
-              (click)="toggleDietaryFilter(filter.value)"
-            >
-              @if (filter.value === 'SPECIAL') {
-                <span class="material-symbols-outlined">
-                  star
-                </span>
-              }
+          <button type="button" class="filter-chip" [class.active]="isFilterActive(filter.value)"
+            (click)="toggleDietaryFilter(filter.value)">
+            @if (filter.value === 'SPECIAL') {
+            <span class="material-symbols-outlined">
+              star
+            </span>
+            }
 
-              {{ filter.label }}
-            </button>
+            {{ filter.label }}
+          </button>
 
           }
 
@@ -276,152 +258,141 @@
 
       @for (item of filteredItems; track item._id) {
 
-        <article class="dish-card">
+      <article class="dish-card">
 
-          <div>
+        <div>
 
-            <!-- IMAGE -->
-            <div class="dish-image">
+          <!-- IMAGE -->
+          <div class="dish-image">
 
-              <img
-                [src]="item.image"
-                [alt]="item.name"
-              >
+            <img [src]="item.image" [alt]="item.name">
 
-              <div class="dish-badges">
+            <div class="dish-badges">
 
-                @for (badge of item.dietary; track badge) {
+              @for (badge of item.dietary; track badge) {
 
-                  <span>
-                    {{ badge }}
-                  </span>
+              <span>
+                {{ badge }}
+              </span>
 
-                }
-
-              </div>
-
-              @if (item.signature) {
-
-                <span class="dish-special">
-              
-                  <span class="material-symbols-outlined">
-                    local_fire_department
-                  </span>
-              
-                  Signature
-              
-                </span>
-              
               }
 
             </div>
 
+            @if (item.signature) {
 
-            <!-- CONTENT -->
-            <div class="dish-content">
+            <span class="dish-special">
 
-              <div class="dish-heading">
+              <span class="material-symbols-outlined">
+                local_fire_department
+              </span>
 
-                <h3>
-                  {{ item.name }}
-                </h3>
+              Signature
 
-                <span class="dish-price">
-                  RM {{ item.price }}
+            </span>
+
+            }
+
+          </div>
+
+
+          <!-- CONTENT -->
+          <div class="dish-content">
+
+            <div class="dish-heading">
+
+              <h3>
+                {{ item.name }}
+              </h3>
+
+              <span class="dish-price">
+                RM {{ item.price }}
+              </span>
+
+            </div>
+
+            <p class="dish-description">
+              {{ item.description }}
+            </p>
+
+
+            <div class="dish-information">
+
+              <div>
+                <span class="material-symbols-outlined">
+                  explore
                 </span>
 
+                <span>
+                  Provenance: {{ item.provenance }}
+                </span>
               </div>
 
-              <p class="dish-description">
-                {{ item.description }}
-              </p>
+              <div>
+                <span class="material-symbols-outlined">
+                  local_cafe
+                </span>
 
-
-              <div class="dish-information">
-
-                <div>
-                  <span class="material-symbols-outlined">
-                    explore
-                  </span>
-
-                  <span>
-                    Provenance: {{ item.provenance }}
-                  </span>
-                </div>
-
-                <div>
-                  <span class="material-symbols-outlined">
-                    local_cafe
-                  </span>
-
-                  <span>
-                    Pairing: {{ item.pairing }}
-                  </span>
-                </div>
-
+                <span>
+                  Pairing: {{ item.pairing }}
+                </span>
               </div>
 
             </div>
 
           </div>
 
+        </div>
 
-          <!-- CARD ACTIONS -->
-          <div class="dish-actions">
 
-            <button
-              type="button"
-              class="allergen-button"
-              (click)="openDietaryModal(item)"
-            >
-              Allergen Spec
-            </button>
+        <!-- CARD ACTIONS -->
+        <div class="dish-actions">
 
-            <button
-              type="button"
-              class="add-button"
-              (click)="addToTasting(item)"
-            >
+          <button type="button" class="allergen-button" (click)="openDietaryModal(item)">
+            Allergen Spec
+          </button>
 
-              <span class="material-symbols-outlined">
-                add
-              </span>
+          <button type="button" class="add-button" (click)="addToTasting(item)">
 
-              Add to Tasting
+            <span class="material-symbols-outlined">
+              add
+            </span>
 
-            </button>
+            Add to Tasting
 
-          </div>
+          </button>
 
-        </article>
+        </div>
+
+      </article>
 
       }
 
-      
+
 
       @if (filteredItems.length === 0) {
 
-        <div class="no-results">
+      <div class="no-results">
 
-          <span class="material-symbols-outlined">
-            search_off
-          </span>
+        <span class="material-symbols-outlined">
+          search_off
+        </span>
 
-          <h3>
-            No preparations found
-          </h3>
+        <h3>
+          No preparations found
+        </h3>
 
-          <p>
-            Try another search term or adjust your filters.
-          </p>
+        <p>
+          Try another search term or adjust your filters.
+        </p>
 
-        </div>
+      </div>
 
       }
 
     </div>
 
-    
+
 
   </section>
 
@@ -500,219 +471,195 @@
   <!-- ALLERGEN MODAL -->
   @if (isDietaryModalOpen && selectedDish) {
 
-    <div
-      class="modal-backdrop"
-      (click)="closeDietaryModal()"
-    >
-  
-      <div
-        class="dietary-modal"
-        (click)="$event.stopPropagation()"
-      >
-  
-        <div class="modal-header">
-  
-          <div>
-  
-            <span class="modal-eyebrow">
-              Kitchen Dossier & Allergens
-            </span>
-  
-            <h2>
-              {{ selectedDish.name }}
-            </h2>
-  
-          </div>
-  
-          <button
-            type="button"
-            class="modal-close"
-            (click)="closeDietaryModal()"
-          >
-            <span class="material-symbols-outlined">
-              close
-            </span>
-          </button>
-  
+  <div class="modal-backdrop" (click)="closeDietaryModal()">
+
+    <div class="dietary-modal" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+
+        <div>
+
+          <span class="modal-eyebrow">
+            Kitchen Dossier & Allergens
+          </span>
+
+          <h2>
+            {{ selectedDish.name }}
+          </h2>
+
         </div>
-  
-        <div class="modal-content">
-  
-          <div>
-  
-            <span class="modal-label">
-              Dietary Attributes:
-            </span>
-  
-            <p class="modal-badges">
-              {{ selectedDish.dietary.join(', ') || 'None specified' }}
-            </p>
-  
-          </div>
-  
-          <div class="allergen-warning">
-  
-            <span class="modal-label warning-label">
-  
-              <span class="material-symbols-outlined">
-                warning
-              </span>
-  
-              Allergen Advisory:
-  
-            </span>
-  
-            <p>
-              {{ selectedDish.allergens || 'No allergen information provided.' }}
-            </p>
-  
-          </div>
-  
-        </div>
-  
-        <div class="modal-actions">
-  
-          <button
-            type="button"
-            (click)="closeDietaryModal()"
-          >
-            Understood
-          </button>
-  
-        </div>
-  
+
+        <button type="button" class="modal-close" (click)="closeDietaryModal()">
+          <span class="material-symbols-outlined">
+            close
+          </span>
+        </button>
+
       </div>
-  
+
+      <div class="modal-content">
+
+        <div>
+
+          <span class="modal-label">
+            Dietary Attributes:
+          </span>
+
+          <p class="modal-badges">
+            {{ selectedDish.dietary.join(', ') || 'None specified' }}
+          </p>
+
+        </div>
+
+        <div class="allergen-warning">
+
+          <span class="modal-label warning-label">
+
+            <span class="material-symbols-outlined">
+              warning
+            </span>
+
+            Allergen Advisory:
+
+          </span>
+
+          <p>
+            {{ selectedDish.allergens || 'No allergen information provided.' }}
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button type="button" (click)="closeDietaryModal()">
+          Understood
+        </button>
+
+      </div>
+
     </div>
-  
+
+  </div>
+
   }
 
 
   <!-- TASTING DRAWER -->
   @if (isTastingDrawerOpen) {
 
-    <div
-      class="drawer-backdrop"
-      (click)="closeTastingDrawer()"
-    ></div>
+  <div class="drawer-backdrop" (click)="closeTastingDrawer()"></div>
 
-    <aside class="tasting-drawer">
+  <aside class="tasting-drawer">
 
-      <div>
+    <div>
 
-        <div class="drawer-header">
+      <div class="drawer-header">
+
+        <div>
+
+          <span>
+            Personalized Suite
+          </span>
+
+          <h3>
+            Your Tasting List
+          </h3>
+
+        </div>
+
+        <button type="button" (click)="closeTastingDrawer()">
+          <span class="material-symbols-outlined">
+            close
+          </span>
+        </button>
+
+      </div>
+
+
+      <div class="tasting-items">
+
+        @if (tastingList.length === 0) {
+
+        <p class="empty-tasting">
+          Your curation tray is empty.
+          Tap "Add to Tasting" on any dish to construct
+          your customized sequence.
+        </p>
+
+        }
+
+
+        @for (item of groupedTastingList; track item.id) {
+
+        <div class="tasting-item">
 
           <div>
 
-            <span>
-              Personalized Suite
-            </span>
+            <p>
+              {{ item.name }}
 
-            <h3>
-              Your Tasting List
-            </h3>
+              @if (item.quantity > 1) {
+              <span class="quantity">
+                ×{{ item.quantity }}
+              </span>
+              }
+            </p>
+
+            <span class="item-price">
+              RM {{ (item.price * item.quantity).toFixed(2) }}
+            </span>
 
           </div>
 
-          <button
-            type="button"
-            (click)="closeTastingDrawer()"
-          >
+          <button type="button" (click)="removeFromTasting(item.id)">
+
             <span class="material-symbols-outlined">
-              close
+              delete
             </span>
+
           </button>
 
         </div>
 
-
-        <div class="tasting-items">
-
-          @if (tastingList.length === 0) {
-
-            <p class="empty-tasting">
-              Your curation tray is empty.
-              Tap "Add to Tasting" on any dish to construct
-              your customized sequence.
-            </p>
-
-          }
-
-
-          @for (item of groupedTastingList; track item.id) {
-
-            <div class="tasting-item">
-          
-              <div>
-          
-                <p>
-                  {{ item.name }}
-          
-                  @if (item.quantity > 1) {
-                    <span class="quantity">
-                      ×{{ item.quantity }}
-                    </span>
-                  }
-                </p>
-          
-                <span class="item-price">
-                  RM {{ (item.price * item.quantity).toFixed(2) }}
-                </span>
-          
-              </div>
-          
-              <button
-                type="button"
-                (click)="removeFromTasting(item.id)"
-              >
-          
-                <span class="material-symbols-outlined">
-                  delete
-                </span>
-          
-              </button>
-          
-            </div>
-          
-          }
-
-        </div>
+        }
 
       </div>
 
+    </div>
 
-      <div class="drawer-summary">
 
-        <div class="drawer-total">
+    <div class="drawer-summary">
 
-          <span>
-            Estimated Menu Subtotal:
-          </span>
+      <div class="drawer-total">
 
-          <strong>
-            RM {{ tastingTotal }}
-          </strong>
+        <span>
+          Estimated Menu Subtotal:
+        </span>
 
-        </div>
-
-        <p>
-          Your selection will be synchronized with
-          our restaurant team upon table confirmation.
-        </p>
-
-        <a
-          (click)="proceedToReservation()"
-        >
-          Proceed to Reserve Table
-
-          <span class="material-symbols-outlined">
-            arrow_forward
-          </span>
-        </a>
+        <strong>
+          RM {{ tastingTotal }}
+        </strong>
 
       </div>
 
-    </aside>
+      <p>
+        Your selection will be synchronized with
+        our restaurant team upon table confirmation.
+      </p>
+
+      <a (click)="proceedToReservation()">
+        Proceed to Reserve Table
+
+        <span class="material-symbols-outlined">
+          arrow_forward
+        </span>
+      </a>
+
+    </div>
+
+  </aside>
 
   }
 

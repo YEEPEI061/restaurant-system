@@ -278,132 +278,132 @@
       <div class="table-card">
 
         <div class="table-scroll">
-  
+
           <table class="reservation-table">
-  
+
             <thead>
-  
+
               <tr>
-  
+
                 <th>
                   Booking
                 </th>
-  
+
                 <th>
                   Guest
                 </th>
-  
+
                 <th>
                   Date &amp; Time
                 </th>
-  
+
                 <th>
                   Table
                 </th>
-  
+
                 <th>
                   Dining Package
                 </th>
-  
+
                 <th>
                   Status
                 </th>
-  
+
                 <th class="actions-column">
                   Actions
                 </th>
-  
+
               </tr>
-  
+
             </thead>
-  
-  
+
+
             <tbody>
-  
+
               @for (
               reservation of filteredReservations;
               track reservation.reservationId
               ) {
-  
+
               <tr (click)="openReservation(reservation)" (keydown.enter)="openReservation(reservation)" tabindex="0"
                 role="button" [attr.aria-label]="
                     'Edit reservation ' +
                     reservation.reservationId
                   ">
-  
+
                 <!-- Booking -->
                 <td>
-  
+
                   <div class="reservation-identity">
-  
+
                     <div class="reservation-icon">
-  
+
                       <span class="material-symbols-outlined">
                         event
                       </span>
-  
+
                     </div>
-  
+
                     <div class="reservation-details">
-  
+
                       <strong>
                         {{ reservation.reservationId }}
                       </strong>
-  
+
                       <span>
                         Reservation
                       </span>
-  
+
                     </div>
-  
+
                   </div>
-  
+
                 </td>
-  
-  
+
+
                 <!-- Guest -->
                 <td>
-  
+
                   <div class="guest-details">
-  
+
                     <strong>
                       {{ reservation.guestName }}
                     </strong>
-  
+
                     <span>
                       {{ reservation.phone }}
                     </span>
-  
+
                     <small>
                       {{ reservation.email }}
                     </small>
-  
+
                   </div>
-  
+
                 </td>
-  
-  
+
+
                 <!-- Date and time -->
                 <td>
-  
+
                   <div class="reservation-datetime">
-  
+
                     <strong>
                       {{ reservation.time }}
                     </strong>
-  
+
                     <span>
                       {{ reservation.date | date:'dd MMM yyyy' }}
                     </span>
-  
+
                   </div>
-  
+
                 </td>
-  
-  
+
+
                 <!-- Table -->
                 <td (click)="$event.stopPropagation()">
-  
+
                   <select class="table-select" [ngModel]="reservation.table" [ngModelOptions]="{ standalone: true }"
                     [attr.aria-label]="
                         'Assign table for ' +
@@ -411,16 +411,16 @@
                       " (ngModelChange)="
                         assignTable(reservation, $event)
                       ">
-  
+
                     <option value="">
                       Unassigned
                     </option>
-  
+
                     @for (
                     table of tables;
                     track table.id
                     ) {
-  
+
                     <option [value]="table.id" [disabled]="
                             isTableOccupied(
                               table.id,
@@ -430,7 +430,7 @@
                             )
                           ">
                       {{ table.id }}
-  
+
                       @if (
                       isTableOccupied(
                       table.id,
@@ -441,45 +441,45 @@
                       ) {
                       — Occupied
                       }
-  
+
                     </option>
-  
+
                     }
                   </select>
-  
+
                 </td>
-  
-  
+
+
                 <!-- Dining package -->
                 <td>
                   <div class="package-details">
-  
+
                     @if (reservation.diningOption === 'alacarte') {
-  
+
                     <strong>
                       À La Carte
                     </strong>
-  
+
                     } @else if (reservation.diningOption === 'tasting') {
-  
+
                     <strong>
                       {{ reservation.tastingMenu || reservation.packageName || 'Tasting Menu' }}
                     </strong>
-  
+
                     } @else if (reservation.diningOption === 'table') {
-  
+
                     <strong>
                       Table Only
                     </strong>
-  
+
                     } @else {
-  
+
                     <strong>
                       Dining Reservation
                     </strong>
-  
+
                     }
-  
+
                     <span>
                       {{ reservation.partySize }}
                       {{
@@ -488,16 +488,16 @@
                       : 'guests'
                       }}
                     </span>
-  
+
                   </div>
                 </td>
-  
-  
+
+
                 <!-- Status -->
                 <td>
-  
+
                   <span class="status-pill" [attr.data-status]="reservation.status">
-  
+
                     <i class="status-dot" [class.status-pending]="
                           reservation.status === 'Pending'
                         " [class.status-confirmed]="
@@ -509,25 +509,25 @@
                         " [class.status-cancelled]="
                           reservation.status === 'Cancelled'
                         "></i>
-  
+
                     {{ reservation.status }}
-  
+
                   </span>
-  
+
                 </td>
-  
-  
+
+
                 <!-- Actions -->
                 <td class="actions-column">
-  
+
                   <div class="row-actions">
-  
-  
+
+
                     <!-- Pending → Confirm -->
                     @if (
                     reservation.status === 'Pending'
                     ) {
-  
+
                     <button class="icon-button icon-confirm" type="button" title="Confirm reservation"
                       aria-label="Confirm reservation"
                       (click)="$event.stopPropagation(); updateStatus(reservation, 'Confirmed')">
@@ -535,30 +535,30 @@
                         check
                       </span>
                     </button>
-  
+
                     }
-  
-  
+
+
                     <!-- Confirmed → Seat -->
                     @if (
                     reservation.status === 'Confirmed'
                     ) {
-  
+
                     <button class="icon-button icon-seat" type="button" title="Seat guests" aria-label="Seat guests"
                       (click)="$event.stopPropagation(); updateStatus(reservation, 'Seated')">
                       <span class="material-symbols-outlined">
                         chair
                       </span>
                     </button>
-  
+
                     }
-  
-  
+
+
                     <!-- Seated → Complete -->
                     @if (
                     reservation.status === 'Seated'
                     ) {
-  
+
                     <button class="icon-button icon-complete" type="button" title="Complete booking"
                       aria-label="Complete booking"
                       (click)="$event.stopPropagation(); updateStatus(reservation, 'Completed')">
@@ -566,15 +566,15 @@
                         task_alt
                       </span>
                     </button>
-  
+
                     }
-  
-  
+
+
                     <!-- Cancelled → Reopen -->
                     @if (
                     reservation.status === 'Cancelled'
                     ) {
-  
+
                     <button class="icon-button icon-reopen" type="button" title="Reopen booking"
                       aria-label="Reopen booking"
                       (click)="$event.stopPropagation(); updateStatus(reservation, 'Pending')">
@@ -582,10 +582,10 @@
                         lock_open
                       </span>
                     </button>
-  
+
                     }
-  
-  
+
+
                     <!-- View / edit -->
                     <button class="icon-button icon-edit" type="button" title="Edit reservation"
                       aria-label="Edit reservation" (click)="$event.stopPropagation(); openReservation(reservation)">
@@ -593,14 +593,14 @@
                         edit
                       </span>
                     </button>
-  
-  
+
+
                     <!-- Cancel -->
                     @if (
                     reservation.status !== 'Cancelled' &&
                     reservation.status !== 'Completed'
                     ) {
-  
+
                     <button class="icon-button icon-cancel" type="button" title="Cancel reservation"
                       aria-label="Cancel reservation"
                       (click)="$event.stopPropagation(); updateStatus(reservation, 'Cancelled')">
@@ -608,49 +608,49 @@
                         event_busy
                       </span>
                     </button>
-  
+
                     }
-  
+
                   </div>
-  
+
                 </td>
-  
+
               </tr>
-  
+
               } @empty {
-  
+
               <tr>
-  
+
                 <td class="empty-state" colspan="7">
-  
+
                   <span class="material-symbols-outlined">
                     event_busy
                   </span>
-  
+
                   <strong>
                     No reservations found
                   </strong>
-  
+
                   <span>
                     Try changing your search or filters.
                   </span>
-  
+
                 </td>
-  
+
               </tr>
-  
+
               }
-  
+
             </tbody>
-  
+
           </table>
-  
+
         </div>
-  
-  
+
+
         <!-- Table footer -->
         <div class="table-footer">
-  
+
           <span>
             Showing
             <strong>
@@ -662,13 +662,13 @@
             </strong>
             reservations
           </span>
-  
+
           <span class="demo-note">
             Reservation directory
           </span>
-  
+
         </div>
-  
+
       </div>
 
     </section>

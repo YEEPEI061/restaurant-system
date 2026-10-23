@@ -6,10 +6,12 @@
     <!-- Page heading -->
     <div class="page-heading">
       <div class="heading-copy">
-        <div class="eyebrow">
-          <span>AURELIA TABLE RESERVE</span>
-          <span class="eyebrow-dot"></span>
-          <span>GEORGE TOWN, PENANG</span>
+        <div class="hero-eyebrow">
+          <span class="hero-dot"></span>
+
+          <span>
+            Aurelia Table Reserve
+          </span>
         </div>
 
         <h1>
@@ -52,13 +54,8 @@
           </div>
 
           <div class="service-options">
-            <button
-              type="button"
-              class="service-option"
-              [class.selected]="selectedPeriod === 'dinner'"
-              [attr.aria-pressed]="selectedPeriod === 'dinner'"
-              (click)="changePeriod('dinner')"
-            >
+            <button type="button" class="service-option" [class.selected]="selectedPeriod === 'dinner'"
+              [attr.aria-pressed]="selectedPeriod === 'dinner'" (click)="changePeriod('dinner')">
               <span class="material-symbols-outlined service-icon">
                 nights_stay
               </span>
@@ -74,13 +71,8 @@
               </span>
             </button>
 
-            <button
-              type="button"
-              class="service-option"
-              [class.selected]="selectedPeriod === 'brunch'"
-              [attr.aria-pressed]="selectedPeriod === 'brunch'"
-              (click)="changePeriod('brunch')"
-            >
+            <button type="button" class="service-option" [class.selected]="selectedPeriod === 'brunch'"
+              [attr.aria-pressed]="selectedPeriod === 'brunch'" (click)="changePeriod('brunch')">
               <span class="material-symbols-outlined service-icon">
                 wb_twilight
               </span>
@@ -107,25 +99,16 @@
             </div>
 
             <div class="month-navigation">
-              <button
-                type="button"
-                aria-label="Previous month"
-                [disabled]="
+              <button type="button" aria-label="Previous month" [disabled]="
                   displayedMonth.getFullYear() === today.getFullYear()
                   && displayedMonth.getMonth() === today.getMonth()
-                "
-                (click)="previousMonth()"
-              >
+                " (click)="previousMonth()">
                 <span class="material-symbols-outlined">chevron_left</span>
               </button>
 
               <strong>{{ monthLabel }}</strong>
 
-              <button
-                type="button"
-                aria-label="Next month"
-                (click)="nextMonth()"
-              >
+              <button type="button" aria-label="Next month" (click)="nextMonth()">
                 <span class="material-symbols-outlined">chevron_right</span>
               </button>
             </div>
@@ -144,29 +127,21 @@
 
             <div class="calendar-grid">
               @for (day of calendarDays; track $index) {
-                <button
-                  type="button"
-                  class="calendar-day"
-                  [class.outside-month]="!day.isCurrentMonth"
-                  [class.selected]="isSameDate(day.date, selectedDate)"
-                  [class.weekend]="isWeekend(day.date)"
-                  [disabled]="
+              <button type="button" class="calendar-day" [class.outside-month]="!day.isCurrentMonth"
+                [class.selected]="isSameDate(day.date, selectedDate)" [class.weekend]="isWeekend(day.date)" [disabled]="
                     day.disabled
                     || !day.isCurrentMonth
                     || (selectedPeriod === 'brunch' && !isWeekend(day.date))
-                  "
-                  [attr.aria-pressed]="isSameDate(day.date, selectedDate)"
-                  (click)="selectDate(day)"
-                >
-                  <span>{{ day.date.getDate() }}</span>
-                  @if (
-                    day.isCurrentMonth
-                    && !day.disabled
-                    && !(selectedPeriod === 'brunch' && !isWeekend(day.date))
-                  ) {
-                    <span class="calendar-dot"></span>
-                  }
-                </button>
+                  " [attr.aria-pressed]="isSameDate(day.date, selectedDate)" (click)="selectDate(day)">
+                <span>{{ day.date.getDate() }}</span>
+                @if (
+                day.isCurrentMonth
+                && !day.disabled
+                && !(selectedPeriod === 'brunch' && !isWeekend(day.date))
+                ) {
+                <span class="calendar-dot"></span>
+                }
+              </button>
               }
             </div>
           </div>
@@ -180,9 +155,9 @@
           </div>
 
           @if (selectedPeriod === 'brunch') {
-            <p class="inline-note">
-              Weekend brunch is available on Saturdays and Sundays.
-            </p>
+          <p class="inline-note">
+            Weekend brunch is available on Saturdays and Sundays.
+          </p>
           }
         </section>
 
@@ -196,33 +171,23 @@
 
             <span class="optional-label">
               {{
-                partySize === '7+'
-                  ? 'Private dining · ' + largePartySize + ' guests'
-                  : 'Table for ' + partySize
+              partySize === '7+'
+              ? 'Private dining · ' + largePartySize + ' guests'
+              : 'Table for ' + partySize
               }}
             </span>
           </div>
 
           <div class="party-options">
             @for (size of [1, 2, 3, 4, 5, 6]; track size) {
-              <button
-                type="button"
-                class="party-button"
-                [class.selected]="partySize === size"
-                [attr.aria-pressed]="partySize === size"
-                (click)="selectPartySize(size)"
-              >
-                {{ size }}
-              </button>
+            <button type="button" class="party-button" [class.selected]="partySize === size"
+              [attr.aria-pressed]="partySize === size" (click)="selectPartySize(size)">
+              {{ size }}
+            </button>
             }
 
-            <button
-              type="button"
-              class="party-button private-party"
-              [class.selected]="partySize === '7+'"
-              [attr.aria-pressed]="partySize === '7+'"
-              (click)="selectPartySize('7+')"
-            >
+            <button type="button" class="party-button private-party" [class.selected]="partySize === '7+'"
+              [attr.aria-pressed]="partySize === '7+'" (click)="selectPartySize('7+')">
               <span class="material-symbols-outlined">groups</span>
               <span>7+ Guests</span>
             </button>
@@ -231,43 +196,37 @@
 
           @if (partySize === '7+') {
 
-            <div class="large-party-field">
-          
-              <div class="large-party-input-row">
-          
-                <label for="largePartySize">
-                  Number of Guests
-                </label>
-          
-                <div class="large-party-input-wrapper">
-          
-                  <input
-                    id="largePartySize"
-                    name="largePartySize"
-                    type="number"
-                    min="7"
-                    max="30"
-                    [(ngModel)]="largePartySize"
-                  />
-          
-                  <span>guests</span>
-          
-                </div>
-          
+          <div class="large-party-field">
+
+            <div class="large-party-input-row">
+
+              <label for="largePartySize">
+                Number of Guests
+              </label>
+
+              <div class="large-party-input-wrapper">
+
+                <input id="largePartySize" name="largePartySize" type="number" min="7" max="30"
+                  [(ngModel)]="largePartySize" />
+
+                <span>guests</span>
+
               </div>
-          
-              <div class="large-party-note">
-                <span class="material-symbols-outlined">
-                  info
-                </span>
-          
-                <span>
-                  Private dining is available for parties of 7–30 guests.
-                </span>
-              </div>
-          
+
             </div>
-          
+
+            <div class="large-party-note">
+              <span class="material-symbols-outlined">
+                info
+              </span>
+
+              <span>
+                Private dining is available for parties of 7–30 guests.
+              </span>
+            </div>
+
+          </div>
+
           }
         </section>
 
@@ -282,12 +241,8 @@
           </div>
 
           <div class="dining-options">
-            <button
-              type="button"
-              class="dining-option"
-              [class.selected]="selectedDiningOption === 'tasting'"
-              (click)="selectDiningOption('tasting')"
-            >
+            <button type="button" class="dining-option" [class.selected]="selectedDiningOption === 'tasting'"
+              (click)="selectDiningOption('tasting')">
               <span class="dining-option-top">
                 <strong>Set Tasting Menu</strong>
                 <span class="material-symbols-outlined">
@@ -297,12 +252,8 @@
               <span>A curated multi-course journey.</span>
             </button>
 
-            <button
-              type="button"
-              class="dining-option"
-              [class.selected]="selectedDiningOption === 'alacarte'"
-              (click)="selectDiningOption('alacarte')"
-            >
+            <button type="button" class="dining-option" [class.selected]="selectedDiningOption === 'alacarte'"
+              (click)="selectDiningOption('alacarte')">
               <span class="dining-option-top">
                 <strong>Hand-Pick Dishes</strong>
                 <span class="material-symbols-outlined">
@@ -312,12 +263,8 @@
               <span>Choose dishes from our menu.</span>
             </button>
 
-            <button
-              type="button"
-              class="dining-option"
-              [class.selected]="selectedDiningOption === 'table'"
-              (click)="selectDiningOption('table')"
-            >
+            <button type="button" class="dining-option" [class.selected]="selectedDiningOption === 'table'"
+              (click)="selectDiningOption('table')">
               <span class="dining-option-top">
                 <strong>Order at Table</strong>
                 <span class="material-symbols-outlined">
@@ -329,145 +276,135 @@
           </div>
 
           @if (selectedDiningOption === 'tasting') {
-            <div class="tasting-menu-list">
-              @for (menu of tastingMenus; track menu.name) {
-                <button
-                  type="button"
-                  class="tasting-menu"
-                  [class.selected]="selectedTastingMenu === menu.name"
-                  (click)="selectMenu(menu.name)"
-                >
-                  <span class="menu-topline">
-                    <span class="small-label">{{ menu.label }}</span>
-                    <span class="menu-courses">{{ menu.courses }}</span>
+          <div class="tasting-menu-list">
+            @for (menu of tastingMenus; track menu.name) {
+            <button type="button" class="tasting-menu" [class.selected]="selectedTastingMenu === menu.name"
+              (click)="selectMenu(menu.name)">
+              <span class="menu-topline">
+                <span class="small-label">{{ menu.label }}</span>
+                <span class="menu-courses">{{ menu.courses }}</span>
+              </span>
+
+              <strong>{{ menu.name }}</strong>
+              <span class="menu-description">{{ menu.description }}</span>
+
+              <span class="menu-bottomline">
+                <span class="menu-price">
+                  RM {{ menu.price.toFixed(2) }}
+                  <small>/ guest</small>
+                </span>
+
+                <span class="menu-action">
+                  <span class="material-symbols-outlined">
+                    {{ selectedTastingMenu === menu.name ? 'check_circle' : 'add_circle' }}
                   </span>
-
-                  <strong>{{ menu.name }}</strong>
-                  <span class="menu-description">{{ menu.description }}</span>
-
-                  <span class="menu-bottomline">
-                    <span class="menu-price">
-                      RM {{ menu.price.toFixed(2) }}
-                      <small>/ guest</small>
-                    </span>
-
-                    <span class="menu-action">
-                      <span class="material-symbols-outlined">
-                        {{ selectedTastingMenu === menu.name ? 'check_circle' : 'add_circle' }}
-                      </span>
-                      {{ selectedTastingMenu === menu.name ? 'Selected' : 'Choose' }}
-                    </span>
-                  </span>
-                </button>
-              }
-            </div>
+                  {{ selectedTastingMenu === menu.name ? 'Selected' : 'Choose' }}
+                </span>
+              </span>
+            </button>
+            }
+          </div>
           } @else {
 
-            @if (selectedDiningOption === 'alacarte') {
+          @if (selectedDiningOption === 'alacarte') {
 
-              <div class="selected-dishes">
-            
-                <div class="selected-dishes-heading">
-                  <div>
-                    <span class="eyebrow">YOUR SELECTION</span>
-            
-                    <h4>Hand-Picked Dishes</h4>
-                  </div>
-            
-                  <span class="dish-count">
-                    {{ tastingList.length }}
-                    {{ tastingList.length === 1 ? 'dish' : 'dishes' }}
-                  </span>
-                </div>
-            
-            
-                @if (tastingList.length > 0) {
-            
-                  <div class="selected-dishes-list">
-            
-                    @for (item of groupedTastingList; track item.id) {
+          <div class="selected-dishes">
 
-                      <div class="selected-dish">
-                    
-                        <span class="dish-name">
-                    
-                          {{ item.name }}
-                    
-                          @if (item.quantity > 1) {
-                            <span class="quantity">
-                              ×{{ item.quantity }}
-                            </span>
-                          }
-                    
-                        </span>
-                    
-                        <span class="dish-price">
-                          RM {{ (item.price * item.quantity).toFixed(2) }}
-                        </span>
-                    
-                      </div>
-                    
-                    }
-            
-                  </div>
-            
-                } @else {
-            
-                  <p class="selection-empty">
-                    No dishes selected yet.
-                  </p>
-            
-                }
-            
-            
-                <a
-                  class="add-dishes-link"
-                  routerLink="/menu"
-                >
-                  <span class="material-symbols-outlined">
-                    add
-                  </span>
-            
-                  Add More Dishes
-                </a>
-            
+            <div class="selected-dishes-heading">
+              <div>
+                <span class="eyebrow">YOUR SELECTION</span>
+
+                <h4>Hand-Picked Dishes</h4>
               </div>
-            
-            } @else {
-            
-              <div class="selection-notice">
 
-                <span class="selection-icon material-symbols-outlined">
-                  restaurant_menu
+              <span class="dish-count">
+                {{ tastingList.length }}
+                {{ tastingList.length === 1 ? 'dish' : 'dishes' }}
+              </span>
+            </div>
+
+
+            @if (tastingList.length > 0) {
+
+            <div class="selected-dishes-list">
+
+              @for (item of groupedTastingList; track item.id) {
+
+              <div class="selected-dish">
+
+                <span class="dish-name">
+
+                  {{ item.name }}
+
+                  @if (item.quantity > 1) {
+                  <span class="quantity">
+                    ×{{ item.quantity }}
+                  </span>
+                  }
+
                 </span>
-              
-                <div class="selection-copy">
-              
-                  <strong>
-                    Order from the Menu
-                  </strong>
-              
-                  <span>
-                    Browse our menu and select your dishes before your visit.
-                  </span>
-              
-                </div>
-              
-                <a
-                  routerLink="/menu"
-                  class="selection-action"
-                >
-                  Explore Menu
-              
-                  <span class="material-symbols-outlined">
-                    arrow_forward
-                  </span>
-                </a>
-              
+
+                <span class="dish-price">
+                  RM {{ (item.price * item.quantity).toFixed(2) }}
+                </span>
+
               </div>
-            
+
+              }
+
+            </div>
+
+            } @else {
+
+            <p class="selection-empty">
+              No dishes selected yet.
+            </p>
+
             }
-          
+
+
+            <a class="add-dishes-link" routerLink="/menu">
+              <span class="material-symbols-outlined">
+                add
+              </span>
+
+              Add More Dishes
+            </a>
+
+          </div>
+
+          } @else {
+
+          <div class="selection-notice">
+
+            <span class="selection-icon material-symbols-outlined">
+              restaurant_menu
+            </span>
+
+            <div class="selection-copy">
+
+              <strong>
+                Order from the Menu
+              </strong>
+
+              <span>
+                Browse our menu and select your dishes before your visit.
+              </span>
+
+            </div>
+
+            <a routerLink="/menu" class="selection-action">
+              Explore Menu
+
+              <span class="material-symbols-outlined">
+                arrow_forward
+              </span>
+            </a>
+
+          </div>
+
+          }
+
           }
 
           <label class="pairing-option">
@@ -480,11 +417,7 @@
               <span>Curated non-alcoholic drinks · RM 56.00 per guest</span>
             </span>
 
-            <input
-              type="checkbox"
-              name="beveragePairing"
-              [(ngModel)]="includeBeveragePairing"
-            />
+            <input type="checkbox" name="beveragePairing" [(ngModel)]="includeBeveragePairing" />
           </label>
         </section>
 
@@ -500,27 +433,22 @@
 
           <div class="seating-options">
             @for (option of seatingOptions; track option.name) {
-              <button
-                type="button"
-                class="seating-option"
-                [class.selected]="selectedSeating === option.name"
-                [attr.aria-pressed]="selectedSeating === option.name"
-                (click)="selectSeating(option.name)"
-              >
-                <span class="seating-topline">
-                  <span class="material-symbols-outlined">
-                    {{ option.icon }}
-                  </span>
-                  <span class="seating-badge">{{ option.label }}</span>
+            <button type="button" class="seating-option" [class.selected]="selectedSeating === option.name"
+              [attr.aria-pressed]="selectedSeating === option.name" (click)="selectSeating(option.name)">
+              <span class="seating-topline">
+                <span class="material-symbols-outlined">
+                  {{ option.icon }}
                 </span>
+                <span class="seating-badge">{{ option.label }}</span>
+              </span>
 
-                <strong>{{ option.name }}</strong>
-                <span class="seating-description">{{ option.description }}</span>
+              <strong>{{ option.name }}</strong>
+              <span class="seating-description">{{ option.description }}</span>
 
-                <span class="seating-choice">
-                  {{ selectedSeating === option.name ? 'Selected' : 'Choose seating' }}
-                </span>
-              </button>
+              <span class="seating-choice">
+                {{ selectedSeating === option.name ? 'Selected' : 'Choose seating' }}
+              </span>
+            </button>
             }
           </div>
         </section>
@@ -537,17 +465,11 @@
 
           <div class="time-options">
             @for (slot of currentTimes; track slot.time) {
-              <button
-                type="button"
-                class="time-option"
-                [class.selected]="selectedTime === slot.time"
-                [disabled]="slot.disabled"
-                [attr.aria-pressed]="selectedTime === slot.time"
-                (click)="selectTime(slot)"
-              >
-                <strong>{{ slot.time }}</strong>
-                <span>{{ slot.label }}</span>
-              </button>
+            <button type="button" class="time-option" [class.selected]="selectedTime === slot.time"
+              [disabled]="slot.disabled" [attr.aria-pressed]="selectedTime === slot.time" (click)="selectTime(slot)">
+              <strong>{{ slot.time }}</strong>
+              <span>{{ slot.label }}</span>
+            </button>
             }
           </div>
 
@@ -584,12 +506,12 @@
             <div class="summary-detail">
 
               <span>PARTY</span>
-            
+
               <strong>
                 {{ guestCount }}
                 {{ guestCount === 1 ? 'Guest' : 'Guests' }}
               </strong>
-            
+
             </div>
 
             <div class="summary-detail">
@@ -610,113 +532,113 @@
             <span class="small-label">
               DINING PREFERENCE
             </span>
-          
+
             <strong>
               {{ diningOptionLabel }}
             </strong>
-          
-          
+
+
             @if (selectedDiningOption === 'tasting') {
-          
-              <span>
-                {{ selectedTastingMenu }}
-              </span>
-          
+
+            <span>
+              {{ selectedTastingMenu }}
+            </span>
+
             }
-          
-          
+
+
             @if (selectedDiningOption === 'alacarte') {
-          
-              <span>
-                {{ tastingList.length }}
-                {{ tastingList.length === 1 ? 'dish' : 'dishes' }}
-                selected
-              </span>
-          
-              @for (item of groupedTastingList; track item.id) {
-          
-                <span>
-                  {{ item.name }}
-          
-                  @if (item.quantity > 1) {
-                    ×{{ item.quantity }}
-                  }
-          
-                  · RM {{ (item.price * item.quantity).toFixed(2) }}
-                </span>
-          
+
+            <span>
+              {{ tastingList.length }}
+              {{ tastingList.length === 1 ? 'dish' : 'dishes' }}
+              selected
+            </span>
+
+            @for (item of groupedTastingList; track item.id) {
+
+            <span>
+              {{ item.name }}
+
+              @if (item.quantity > 1) {
+              ×{{ item.quantity }}
               }
-          
+
+              · RM {{ (item.price * item.quantity).toFixed(2) }}
+            </span>
+
             }
-          
-          
+
+            }
+
+
             @if (selectedDiningOption === 'table') {
-          
-              <span>
-                Order from our menu when seated
-              </span>
-          
+
+            <span>
+              Order from our menu when seated
+            </span>
+
             }
-          
-          
+
+
             @if (includeBeveragePairing) {
-          
-              <span>
-                Seasonal Beverage Pairing included
-              </span>
-          
+
+            <span>
+              Seasonal Beverage Pairing included
+            </span>
+
             }
-          
+
           </div>
 
           <div class="price-breakdown">
             @if (selectedDiningOption === 'tasting') {
 
-              <div class="price-row">
-            
-                <span>
-                  {{ selectedMenu.name }} × {{ guestCount }}
-                </span>
-            
-                <strong>
-                  RM {{ (selectedMenu.price * guestCount).toFixed(2) }}
-                </strong>
-            
-              </div>
-            
+            <div class="price-row">
+
+              <span>
+                {{ selectedMenu.name }} × {{ guestCount }}
+              </span>
+
+              <strong>
+                RM {{ (selectedMenu.price * guestCount).toFixed(2) }}
+              </strong>
+
+            </div>
+
             }
-            
+
             @if (
-              selectedDiningOption === 'alacarte'
-              && tastingList.length > 0
+            selectedDiningOption === 'alacarte'
+            && tastingList.length > 0
             ) {
 
-              @for (item of groupedTastingList; track item.id) {
+            @for (item of groupedTastingList; track item.id) {
 
-                <div class="price-row">
+            <div class="price-row">
 
-                  <span>
-                    {{ item.name }}
-                    × {{ item.quantity }}
-                  </span>
+              <span>
+                {{ item.name }}
+                × {{ item.quantity }}
+              </span>
 
-                  <strong>
-                    RM {{ (item.price * item.quantity).toFixed(2) }}
-                  </strong>
+              <strong>
+                RM {{ (item.price * item.quantity).toFixed(2) }}
+              </strong>
 
-                </div>
+            </div>
 
-              }
+            }
 
             }
 
             @if (includeBeveragePairing) {
-              <div class="price-row">
-                <span>Beverage pairing × {{ guestCount }}</span>
-                <strong>
-                  RM {{ (beveragePairingPrice * guestCount).toFixed(2) }}
-                </strong>
-              </div>
+            <div class="price-row">
+              <span>Beverage pairing × {{ guestCount }}</span>
+              <strong>
+                RM {{ (beveragePairingPrice * guestCount).toFixed(2) }}
+              </strong>
+            </div>
             }
 
             <div class="price-row subtotal-row">
@@ -745,73 +667,43 @@
               <label for="guestName">
                 Full Name <i>*</i>
               </label>
-          
-              <input
-                id="guestName"
-                name="guestName"
-                type="text"
-                [(ngModel)]="guestName"
-                placeholder="Enter your full name"
-                autocomplete="name"
-                required
-              />
+
+              <input id="guestName" name="guestName" type="text" [(ngModel)]="guestName"
+                placeholder="Enter your full name" autocomplete="name" required />
             </div>
 
             <div class="form-field">
               <label for="guestEmail">
                 Email Address <i>*</i>
               </label>
-          
-              <input
-                id="guestEmail"
-                name="guestEmail"
-                type="email"
-                [(ngModel)]="guestEmail"
-                placeholder="you@example.com"
-                autocomplete="email"
-                required
-              />
+
+              <input id="guestEmail" name="guestEmail" type="email" [(ngModel)]="guestEmail"
+                placeholder="you@example.com" autocomplete="email" required />
             </div>
 
             <div class="form-field">
               <label for="guestPhone">
                 Phone Number <i>*</i>
               </label>
-              <input
-                id="guestPhone"
-                name="guestPhone"
-                type="tel"
-                [(ngModel)]="guestPhone"
-                placeholder="+60 12 345 6789"
-                autocomplete="tel"
-                required
-              />
+              <input id="guestPhone" name="guestPhone" type="tel" [(ngModel)]="guestPhone" placeholder="+60 12 345 6789"
+                autocomplete="tel" required />
             </div>
 
             <div class="form-field">
               <label for="specialNotes">Special Requests or Allergies</label>
-              <textarea
-                id="specialNotes"
-                name="specialNotes"
-                [(ngModel)]="specialNotes"
-                rows="3"
-                placeholder="Let us know about dietary needs or a special occasion..."
-              ></textarea>
+              <textarea id="specialNotes" name="specialNotes" [(ngModel)]="specialNotes" rows="3"
+                placeholder="Let us know about dietary needs or a special occasion..."></textarea>
             </div>
 
-            <button
-              type="submit"
-              class="confirm-button"
-              [disabled]="isSubmitting"
-            >
+            <button type="submit" class="confirm-button" [disabled]="isSubmitting">
               <span>
                 @if (isSubmitting) {
-                  Saving Changes...
+                Saving Changes...
                 } @else {
-                  {{ isEditMode ? 'Save Changes' : 'Confirm Reservation' }}
+                {{ isEditMode ? 'Save Changes' : 'Confirm Reservation' }}
                 }
               </span>
- 
+
               <span class="material-symbols-outlined">
                 {{ isSubmitting ? 'progress_activity' : 'arrow_forward' }}
               </span>
@@ -853,11 +745,7 @@
 
       <div class="atmosphere-grid">
         <article class="atmosphere-card atmosphere-main">
-          <img
-            src="/images/aurelia-dining.png"
-            alt="Aurelia restaurant dining room"
-            loading="lazy"
-          />
+          <img src="/images/aurelia-dining.png" alt="Aurelia restaurant dining room" loading="lazy" />
           <div class="atmosphere-overlay">
             <span>THE SETTING</span>
             <h3>Dining Room Elegance</h3>
@@ -865,11 +753,7 @@
         </article>
 
         <article class="atmosphere-card">
-          <img
-            src="/images/aurelia-chef.png"
-            alt="Chef preparing a seasonal dish"
-            loading="lazy"
-          />
+          <img src="/images/aurelia-chef.png" alt="Chef preparing a seasonal dish" loading="lazy" />
           <div class="atmosphere-overlay">
             <span>THE CRAFT</span>
             <h3>Made with Intention</h3>
@@ -877,11 +761,8 @@
         </article>
 
         <article class="atmosphere-card">
-          <img
-            src="/images/aurelia-atmosphere.png"
-            alt="An intimate restaurant table prepared for dinner"
-            loading="lazy"
-          />
+          <img src="/images/aurelia-atmosphere.png" alt="An intimate restaurant table prepared for dinner"
+            loading="lazy" />
           <div class="atmosphere-overlay">
             <span>THE MOMENT</span>
             <h3>Gather Around the Table</h3>
@@ -900,56 +781,39 @@ RESERVATION SUCCESS
 
 @if (successMessage) {
 
-<div
-class="message-modal-backdrop success-backdrop"
-role="status"
->
+<div class="message-modal-backdrop success-backdrop" role="status">
 
-<div class="message-card success-card">
+  <div class="message-card success-card">
 
- <div class="success-animation">
+    <div class="success-animation">
 
-   <svg
-     class="success-svg"
-     viewBox="0 0 52 52"
-     aria-hidden="true"
-   >
+      <svg class="success-svg" viewBox="0 0 52 52" aria-hidden="true">
 
-     <circle
-       class="success-circle"
-       cx="26"
-       cy="26"
-       r="24"
-       fill="none"
-     ></circle>
+        <circle class="success-circle" cx="26" cy="26" r="24" fill="none"></circle>
 
-     <path
-       class="success-check"
-       fill="none"
-       d="M14 27 L22 35 L39 18"
-     ></path>
+        <path class="success-check" fill="none" d="M14 27 L22 35 L39 18"></path>
 
-   </svg>
+      </svg>
 
- </div>
+    </div>
 
- <div class="message-copy">
+    <div class="message-copy">
 
-   <span class="message-eyebrow success-eyebrow">
-     RESERVATION SUBMITTED
-   </span>
+      <span class="message-eyebrow success-eyebrow">
+        RESERVATION SUBMITTED
+      </span>
 
-   <h2>
-     {{ successTitle }}
-   </h2>
+      <h2>
+        {{ successTitle }}
+      </h2>
 
-   <p>
-     {{ successMessage }}
-   </p>
+      <p>
+        {{ successMessage }}
+      </p>
 
- </div>
+    </div>
 
-</div>
+  </div>
 
 </div>
 
@@ -962,46 +826,39 @@ ERROR MESSAGE
 
 @if (errorMessage) {
 
-<div
-class="message-modal-backdrop error-backdrop"
-role="alert"
->
+<div class="message-modal-backdrop error-backdrop" role="alert">
 
-<div class="message-card error-card">
+  <div class="message-card error-card">
 
- <div class="error-icon">
+    <div class="error-icon">
 
-   <span class="material-symbols-outlined">
-     error
-   </span>
+      <span class="material-symbols-outlined">
+        error
+      </span>
 
- </div>
+    </div>
 
- <div class="message-copy">
+    <div class="message-copy">
 
-   <span class="message-eyebrow error-eyebrow">
-     ATTENTION
-   </span>
+      <span class="message-eyebrow error-eyebrow">
+        ATTENTION
+      </span>
 
-   <h2>
-     {{ errorTitle }}
-   </h2>
+      <h2>
+        {{ errorTitle }}
+      </h2>
 
-   <p>
-     {{ errorMessage }}
-   </p>
+      <p>
+        {{ errorMessage }}
+      </p>
 
- </div>
+    </div>
 
- <button
-   type="button"
-   class="button button-light error-close-button"
-   (click)="clearError()"
- >
-   Close
- </button>
+    <button type="button" class="button button-light error-close-button" (click)="clearError()">
+      Close
+    </button>
 
-</div>
+  </div>
 
 </div>
 

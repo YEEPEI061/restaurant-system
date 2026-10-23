@@ -28,11 +28,7 @@
 
       <div class="heading-actions">
 
-        <button
-          class="button button-primary"
-          type="button"
-          (click)="openAddDrawer()"
-        >
+        <button class="button button-primary" type="button" (click)="openAddDrawer()">
           <span class="material-symbols-outlined">add</span>
           Add New Dish
         </button>
@@ -165,24 +161,17 @@
            CATEGORY FILTERS
            =================================================== -->
 
-      <div
-        class="category-tabs"
-        aria-label="Filter by menu category"
-      >
+      <div class="category-tabs" aria-label="Filter by menu category">
 
         @for (category of categories; track category) {
 
-          <button
-            type="button"
-            [class.active]="activeCategory === category"
-            (click)="selectCategory(category)"
-          >
-            {{ category }}
+        <button type="button" [class.active]="activeCategory === category" (click)="selectCategory(category)">
+          {{ category }}
 
-            <span>
-              {{ categoryDishCount(category) }}
-            </span>
-          </button>
+          <span>
+            {{ categoryDishCount(category) }}
+          </span>
+        </button>
 
         }
 
@@ -201,13 +190,8 @@
             search
           </span>
 
-          <input
-            type="search"
-            name="menuSearch"
-            [(ngModel)]="searchTerm"
-            placeholder="Search dish name, description or ID..."
-            aria-label="Search menu"
-          />
+          <input type="search" name="menuSearch" [(ngModel)]="searchTerm"
+            placeholder="Search dish name, description or ID..." aria-label="Search menu" />
 
         </label>
 
@@ -226,14 +210,10 @@
 
         @for (tag of dietaryOptions; track tag) {
 
-          <button
-            type="button"
-            class="filter-chip"
-            [class.chip-active]="isDietaryActive(tag)"
-            (click)="toggleDietary(tag)"
-          >
-            {{ tag }}
-          </button>
+        <button type="button" class="filter-chip" [class.chip-active]="isDietaryActive(tag)"
+          (click)="toggleDietary(tag)">
+          {{ tag }}
+        </button>
 
         }
 
@@ -242,12 +222,8 @@
 
         <!-- Signature Filter -->
 
-        <button
-          type="button"
-          class="filter-chip signature-chip"
-          [class.chip-active]="signatureOnly"
-          (click)="signatureOnly = !signatureOnly"
-        >
+        <button type="button" class="filter-chip signature-chip" [class.chip-active]="signatureOnly"
+          (click)="signatureOnly = !signatureOnly">
           <span class="material-symbols-outlined">
             star
           </span>
@@ -258,12 +234,8 @@
 
         <!-- Unavailable Filter -->
 
-        <button
-          type="button"
-          class="filter-chip unavailable-chip"
-          [class.chip-active]="unavailableOnly"
-          (click)="unavailableOnly = !unavailableOnly"
-        >
+        <button type="button" class="filter-chip unavailable-chip" [class.chip-active]="unavailableOnly"
+          (click)="unavailableOnly = !unavailableOnly">
           <span class="material-symbols-outlined">
             block
           </span>
@@ -274,17 +246,13 @@
 
         <!-- Reset Filters -->
 
-        <button
-          type="button"
-          class="reset-button"
-          (click)="
+        <button type="button" class="reset-button" (click)="
             activeCategory = 'All Courses';
             searchTerm = '';
             activeDietary = [];
             signatureOnly = false;
             unavailableOnly = false
-          "
-        >
+          ">
           Reset filters
         </button>
 
@@ -328,189 +296,165 @@
 
             @for (dish of filteredDishes; track dish.id) {
 
-              <tr
-                [class.unavailable-row]="!dish.available"
-              >
+            <tr [class.unavailable-row]="!dish.available">
 
-                <!-- Dish -->
+              <!-- Dish -->
 
-                <td>
+              <td>
 
-                  <div class="dish-cell">
+                <div class="dish-cell">
 
-                    @if (dish.image) {
+                  @if (dish.image) {
 
-                      <img
-                        class="dish-image"
-                        [src]="dish.image"
-                        [alt]="dish.name"
-                      />
+                  <img class="dish-image" [src]="dish.image" [alt]="dish.name" />
 
-                    } @else {
+                  } @else {
 
-                      <div class="dish-image dish-placeholder">
+                  <div class="dish-image dish-placeholder">
 
-                        <span class="material-symbols-outlined">
-                          restaurant
-                        </span>
+                    <span class="material-symbols-outlined">
+                      restaurant
+                    </span>
 
-                      </div>
+                  </div>
 
-                    }
+                  }
 
 
-                    <div class="dish-info">
+                  <div class="dish-info">
 
-                      <div class="dish-title-row">
+                    <div class="dish-title-row">
 
-                        <strong>
-                          {{ dish.name }}
-                        </strong>
+                      <strong>
+                        {{ dish.name }}
+                      </strong>
 
-                        @if (dish.signature) {
+                      @if (dish.signature) {
 
-                          <span class="signature-badge">
-                            SIGNATURE
-                          </span>
+                      <span class="signature-badge">
+                        SIGNATURE
+                      </span>
 
-                        }
+                      }
 
-                      </div>
-
-
-                      <p>
-                        {{ dish.description }}
-                      </p>
+                    </div>
 
 
-                      <div class="dish-meta">
+                    <p>
+                      {{ dish.description }}
+                    </p>
 
-                        <span>
-                          ID: {{ dish.id }}
-                        </span>
 
-                        @for (tag of dish.dietary; track tag) {
+                    <div class="dish-meta">
 
-                          <span class="dietary-badge">
-                            {{ tag }}
-                          </span>
+                      <span>
+                        ID: {{ dish.id }}
+                      </span>
 
-                        }
+                      @for (tag of dish.dietary; track tag) {
 
-                      </div>
+                      <span class="dietary-badge">
+                        {{ tag }}
+                      </span>
+
+                      }
 
                     </div>
 
                   </div>
 
-                </td>
+                </div>
+
+              </td>
 
 
-                <!-- Category -->
+              <!-- Category -->
 
-                <td>
+              <td>
 
-                  <div class="category-cell">
-                    {{ dish.category }}
-                  </div>
+                <div class="category-cell">
+                  {{ dish.category }}
+                </div>
 
-                </td>
-
-
-                <!-- Price -->
-
-                <td class="numeric-cell price-cell">
-                  RM {{ dish.price | number:'1.2-2' }}
-                </td>
+              </td>
 
 
-                <!-- Availability -->
+              <!-- Price -->
 
-                <td class="availability-cell">
+              <td class="numeric-cell price-cell">
+                RM {{ dish.price | number:'1.2-2' }}
+              </td>
 
-                  <button
-                    type="button"
-                    class="availability-toggle"
-                    [class.toggle-on]="dish.available"
-                    [attr.aria-pressed]="dish.available"
-                    [attr.aria-label]="'Toggle availability for ' + dish.name"
-                    (click)="toggleAvailability(dish)"
-                  >
-                    <span></span>
+
+              <!-- Availability -->
+
+              <td class="availability-cell">
+
+                <button type="button" class="availability-toggle" [class.toggle-on]="dish.available"
+                  [attr.aria-pressed]="dish.available" [attr.aria-label]="'Toggle availability for ' + dish.name"
+                  (click)="toggleAvailability(dish)">
+                  <span></span>
+                </button>
+
+                <span class="availability-label" [class.off-label]="!dish.available">
+                  {{ dish.available ? 'Available' : 'Unavailable' }}
+                </span>
+
+              </td>
+
+
+              <!-- Actions -->
+
+              <td class="actions-cell">
+
+                <div class="row-actions">
+
+                  <button type="button" class="icon-button icon-edit" title="Edit dish" aria-label="Edit dish"
+                    (click)="openEditDrawer(dish)">
+                    <span class="material-symbols-outlined">
+                      edit
+                    </span>
                   </button>
 
-                  <span
-                    class="availability-label"
-                    [class.off-label]="!dish.available"
-                  >
-                    {{ dish.available ? 'Available' : 'Unavailable' }}
-                  </span>
 
-                </td>
+                  <button type="button" class="icon-button icon-delete delete-action" title="Delete dish"
+                    aria-label="Delete dish" (click)="openDeleteConfirmation(dish)">
+                    <span class="material-symbols-outlined">
+                      delete_outline
+                    </span>
+                  </button>
 
+                </div>
 
-                <!-- Actions -->
+              </td>
 
-                <td class="actions-cell">
-
-                  <div class="row-actions">
-
-                    <button
-                      type="button"
-                      class="icon-action"
-                      title="Edit dish"
-                      aria-label="Edit dish"
-                      (click)="openEditDrawer(dish)"
-                    >
-                      <span class="material-symbols-outlined">
-                        edit
-                      </span>
-                    </button>
-
-
-                    <button
-                      type="button"
-                      class="icon-action delete-action"
-                      title="Delete dish"
-                      aria-label="Delete dish"
-                      (click)="openDeleteConfirmation(dish)"
-                    >
-                      <span class="material-symbols-outlined">
-                        delete_outline
-                      </span>
-                    </button>
-
-                  </div>
-
-                </td>
-
-              </tr>
+            </tr>
 
             } @empty {
 
-              <tr>
+            <tr>
 
-                <td colspan="5">
+              <td colspan="5">
 
-                  <div class="empty-state">
+                <div class="empty-state">
 
-                    <span class="material-symbols-outlined">
-                      search_off
-                    </span>
+                  <span class="material-symbols-outlined">
+                    search_off
+                  </span>
 
-                    <strong>
-                      No dishes found
-                    </strong>
+                  <strong>
+                    No dishes found
+                  </strong>
 
-                    <p>
-                      Try changing your search or filters.
-                    </p>
+                  <p>
+                    Try changing your search or filters.
+                  </p>
 
-                  </div>
+                </div>
 
-                </td>
+              </td>
 
-              </tr>
+            </tr>
 
             }
 
@@ -557,608 +501,497 @@
 
 @if (showDishDrawer) {
 
-  <div
-    class="drawer-overlay"
-    (click)="closeDrawer()"
-  >
+<div class="drawer-overlay" (click)="closeDrawer()">
 
-    <aside
-      class="dish-drawer"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="drawer-title"
-      (click)="$event.stopPropagation()"
-    >
+  <aside class="dish-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title"
+    (click)="$event.stopPropagation()">
 
-      <!-- Drawer Header -->
+    <!-- Drawer Header -->
 
-      <div class="drawer-header">
+    <div class="drawer-header">
 
-        <div>
+      <div>
+        <h2 id="drawer-title">
+          {{ drawerTitle }}
+        </h2>
 
-          <span class="drawer-eyebrow">
-            AURELIA · MENU CATALOGUE
-          </span>
-
-          <h2 id="drawer-title">
-            {{ drawerTitle }}
-          </h2>
-
-          <p>
-            Manage the dish image and
-            guest-facing menu information.
-          </p>
-
-        </div>
-
-
-        <button
-          type="button"
-          class="drawer-close"
-          aria-label="Close drawer"
-          (click)="closeDrawer()"
-        >
-          <span class="material-symbols-outlined">
-            close
-          </span>
-        </button>
+        <p>
+          Manage the dish image and
+          guest-facing menu information.
+        </p>
 
       </div>
 
 
-      <!-- ===================================================
+      <button type="button" class="drawer-close" aria-label="Close drawer" (click)="closeDrawer()">
+        <span class="material-symbols-outlined">
+          close
+        </span>
+      </button>
+
+    </div>
+
+
+    <!-- ===================================================
            DISH FORM
            =================================================== -->
 
-      <form
-        class="dish-form"
-        #dishForm="ngForm"
-        (ngSubmit)="saveDish()"
-        novalidate
-      >
+    <form class="dish-form" #dishForm="ngForm" (ngSubmit)="saveDish()" novalidate>
 
-        <div class="dish-editor-content">
+      <div class="dish-editor-content">
 
 
-          <!-- =================================================
+        <!-- =================================================
                DISH IMAGE
                ================================================= -->
 
-          <section class="image-editor-section">
+        <section class="image-editor-section">
 
-            <div
-              class="dish-image-editor"
-              [class.has-image]="!!form.image"
-            >
+          <div class="dish-image-editor" [class.has-image]="!!form.image">
+
+            @if (form.image) {
+
+            <img class="dish-editor-image" [src]="form.image" [alt]="form.name || 'Dish image'" />
+
+            } @else {
+
+            <div class="dish-image-empty">
+
+              <span class="material-symbols-outlined">
+                add_photo_alternate
+              </span>
+
+              <strong>
+                No dish image
+              </strong>
+
+              <span>
+                Add a photo to showcase this dish.
+              </span>
+
+            </div>
+
+            }
+
+
+            <div class="image-hover-actions">
+
+              <label class="image-action" for="dish-image-upload">
+
+                <span class="material-symbols-outlined">
+                  upload
+                </span>
+
+                {{ form.image ? 'Replace Image' : 'Upload Image' }}
+
+              </label>
+
 
               @if (form.image) {
 
-                <img
-                  class="dish-editor-image"
-                  [src]="form.image"
-                  [alt]="form.name || 'Dish image'"
-                />
+              <button type="button" class="image-action image-delete-action" (click)="removeDishImage()">
 
-              } @else {
+                <span class="material-symbols-outlined">
+                  delete_outline
+                </span>
 
-                <div class="dish-image-empty">
+                Delete Image
 
-                  <span class="material-symbols-outlined">
-                    add_photo_alternate
-                  </span>
-
-                  <strong>
-                    No dish image
-                  </strong>
-
-                  <span>
-                    Add a photo to showcase this dish.
-                  </span>
-
-                </div>
+              </button>
 
               }
-
-
-              <div class="image-hover-actions">
-
-                <label
-                  class="image-action"
-                  for="dish-image-upload"
-                >
-
-                  <span class="material-symbols-outlined">
-                    upload
-                  </span>
-
-                  {{ form.image ? 'Replace Image' : 'Upload Image' }}
-
-                </label>
-
-
-                @if (form.image) {
-
-                  <button
-                    type="button"
-                    class="image-action image-delete-action"
-                    (click)="removeDishImage()"
-                  >
-
-                    <span class="material-symbols-outlined">
-                      delete_outline
-                    </span>
-
-                    Delete Image
-
-                  </button>
-
-                }
-
-              </div>
-
-
-              <input
-                id="dish-image-upload"
-                class="image-file-input"
-                type="file"
-                accept="image/*"
-                (change)="onDishImageSelected($event)"
-              />
 
             </div>
 
 
-            <p class="image-helper">
-              Use a clear, high-quality photo
-              of the finished dish.
-            </p>
+            <input id="dish-image-upload" class="image-file-input" type="file" accept="image/*"
+              (change)="onDishImageSelected($event)" />
 
-          </section>
+          </div>
 
 
-          <!-- =================================================
+          <p class="image-helper">
+            Use a clear, high-quality photo
+            of the finished dish.
+          </p>
+
+        </section>
+
+
+        <!-- =================================================
                DISH INFORMATION
                ================================================= -->
 
-          <section class="editor-section">
+        <section class="editor-section">
 
-            <h3>
-              Dish Information
-            </h3>
+          <h3>
+            Dish Information
+          </h3>
 
 
-            <!-- Dish Name -->
+          <!-- Dish Name -->
 
-            <div class="form-field">
+          <div class="form-field">
 
-              <label for="dish-name">
-                Dish Name <i>*</i>
-              </label>
+            <label for="dish-name">
+              Dish Name <i>*</i>
+            </label>
 
-              <input
-                id="dish-name"
-                name="dishName"
-                [(ngModel)]="form.name"
-                #dishName="ngModel"
-                required
-                maxlength="100"
-                placeholder="e.g. French Onion Soup"
-                [class.input-invalid]="
+            <input id="dish-name" name="dishName" [(ngModel)]="form.name" #dishName="ngModel" required maxlength="100"
+              placeholder="e.g. French Onion Soup" [class.input-invalid]="
                   dishName.invalid &&
                   (
                     dishName.touched ||
                     dishForm.submitted
                   )
-                "
-              />
+                " />
 
-              @if (
-                dishName.invalid &&
-                (
-                  dishName.touched ||
-                  dishForm.submitted
-                )
-              ) {
+            @if (
+            dishName.invalid &&
+            (
+            dishName.touched ||
+            dishForm.submitted
+            )
+            ) {
 
-                <small class="field-error">
+            <small class="field-error">
 
-                  <span class="material-symbols-outlined">
-                    error
-                  </span>
+              <span class="material-symbols-outlined">
+                error
+              </span>
 
-                  @if (dishName.errors?.['required']) {
-                    Please enter a dish name.
-                  }
-
-                </small>
-
+              @if (dishName.errors?.['required']) {
+              Please enter a dish name.
               }
 
-            </div>
+            </small>
+
+            }
+
+          </div>
 
 
-            <!-- Category + Price -->
+          <!-- Category + Price -->
 
-            <div class="form-grid">
+          <div class="form-grid">
 
-              <div class="form-field">
+            <div class="form-field">
 
-                <label for="dish-category">
-                  Course <i>*</i>
-                </label>
+              <label for="dish-category">
+                Course <i>*</i>
+              </label>
 
-                <select
-                  id="dish-category"
-                  name="dishCategory"
-                  [(ngModel)]="form.category"
-                  #dishCategory="ngModel"
-                  required
-                  [class.input-invalid]="
+              <select id="dish-category" name="dishCategory" [(ngModel)]="form.category" #dishCategory="ngModel"
+                required [class.input-invalid]="
                     dishCategory.invalid &&
                     (
                       dishCategory.touched ||
                       dishForm.submitted
                     )
-                  "
-                >
+                  ">
 
-                  @for (
-                    category of categories.slice(1);
-                    track category
-                  ) {
-
-                    <option [value]="category">
-                      {{ category }}
-                    </option>
-
-                  }
-
-                </select>
-
-                @if (
-                  dishCategory.invalid &&
-                  (
-                    dishCategory.touched ||
-                    dishForm.submitted
-                  )
+                @for (
+                category of categories.slice(1);
+                track category
                 ) {
 
-                  <small class="field-error">
-
-                    <span class="material-symbols-outlined">
-                      error
-                    </span>
-
-                    Please select a course.
-
-                  </small>
+                <option [value]="category">
+                  {{ category }}
+                </option>
 
                 }
 
-              </div>
-
-
-              <div class="form-field">
-
-                <label for="dish-price">
-                  Price (RM) <i>*</i>
-                </label>
-
-                <input
-                  id="dish-price"
-                  name="dishPrice"
-                  type="number"
-                  [(ngModel)]="form.price"
-                  #dishPrice="ngModel"
-                  min="0.01"
-                  step="0.01"
-                  required
-                  placeholder="0.00"
-                  [class.input-invalid]="
-                    dishPrice.invalid &&
-                    (
-                      dishPrice.touched ||
-                      dishForm.submitted
-                    )
-                  "
-                />
-
-                @if (
-                  dishPrice.invalid &&
-                  (
-                    dishPrice.touched ||
-                    dishForm.submitted
-                  )
-                ) {
-
-                  <small class="field-error">
-
-                    <span class="material-symbols-outlined">
-                      error
-                    </span>
-
-                    @if (dishPrice.errors?.['required']) {
-                      Please enter a price.
-                    } @else if (dishPrice.errors?.['min']) {
-                      Price must be greater than RM 0.00.
-                    }
-
-                  </small>
-
-                }
-
-              </div>
-
-            </div>
-
-
-            <!-- Description -->
-
-            <div class="form-field">
-
-              <label for="dish-description">
-                Description <i>*</i>
-              </label>
-
-              <textarea
-                id="dish-description"
-                name="dishDescription"
-                [(ngModel)]="form.description"
-                #dishDescription="ngModel"
-                rows="4"
-                maxlength="500"
-                required
-                placeholder="Describe the dish, its flavours and key ingredients..."
-                [class.input-invalid]="
-                  dishDescription.invalid &&
-                  (
-                    dishDescription.touched ||
-                    dishForm.submitted
-                  )
-                "
-              ></textarea>
+              </select>
 
               @if (
-                dishDescription.invalid &&
-                (
-                  dishDescription.touched ||
-                  dishForm.submitted
-                )
+              dishCategory.invalid &&
+              (
+              dishCategory.touched ||
+              dishForm.submitted
+              )
               ) {
 
-                <small class="field-error">
+              <small class="field-error">
 
-                  <span class="material-symbols-outlined">
-                    error
-                  </span>
+                <span class="material-symbols-outlined">
+                  error
+                </span>
 
-                  Please enter a description.
+                Please select a course.
 
-                </small>
+              </small>
 
               }
 
             </div>
 
-          </section>
+
+            <div class="form-field">
+
+              <label for="dish-price">
+                Price (RM) <i>*</i>
+              </label>
+
+              <input id="dish-price" name="dishPrice" type="number" [(ngModel)]="form.price" #dishPrice="ngModel"
+                min="0.01" step="0.01" required placeholder="0.00" [class.input-invalid]="
+                    dishPrice.invalid &&
+                    (
+                      dishPrice.touched ||
+                      dishForm.submitted
+                    )
+                  " />
+
+              @if (
+              dishPrice.invalid &&
+              (
+              dishPrice.touched ||
+              dishForm.submitted
+              )
+              ) {
+
+              <small class="field-error">
+
+                <span class="material-symbols-outlined">
+                  error
+                </span>
+
+                @if (dishPrice.errors?.['required']) {
+                Please enter a price.
+                } @else if (dishPrice.errors?.['min']) {
+                Price must be greater than RM 0.00.
+                }
+
+              </small>
+
+              }
+
+            </div>
+
+          </div>
 
 
-          <!-- =================================================
+          <!-- Description -->
+
+          <div class="form-field">
+
+            <label for="dish-description">
+              Description <i>*</i>
+            </label>
+
+            <textarea id="dish-description" name="dishDescription" [(ngModel)]="form.description"
+              #dishDescription="ngModel" rows="4" maxlength="500" required
+              placeholder="Describe the dish, its flavours and key ingredients..." [class.input-invalid]="
+                  dishDescription.invalid &&
+                  (
+                    dishDescription.touched ||
+                    dishForm.submitted
+                  )
+                "></textarea>
+
+            @if (
+            dishDescription.invalid &&
+            (
+            dishDescription.touched ||
+            dishForm.submitted
+            )
+            ) {
+
+            <small class="field-error">
+
+              <span class="material-symbols-outlined">
+                error
+              </span>
+
+              Please enter a description.
+
+            </small>
+
+            }
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
                MENU SETTINGS
                ================================================= -->
 
-          <section class="editor-section">
+        <section class="editor-section">
 
-            <h3>
-              Menu Settings
-            </h3>
+          <h3>
+            Menu Settings
+          </h3>
 
-            <p class="section-description">
-              Control how this dish is presented
-              and whether guests can currently order it.
-            </p>
+          <p class="section-description">
+            Control how this dish is presented
+            and whether guests can currently order it.
+          </p>
+
+
+          <div class="checkbox-list">
+
+            <label class="checkbox-option">
+
+              <input type="checkbox" name="dishAvailable" [(ngModel)]="form.available" />
+
+              <span>
+                Available to Guests
+              </span>
+
+            </label>
+
+
+            <label class="checkbox-option">
+
+              <input type="checkbox" name="dishSignature" [(ngModel)]="form.signature" />
+
+              <span>
+                Signature Dish
+              </span>
+
+            </label>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+               PROVENANCE & PAIRING
+               ================================================= -->
+
+        <section class="editor-section">
+
+          <h3>
+            Provenance &amp; Pairing
+          </h3>
+
+
+          <div class="form-field">
+
+            <label for="dish-provenance">
+              Provenance
+            </label>
+
+            <textarea id="dish-provenance" name="dishProvenance" [(ngModel)]="form.provenance" rows="2" maxlength="300"
+              placeholder="Ingredient origin, farm or supplier..."></textarea>
+
+          </div>
+
+
+          <div class="form-field">
+
+            <label for="dish-pairing">
+              Pairing Recommendation
+            </label>
+
+            <textarea id="dish-pairing" name="dishPairing" [(ngModel)]="form.pairing" rows="2" maxlength="300"
+              placeholder="Suggested side dish or beverage..."></textarea>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+               DIETARY & ALLERGENS
+               ================================================= -->
+
+        <section class="editor-section">
+
+          <h3>
+            Dietary &amp; Allergens
+          </h3>
+
+          <p class="section-description">
+            Select the dietary labels that apply
+            and record known allergens so guests
+            can make informed choices.
+          </p>
+
+
+          <!-- Dietary -->
+
+          <div class="form-field">
+
+            <label>
+              Dietary Badges
+            </label>
 
 
             <div class="checkbox-list">
 
-              <label class="checkbox-option">
-
-                <input
-                  type="checkbox"
-                  name="dishAvailable"
-                  [(ngModel)]="form.available"
-                />
-
-                <span>
-                  Available to Guests
-                </span>
-
-              </label>
-
+              @for (tag of dietaryOptions; track tag) {
 
               <label class="checkbox-option">
 
-                <input
-                  type="checkbox"
-                  name="dishSignature"
-                  [(ngModel)]="form.signature"
-                />
-
-                <span>
-                  Signature Dish
-                </span>
-
-              </label>
-
-            </div>
-
-          </section>
-
-
-          <!-- =================================================
-               PROVENANCE & PAIRING
-               ================================================= -->
-
-          <section class="editor-section">
-
-            <h3>
-              Provenance &amp; Pairing
-            </h3>
-
-
-            <div class="form-field">
-
-              <label for="dish-provenance">
-                Provenance
-              </label>
-
-              <textarea
-                id="dish-provenance"
-                name="dishProvenance"
-                [(ngModel)]="form.provenance"
-                rows="2"
-                maxlength="300"
-                placeholder="Ingredient origin, farm or supplier..."
-              ></textarea>
-
-            </div>
-
-
-            <div class="form-field">
-
-              <label for="dish-pairing">
-                Pairing Recommendation
-              </label>
-
-              <textarea
-                id="dish-pairing"
-                name="dishPairing"
-                [(ngModel)]="form.pairing"
-                rows="2"
-                maxlength="300"
-                placeholder="Suggested side dish or beverage..."
-              ></textarea>
-
-            </div>
-
-          </section>
-
-
-          <!-- =================================================
-               DIETARY & ALLERGENS
-               ================================================= -->
-
-          <section class="editor-section">
-
-            <h3>
-              Dietary &amp; Allergens
-            </h3>
-
-            <p class="section-description">
-              Select the dietary labels that apply
-              and record known allergens so guests
-              can make informed choices.
-            </p>
-
-
-            <!-- Dietary -->
-
-            <div class="form-field">
-
-              <label>
-                Dietary Badges
-              </label>
-
-
-              <div class="checkbox-list">
-
-                @for (tag of dietaryOptions; track tag) {
-
-                  <label class="checkbox-option">
-
-                    <input
-                      type="checkbox"
-                      [checked]="form.dietary.includes(tag)"
-                      (change)="
+                <input type="checkbox" [checked]="form.dietary.includes(tag)" (change)="
                         toggleFormDietary(
                           tag,
                           $any($event.target).checked
                         )
-                      "
-                    />
+                      " />
 
-                    <span>
-                      {{ tag }}
-                    </span>
+                <span>
+                  {{ tag }}
+                </span>
 
-                  </label>
-
-                }
-
-              </div>
-
-            </div>
-
-
-            <!-- Allergens -->
-
-            <div class="form-field">
-
-              <label for="dish-allergens">
-                Allergy Information
               </label>
 
-              <textarea
-                id="dish-allergens"
-                name="dishAllergens"
-                [(ngModel)]="form.allergens"
-                rows="3"
-                maxlength="500"
-                placeholder="e.g. Contains milk and wheat. Note possible cross-contact where applicable."
-              ></textarea>
+              }
 
             </div>
 
-          </section>
-
-        </div>
+          </div>
 
 
-        <!-- ===================================================
+          <!-- Allergens -->
+
+          <div class="form-field">
+
+            <label for="dish-allergens">
+              Allergy Information
+            </label>
+
+            <textarea id="dish-allergens" name="dishAllergens" [(ngModel)]="form.allergens" rows="3" maxlength="500"
+              placeholder="e.g. Contains milk and wheat. Note possible cross-contact where applicable."></textarea>
+
+          </div>
+
+        </section>
+
+      </div>
+
+
+      <!-- ===================================================
              DRAWER FOOTER
              =================================================== -->
 
-        <div class="drawer-footer">
+      <div class="drawer-footer">
 
-          <button
-            type="button"
-            class="button button-light"
-            (click)="closeDrawer()"
-          >
-            Cancel
-          </button>
+        <button type="button" class="button button-light" (click)="closeDrawer()">
+          Cancel
+        </button>
 
 
-          <button
-            type="submit"
-            class="button button-primary"
-          >
+        <button type="submit" class="button button-primary">
 
-            <span class="material-symbols-outlined">
-              check
-            </span>
+          <span class="material-symbols-outlined">
+            check
+          </span>
 
-            Save Menu Item
+          Save Menu Item
 
-          </button>
+        </button>
 
-        </div>
+      </div>
 
-      </form>
+    </form>
 
-    </aside>
+  </aside>
 
-  </div>
+</div>
 
 }
 
@@ -1169,76 +1002,60 @@
 
 @if (deleteConfirmOpen) {
 
-  <div
-    class="message-modal-backdrop"
-    (click)="cancelDelete()"
-  >
+<div class="message-modal-backdrop" (click)="cancelDelete()">
 
-    <div
-      class="message-card confirm-card"
-      role="alertdialog"
-      aria-modal="true"
-      aria-labelledby="delete-title"
-      (click)="$event.stopPropagation()"
-    >
+  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="delete-title"
+    (click)="$event.stopPropagation()">
 
-      <div class="message-icon delete-message-icon">
+    <div class="message-icon delete-message-icon">
+
+      <span class="material-symbols-outlined">
+        delete
+      </span>
+
+    </div>
+
+    <div class="message-copy">
+
+      <span class="message-eyebrow">
+        CONFIRM ACTION
+      </span>
+
+      <h2 id="delete-title">
+        Delete Menu Item?
+      </h2>
+
+      <p>
+        Are you sure you want to delete
+        <strong>
+          {{ dishToDelete?.name }}
+        </strong>?
+        This action cannot be undone.
+      </p>
+
+    </div>
+
+    <div class="message-actions">
+
+      <button type="button" class="button button-light modal-button" (click)="cancelDelete()">
+        Cancel
+      </button>
+
+      <button type="button" class="button delete-confirm-button modal-button" (click)="confirmDelete()">
 
         <span class="material-symbols-outlined">
           delete
         </span>
 
-      </div>
+        Delete Menu Item
 
-      <div class="message-copy">
-
-        <span class="message-eyebrow">
-          CONFIRM ACTION
-        </span>
-
-        <h2 id="delete-title">
-          Delete Menu Item?
-        </h2>
-
-        <p>
-          Are you sure you want to delete
-          <strong>
-            {{ dishToDelete?.name }}
-          </strong>?
-          This action cannot be undone.
-        </p>
-
-      </div>
-
-      <div class="message-actions">
-
-        <button
-          type="button"
-          class="button button-light modal-button"
-          (click)="cancelDelete()"
-        >
-          Cancel
-        </button>
-
-        <button
-          type="button"
-          class="button delete-confirm-button modal-button"
-          (click)="confirmDelete()"
-        >
-
-          <span class="material-symbols-outlined">
-            delete
-          </span>
-
-          Delete Menu Item
-
-        </button>
-
-      </div>
+      </button>
 
     </div>
 
   </div>
+
+</div>
 
 }
 
@@ -1249,58 +1066,41 @@
 
 @if (successMessage) {
 
-  <div
-    class="message-modal-backdrop success-backdrop"
-    role="status"
-  >
+<div class="message-modal-backdrop success-backdrop" role="status">
 
-    <div class="message-card success-card">
+  <div class="message-card success-card">
 
-      <div class="success-animation">
+    <div class="success-animation">
 
-        <svg
-          class="success-svg"
-          viewBox="0 0 52 52"
-          aria-hidden="true"
-        >
+      <svg class="success-svg" viewBox="0 0 52 52" aria-hidden="true">
 
-          <circle
-            class="success-circle"
-            cx="26"
-            cy="26"
-            r="24"
-            fill="none"
-          ></circle>
+        <circle class="success-circle" cx="26" cy="26" r="24" fill="none"></circle>
 
-          <path
-            class="success-check"
-            fill="none"
-            d="M14 27 L22 35 L39 18"
-          ></path>
+        <path class="success-check" fill="none" d="M14 27 L22 35 L39 18"></path>
 
-        </svg>
+      </svg>
 
-      </div>
+    </div>
 
-      <div class="message-copy">
+    <div class="message-copy">
 
-        <span class="message-eyebrow success-eyebrow">
-          SUCCESS
-        </span>
+      <span class="message-eyebrow success-eyebrow">
+        SUCCESS
+      </span>
 
-        <h2>
-          {{ successTitle }}
-        </h2>
+      <h2>
+        {{ successTitle }}
+      </h2>
 
-        <p>
-          {{ successMessage }}
-        </p>
-
-      </div>
+      <p>
+        {{ successMessage }}
+      </p>
 
     </div>
 
   </div>
+
+</div>
 
 }
 
@@ -1311,48 +1111,41 @@
 
 @if (errorMessage) {
 
-  <div
-    class="message-modal-backdrop error-backdrop"
-    role="alert"
-  >
+<div class="message-modal-backdrop error-backdrop" role="alert">
 
-    <div class="message-card error-card">
+  <div class="message-card error-card">
 
-      <div class="error-icon">
+    <div class="error-icon">
 
-        <span class="material-symbols-outlined">
-          error
-        </span>
-
-      </div>
-
-      <div class="message-copy">
-
-        <span class="message-eyebrow error-eyebrow">
-          ATTENTION
-        </span>
-
-        <h2>
-          {{ errorTitle }}
-        </h2>
-
-        <p>
-          {{ errorMessage }}
-        </p>
-
-      </div>
-
-      <button
-        type="button"
-        class="button button-light error-close-button"
-        (click)="clearError()"
-      >
-        Close
-      </button>
+      <span class="material-symbols-outlined">
+        error
+      </span>
 
     </div>
 
+    <div class="message-copy">
+
+      <span class="message-eyebrow error-eyebrow">
+        ATTENTION
+      </span>
+
+      <h2>
+        {{ errorTitle }}
+      </h2>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+    </div>
+
+    <button type="button" class="button button-light error-close-button" (click)="clearError()">
+      Close
+    </button>
+
   </div>
+
+</div>
 
 }
 

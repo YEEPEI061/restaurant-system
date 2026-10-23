@@ -10,10 +10,12 @@
 
       <div class="heading-copy">
 
-        <div class="eyebrow">
-          <span>AURELIA GUEST PORTAL</span>
-          <span class="eyebrow-dot"></span>
-          <span>GEORGE TOWN, PENANG</span>
+        <div class="hero-eyebrow">
+          <span class="hero-dot"></span>
+
+          <span>
+            Your Reservations
+          </span>
         </div>
 
         <h1>Your Reservations &amp; Dining History</h1>
@@ -29,48 +31,44 @@
 
     @if (!isLoggedIn) {
 
-      <section class="login-required-state">
-    
-        <div class="login-required-icon">
-    
-          <span class="material-symbols-outlined">
-            lock
-          </span>
-    
-        </div>
-    
-        <span class="step-label">
-          AURELIA GUEST PORTAL
+    <section class="login-required-state">
+
+      <div class="login-required-icon">
+
+        <span class="material-symbols-outlined">
+          lock
         </span>
-    
-        <h2>
-          Please Log In to View Your Reservations
-        </h2>
-    
-        <p>
-          Your reservations and dining history are available
-          after you sign in to your Aurelia guest account.
-        </p>
-    
-        <button
-          type="button"
-          class="button button-primary"
-          (click)="goToLogin()"
-        >
-    
-          <span class="material-symbols-outlined">
-            login
-          </span>
-    
-          Log In to View Reservations
-    
-        </button>
-    
-      </section>
-    
+
+      </div>
+
+      <span class="step-label">
+        AURELIA GUEST PORTAL
+      </span>
+
+      <h2>
+        Please Log In to View Your Reservations
+      </h2>
+
+      <p>
+        Your reservations and dining history are available
+        after you sign in to your Aurelia guest account.
+      </p>
+
+      <button type="button" class="button button-primary" (click)="goToLogin()">
+
+        <span class="material-symbols-outlined">
+          login
+        </span>
+
+        Log In to View Reservations
+
+      </button>
+
+    </section>
+
     } @else {
-    
-   
+
+
 
 
     <!-- =====================================================
@@ -80,36 +78,23 @@
 
       <div class="reservation-tabs">
 
-        <button
-          type="button"
-          class="tab-button"
-          [class.active]="activeTab === 'upcoming'"
-          (click)="setActiveTab('upcoming')"
-        >
+        <button type="button" class="tab-button" [class.active]="activeTab === 'upcoming'"
+          (click)="setActiveTab('upcoming')">
           Upcoming
           <span class="tab-count">
             {{ upcomingCount }}
           </span>
         </button>
 
-        <button
-          type="button"
-          class="tab-button"
-          [class.active]="activeTab === 'past'"
-          (click)="setActiveTab('past')"
-        >
+        <button type="button" class="tab-button" [class.active]="activeTab === 'past'" (click)="setActiveTab('past')">
           Past Experiences
           <span class="tab-count">
             {{ pastCount }}
           </span>
         </button>
 
-        <button
-          type="button"
-          class="tab-button"
-          [class.active]="activeTab === 'cancelled'"
-          (click)="setActiveTab('cancelled')"
-        >
+        <button type="button" class="tab-button" [class.active]="activeTab === 'cancelled'"
+          (click)="setActiveTab('cancelled')">
           Cancelled
           <span class="tab-count">
             {{ cancelledCount }}
@@ -121,26 +106,21 @@
 
       <div class="search-controls">
 
-       
-        <button
-          type="button"
-          class="sort-button"
-          (click)="toggleSort()"
-          [attr.aria-label]="
+
+        <button type="button" class="sort-button" (click)="toggleSort()" [attr.aria-label]="
             sortNewestFirst
               ? 'Sort oldest first'
               : 'Sort newest first'
-          "
-        >
+          ">
           <span class="material-symbols-outlined">
             swap_vert
           </span>
 
           <span>
             {{
-              sortNewestFirst
-                ? 'Newest first'
-                : 'Oldest first'
+            sortNewestFirst
+            ? 'Newest first'
+            : 'Oldest first'
             }}
           </span>
         </button>
@@ -155,19 +135,19 @@
     ====================================================== -->
     @if (errorMessage && !showCancelModal) {
 
-      <div class="empty-state">
+    <div class="empty-state">
 
-        <span class="material-symbols-outlined">
-          error
-        </span>
+      <span class="material-symbols-outlined">
+        error
+      </span>
 
-        <h3>Unable to Load Reservations</h3>
+      <h3>Unable to Load Reservations</h3>
 
-        <p>
-          {{ errorMessage }}
-        </p>
+      <p>
+        {{ errorMessage }}
+      </p>
 
-      </div>
+    </div>
 
     }
 
@@ -177,641 +157,618 @@
     ====================================================== -->
     @if (activeTab === 'upcoming') {
 
-      <section class="reservation-list">
+    <section class="reservation-list">
 
 
-        <!-- Loading -->
-        @if (isLoading) {
+      <!-- Loading -->
+      @if (isLoading) {
 
-          <div class="empty-state">
+      <div class="empty-state">
 
-            <span class="material-symbols-outlined">
-              hourglass_top
+        <span class="material-symbols-outlined">
+          hourglass_top
+        </span>
+
+        <h3>Loading your reservations</h3>
+
+        <p>
+          Please wait while we retrieve your upcoming visits.
+        </p>
+
+      </div>
+
+      } @else {
+
+
+      <!-- Reservation cards -->
+      @for (
+      reservation of filteredReservations;
+      track reservation._id;
+      let i = $index
+      ) {
+
+      <article class="reservation-card">
+
+
+        <!-- ===========================================
+                   CARD HEADER
+              ============================================ -->
+        <div class="reservation-card-topline">
+
+          <div class="reference-label">
+
+            <span>
+              UPCOMING SEATING
             </span>
 
-            <h3>Loading your reservations</h3>
+            <span class="reference-divider">
+              •
+            </span>
 
-            <p>
-              Please wait while we retrieve your upcoming visits.
-            </p>
+            <strong>
+              REF. {{ reservation.reservationId }}
+            </strong>
 
           </div>
 
-        } @else {
+
+          <span class="status-badge" [ngClass]="getStatusClass(reservation.status)">
+            <span class="status-dot"></span>
+
+            {{ reservation.status }}
+          </span>
+
+        </div>
 
 
-          <!-- Reservation cards -->
-          @for (
-            reservation of filteredReservations;
-            track reservation._id;
-            let i = $index
-          ) {
-
-            <article class="reservation-card">
-
-
-              <!-- ===========================================
-                   CARD HEADER
+        <!-- ===========================================
+                   RESERVATION HERO
               ============================================ -->
-              <div class="reservation-card-topline">
+        <div class="reservation-hero">
 
-                <div class="reference-label">
+          <div class="reservation-image">
 
-                  <span>
-                    UPCOMING SEATING
-                  </span>
+            <img src="/images/aurelia-dining.png" alt="Aurelia restaurant dining room" [class.second-image]="i > 0" />
 
-                  <span class="reference-divider">
-                    •
-                  </span>
+            <div class="image-label">
+              {{ reservation.seating }}
+            </div>
 
-                  <strong>
-                    REF. {{ reservation.reservationId }}
-                  </strong>
+          </div>
+
+
+          <div class="reservation-overview">
+
+            <div class="overview-topline">
+
+              <span class="experience-badge">
+                {{ getDiningLabel(reservation) }}
+              </span>
+
+
+              @if (hasEstimatedPrice(reservation)) {
+
+              <div class="estimated-total">
+
+                <span>
+                  ESTIMATED TOTAL
+                </span>
+
+                <strong>
+                  RM
+                  {{
+                  getEstimatedTotal(reservation)
+                  .toFixed(2)
+                  }}
+                </strong>
+
+              </div>
+
+              }
+
+            </div>
+
+
+            <h2>
+              {{ formatReservationDate(reservation.date) }}
+              at
+              {{ reservation.time }}
+            </h2>
+
+
+            <p class="reservation-description">
+              {{ getDiningDescription(reservation) }}
+              ·
+              {{ reservation.seating }}
+            </p>
+
+
+            <!-- Metrics -->
+            <div class="metrics-grid">
+
+              <div class="metric">
+
+                <span>
+                  PARTY SIZE
+                </span>
+
+                <strong>
+                  {{ reservation.partySize }}
+                  {{
+                  reservation.partySize === 1
+                  ? 'Guest'
+                  : 'Guests'
+                  }}
+                </strong>
+
+                <small>
+                  Table for {{ reservation.partySize }}
+                </small>
+
+              </div>
+
+
+              <div class="metric">
+
+                <span>
+                  SERVICE
+                </span>
+
+                <strong>
+                  {{ getServicePeriodLabel(reservation) }}
+                </strong>
+
+                <small>
+                  {{ reservation.time }}
+                </small>
+
+              </div>
+
+
+              <div class="metric">
+
+                <span>
+                  SEATING
+                </span>
+
+                <strong>
+                  {{ reservation.seating }}
+                </strong>
+
+                <small>
+                  Subject to availability
+                </small>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ===========================================
+                   RESERVATION DETAILS
+              ============================================ -->
+        <div class="reservation-details">
+
+
+          <!-- Dining selections -->
+          <div class="course-column">
+
+            <div class="section-title-row">
+
+              <h3>
+
+                <span class="material-symbols-outlined">
+                  restaurant
+                </span>
+
+                Dining Selections
+
+              </h3>
+
+              <span class="section-caption">
+                YOUR PREFERENCES
+              </span>
+
+            </div>
+
+
+            <!-- À LA CARTE -->
+            <!-- À LA CARTE -->
+            @if (
+            reservation.diningOption === 'alacarte' &&
+            reservation.selectedDishes &&
+            reservation.selectedDishes.length > 0
+            ) {
+
+            <div class="course-list">
+
+              @for (
+              dish of getGroupedSelectedDishes(reservation);
+              track dish.id
+              ) {
+
+              <div class="course-item">
+
+                <div class="course-number">
+                  {{
+                  $index + 1 < 10 ? '0' + ($index + 1) : $index + 1 }} </div>
+
+                    <div class="course-copy">
+
+                      <strong>
+                        {{ dish.name }}
+
+                        @if (dish.quantity > 1) {
+                        <span class="dish-quantity">
+                          ×{{ dish.quantity }}
+                        </span>
+                        }
+                      </strong>
+
+                      <span>
+                        Selected from the Aurelia menu
+                      </span>
+
+                    </div>
+
+                    <strong class="course-price">
+                      RM {{ (dish.price * dish.quantity).toFixed(2) }}
+                    </strong>
 
                 </div>
 
+                }
 
-                <span
-                  class="status-badge"
-                  [ngClass]="getStatusClass(reservation.status)"
-                >
-                  <span class="status-dot"></span>
+              </div>
 
+              }
+
+              <!-- TASTING MENU -->
+              @if (
+              reservation.diningOption === 'tasting'
+              ) {
+
+              <div class="course-list">
+
+                <div class="course-item">
+
+                  <div class="course-number">
+                    01
+                  </div>
+
+
+                  <div class="course-copy">
+
+                    <strong>
+                      {{
+                      reservation.tastingMenu ||
+                      reservation.packageName ||
+                      'Tasting Menu'
+                      }}
+                    </strong>
+
+                    <span>
+                      Curated seasonal dining experience
+                    </span>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              }
+
+
+              <!-- TABLE RESERVATION -->
+              @if (
+              reservation.diningOption === 'table'
+              ) {
+
+              <div class="course-list">
+
+                <div class="course-item">
+
+                  <div class="course-number">
+                    01
+                  </div>
+
+
+                  <div class="course-copy">
+
+                    <strong>
+                      Table Reservation
+                    </strong>
+
+                    <span>
+                      Order from our menu when seated
+                    </span>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              }
+
+
+              <!-- BEVERAGE PAIRING -->
+              @if (reservation.beveragePairing) {
+
+              <div class="course-list">
+
+                <div class="course-item">
+
+                  <div class="course-number">
+                    +
+                  </div>
+
+
+                  <div class="course-copy">
+
+                    <strong>
+                      Seasonal Beverage Pairing
+                    </strong>
+
+                    <span>
+                      Included with this reservation
+                    </span>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              }
+
+
+              <!-- SPECIAL REQUESTS -->
+              <div class="special-requests">
+
+                <span class="material-symbols-outlined">
+                  notes
+                </span>
+
+                <div>
+
+                  <strong>
+                    SPECIAL REQUESTS
+                  </strong>
+
+                  <p>
+                    {{ getSpecialRequest(reservation) }}
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- =========================================
+                     RESERVATION SUMMARY
+                ========================================== -->
+            <aside class="payment-column">
+
+              <div class="payment-heading">
+
+                <h3>
+                  Reservation Summary
+                </h3>
+
+                <span class="payment-status">
                   {{ reservation.status }}
                 </span>
 
               </div>
 
 
-              <!-- ===========================================
-                   RESERVATION HERO
-              ============================================ -->
-              <div class="reservation-hero">
+              <div class="policy-notice">
 
-                <div class="reservation-image">
+                <span class="material-symbols-outlined">
+                  event_available
+                </span>
 
-                  <img
-                    src="/images/aurelia-dining.png"
-                    alt="Aurelia restaurant dining room"
-                    [class.second-image]="i > 0"
-                  />
+                <div>
 
-                  <div class="image-label">
-                    {{ reservation.seating }}
-                  </div>
+                  <strong>
+                    Need to change your plans?
+                  </strong>
 
-                </div>
-
-
-                <div class="reservation-overview">
-
-                  <div class="overview-topline">
-
-                    <span class="experience-badge">
-                      {{ getDiningLabel(reservation) }}
-                    </span>
-
-
-                    @if (hasEstimatedPrice(reservation)) {
-
-                      <div class="estimated-total">
-
-                        <span>
-                          ESTIMATED TOTAL
-                        </span>
-
-                        <strong>
-                          RM
-                          {{
-                            getEstimatedTotal(reservation)
-                              .toFixed(2)
-                          }}
-                        </strong>
-
-                      </div>
-
-                    }
-
-                  </div>
-
-
-                  <h2>
-                    {{ formatReservationDate(reservation.date) }}
-                    at
-                    {{ reservation.time }}
-                  </h2>
-
-
-                  <p class="reservation-description">
-                    {{ getDiningDescription(reservation) }}
-                    ·
-                    {{ reservation.seating }}
+                  <p>
+                    You may modify or cancel your reservation
+                    before your scheduled visit.
                   </p>
 
-
-                  <!-- Metrics -->
-                  <div class="metrics-grid">
-
-                    <div class="metric">
-
-                      <span>
-                        PARTY SIZE
-                      </span>
-
-                      <strong>
-                        {{ reservation.partySize }}
-                        {{
-                          reservation.partySize === 1
-                            ? 'Guest'
-                            : 'Guests'
-                        }}
-                      </strong>
-
-                      <small>
-                        Table for {{ reservation.partySize }}
-                      </small>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                      <span>
-                        SERVICE
-                      </span>
-
-                      <strong>
-                        {{ getServicePeriodLabel(reservation) }}
-                      </strong>
-
-                      <small>
-                        {{ reservation.time }}
-                      </small>
-
-                    </div>
-
-
-                    <div class="metric">
-
-                      <span>
-                        SEATING
-                      </span>
-
-                      <strong>
-                        {{ reservation.seating }}
-                      </strong>
-
-                      <small>
-                        Subject to availability
-                      </small>
-
-                    </div>
-
-                  </div>
-
                 </div>
 
               </div>
 
 
-              <!-- ===========================================
-                   RESERVATION DETAILS
-              ============================================ -->
-              <div class="reservation-details">
+              <div class="payment-breakdown">
 
+                <div class="payment-row">
 
-                <!-- Dining selections -->
-                <div class="course-column">
-
-                  <div class="section-title-row">
-
-                    <h3>
-
-                      <span class="material-symbols-outlined">
-                        restaurant
-                      </span>
-
-                      Dining Selections
-
-                    </h3>
-
-                    <span class="section-caption">
-                      YOUR PREFERENCES
-                    </span>
-
-                  </div>
-
-
-                  <!-- À LA CARTE -->
-                  <!-- À LA CARTE -->
-                  @if (
-                    reservation.diningOption === 'alacarte' &&
-                    reservation.selectedDishes &&
-                    reservation.selectedDishes.length > 0
-                  ) {
-
-                    <div class="course-list">
-
-                      @for (
-                        dish of getGroupedSelectedDishes(reservation);
-                        track dish.id
-                      ) {
-
-                        <div class="course-item">
-
-                          <div class="course-number">
-                            {{
-                              $index + 1 < 10
-                                ? '0' + ($index + 1)
-                                : $index + 1
-                            }}
-                          </div>
-
-                          <div class="course-copy">
-
-                            <strong>
-                              {{ dish.name }}
-
-                              @if (dish.quantity > 1) {
-                                <span class="dish-quantity">
-                                  ×{{ dish.quantity }}
-                                </span>
-                              }
-                            </strong>
-
-                            <span>
-                              Selected from the Aurelia menu
-                            </span>
-
-                          </div>
-
-                          <strong class="course-price">
-                            RM {{ (dish.price * dish.quantity).toFixed(2) }}
-                          </strong>
-
-                        </div>
-
-                      }
-
-                    </div>
-
-                  }
-
-                  <!-- TASTING MENU -->
-                  @if (
-                    reservation.diningOption === 'tasting'
-                  ) {
-
-                    <div class="course-list">
-
-                      <div class="course-item">
-
-                        <div class="course-number">
-                          01
-                        </div>
-
-
-                        <div class="course-copy">
-
-                          <strong>
-                            {{
-                              reservation.tastingMenu ||
-                              reservation.packageName ||
-                              'Tasting Menu'
-                            }}
-                          </strong>
-
-                          <span>
-                            Curated seasonal dining experience
-                          </span>
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  }
-
-
-                  <!-- TABLE RESERVATION -->
-                  @if (
-                    reservation.diningOption === 'table'
-                  ) {
-
-                    <div class="course-list">
-
-                      <div class="course-item">
-
-                        <div class="course-number">
-                          01
-                        </div>
-
-
-                        <div class="course-copy">
-
-                          <strong>
-                            Table Reservation
-                          </strong>
-
-                          <span>
-                            Order from our menu when seated
-                          </span>
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  }
-
-
-                  <!-- BEVERAGE PAIRING -->
-                  @if (reservation.beveragePairing) {
-
-                    <div class="course-list">
-
-                      <div class="course-item">
-
-                        <div class="course-number">
-                          +
-                        </div>
-
-
-                        <div class="course-copy">
-
-                          <strong>
-                            Seasonal Beverage Pairing
-                          </strong>
-
-                          <span>
-                            Included with this reservation
-                          </span>
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  }
-
-
-                  <!-- SPECIAL REQUESTS -->
-                  <div class="special-requests">
-
-                    <span class="material-symbols-outlined">
-                      notes
-                    </span>
-
-                    <div>
-
-                      <strong>
-                        SPECIAL REQUESTS
-                      </strong>
-
-                      <p>
-                        {{ getSpecialRequest(reservation) }}
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-
-                <!-- =========================================
-                     RESERVATION SUMMARY
-                ========================================== -->
-                <aside class="payment-column">
-
-                  <div class="payment-heading">
-
-                    <h3>
-                      Reservation Summary
-                    </h3>
-
-                    <span class="payment-status">
-                      {{ reservation.status }}
-                    </span>
-
-                  </div>
-
-
-                  <div class="policy-notice">
-
-                    <span class="material-symbols-outlined">
-                      event_available
-                    </span>
-
-                    <div>
-
-                      <strong>
-                        Need to change your plans?
-                      </strong>
-
-                      <p>
-                        You may modify or cancel your reservation
-                        before your scheduled visit.
-                      </p>
-
-                    </div>
-
-                  </div>
-
-
-                  <div class="payment-breakdown">
-
-                    <div class="payment-row">
-
-                      <span>
-                        Reservation
-                      </span>
-
-                      <strong>
-                        {{ reservation.reservationId }}
-                      </strong>
-
-                    </div>
-
-
-                    <div class="payment-row">
-
-                      <span>
-                        Service
-                      </span>
-
-                      <strong>
-                        {{ getServicePeriodLabel(reservation) }}
-                      </strong>
-
-                    </div>
-
-
-                    <div class="payment-row">
-
-                      <span>
-                        Dining preference
-                      </span>
-
-                      <strong>
-                        {{ getDiningLabel(reservation) }}
-                      </strong>
-
-                    </div>
-
-
-                    <div class="payment-row">
-
-                      <span>
-                        Party size
-                      </span>
-
-                      <strong>
-                        {{ reservation.partySize }}
-                      </strong>
-
-                    </div>
-
-
-                    <div class="payment-row">
-
-                      <span>
-                        Seating
-                      </span>
-
-                      <strong>
-                        {{ reservation.seating }}
-                      </strong>
-
-                    </div>
-
-
-                    @if (reservation.beveragePairing) {
-
-                      <div class="payment-row">
-
-                        <span>
-                          Beverage pairing
-                        </span>
-
-                        <strong>
-                          Included
-                        </strong>
-
-                      </div>
-
-                    }
-
-                  </div>
-
-                </aside>
-
-              </div>
-
-
-              <!-- ===========================================
-                   ACTIONS
-              ============================================ -->
-              <div class="reservation-actions">
-
-                <p class="action-note">
-
-                  <span class="material-symbols-outlined">
-                    info
+                  <span>
+                    Reservation
                   </span>
 
-                  Changes are subject to restaurant policy
-                  and availability.
+                  <strong>
+                    {{ reservation.reservationId }}
+                  </strong>
 
-                </p>
-
-
-                <div class="action-buttons">
-
-                  @if (canModifyReservation(reservation)) {
-                
-                    <button
-                      type="button"
-                      class="button button-cancel"
-                      (click)="openCancelModal(reservation)"
-                    >
-                      <span class="material-symbols-outlined">
-                        close
-                      </span>
-                
-                      Cancel
-                    </button>
-                
-                    <button
-                      type="button"
-                      class="button button-primary"
-                      (click)="modifyReservation(reservation)"
-                    >
-                      <span class="material-symbols-outlined">
-                        edit_note
-                      </span>
-                
-                      Modify Details
-                    </button>
-                
-                  } @else {
-                
-                    <p class="action-note">
-                      <span class="material-symbols-outlined">
-                        lock
-                      </span>
-                
-                      This reservation can no longer be modified.
-                    </p>
-                
-                  }
-                
                 </div>
+
+
+                <div class="payment-row">
+
+                  <span>
+                    Service
+                  </span>
+
+                  <strong>
+                    {{ getServicePeriodLabel(reservation) }}
+                  </strong>
+
+                </div>
+
+
+                <div class="payment-row">
+
+                  <span>
+                    Dining preference
+                  </span>
+
+                  <strong>
+                    {{ getDiningLabel(reservation) }}
+                  </strong>
+
+                </div>
+
+
+                <div class="payment-row">
+
+                  <span>
+                    Party size
+                  </span>
+
+                  <strong>
+                    {{ reservation.partySize }}
+                  </strong>
+
+                </div>
+
+
+                <div class="payment-row">
+
+                  <span>
+                    Seating
+                  </span>
+
+                  <strong>
+                    {{ reservation.seating }}
+                  </strong>
+
+                </div>
+
+
+                @if (reservation.beveragePairing) {
+
+                <div class="payment-row">
+
+                  <span>
+                    Beverage pairing
+                  </span>
+
+                  <strong>
+                    Included
+                  </strong>
+
+                </div>
+
+                }
 
               </div>
 
-            </article>
+            </aside>
 
-          }
+          </div>
 
 
-          <!-- No upcoming reservations -->
-          @if (filteredReservations.length === 0) {
+          <!-- ===========================================
+                   ACTIONS
+              ============================================ -->
+          <div class="reservation-actions">
 
-            <div class="empty-state">
+            <p class="action-note">
 
               <span class="material-symbols-outlined">
-                event_busy
+                info
               </span>
 
-              <h3>
-                No upcoming reservations
-              </h3>
+              Changes are subject to restaurant policy
+              and availability.
 
-              <p>
-                Your upcoming Aurelia reservations will
-                appear here.
+            </p>
+
+
+            <div class="action-buttons">
+
+              @if (canModifyReservation(reservation)) {
+
+              <button type="button" class="button button-cancel" (click)="openCancelModal(reservation)">
+                <span class="material-symbols-outlined">
+                  close
+                </span>
+
+                Cancel
+              </button>
+
+              <button type="button" class="button button-primary" (click)="modifyReservation(reservation)">
+                <span class="material-symbols-outlined">
+                  edit_note
+                </span>
+
+                Modify Details
+              </button>
+
+              } @else {
+
+              <p class="action-note">
+                <span class="material-symbols-outlined">
+                  lock
+                </span>
+
+                This reservation can no longer be modified.
               </p>
 
-              <button
-                type="button"
-                class="button button-primary"
-                (click)="reserveAnotherTable()"
-              >
-                Reserve a Table
-              </button>
+              }
 
             </div>
 
-          }
+          </div>
 
-        }
+      </article>
 
-      </section>
+      }
+
+
+      <!-- No upcoming reservations -->
+      @if (filteredReservations.length === 0) {
+
+      <div class="empty-state">
+
+        <span class="material-symbols-outlined">
+          event_busy
+        </span>
+
+        <h3>
+          No upcoming reservations
+        </h3>
+
+        <p>
+          Your upcoming Aurelia reservations will
+          appear here.
+        </p>
+
+        <button type="button" class="button button-primary" (click)="reserveAnotherTable()">
+          Reserve a Table
+        </button>
+
+      </div>
+
+      }
+
+      }
+
+    </section>
 
     }
 
@@ -821,202 +778,198 @@
     ====================================================== -->
     @if (activeTab === 'past') {
 
-      <section class="past-section">
+    <section class="past-section">
 
-        <div class="section-heading">
+      <div class="section-heading">
 
-          <div>
+        <div>
 
-            <span class="step-label">
-              YOUR DINING HISTORY
+          <span class="step-label">
+            YOUR DINING HISTORY
+          </span>
+
+          <h2>
+            Past Dining Experiences
+          </h2>
+
+          <p>
+            Revisit your previous dining experiences
+            at Aurelia.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      @if (isLoading) {
+
+      <div class="empty-state">
+
+        <span class="material-symbols-outlined">
+          hourglass_top
+        </span>
+
+        <h3>
+          Loading dining history
+        </h3>
+
+        <p>
+          Please wait while we retrieve your previous visits.
+        </p>
+
+      </div>
+
+      } @else {
+
+      <div class="past-table">
+
+
+        <!-- Table headings -->
+        <div class="past-table-header">
+
+          <span>
+            DATE &amp; SEATING
+          </span>
+
+          <span>
+            EXPERIENCE &amp; MENU
+          </span>
+
+          <span>
+            PARTY &amp; AREA
+          </span>
+
+          <span class="align-right">
+            STATUS
+          </span>
+
+          <span class="align-right">
+            ACTIONS
+          </span>
+
+        </div>
+
+
+        <!-- Past reservations -->
+        @for (
+        reservation of filteredReservations;
+        track reservation._id
+        ) {
+
+        <div class="past-row">
+
+
+          <!-- Date -->
+          <div class="past-cell date-cell">
+
+            <strong>
+              {{ formatReservationDate(reservation.date) }}
+            </strong>
+
+            <span>
+              {{ reservation.time }}
+              ·
+              {{ reservation.reservationId }}
             </span>
 
-            <h2>
-              Past Dining Experiences
-            </h2>
+          </div>
 
-            <p>
-              Revisit your previous dining experiences
-              at Aurelia.
-            </p>
+
+          <!-- Experience -->
+          <div class="past-cell">
+
+            <strong>
+              {{ getDiningLabel(reservation) }}
+            </strong>
+
+            <span class="completed-label">
+
+              <span class="material-symbols-outlined">
+                done_all
+              </span>
+
+              {{ reservation.status }}
+
+            </span>
+
+          </div>
+
+
+          <!-- Party -->
+          <div class="past-cell">
+
+            <strong>
+              {{ reservation.partySize }}
+              {{
+              reservation.partySize === 1
+              ? 'Guest'
+              : 'Guests'
+              }}
+            </strong>
+
+            <span>
+              {{ reservation.seating }}
+            </span>
+
+          </div>
+
+
+          <!-- Status -->
+          <div class="past-cell amount-cell">
+
+            <strong>
+              {{ reservation.status }}
+            </strong>
+
+            <span>
+              Dining experience
+            </span>
+
+          </div>
+
+
+          <!-- Actions -->
+          <div class="past-actions">
+
+            <button type="button" class="button button-rebook" (click)="rebookReservation(reservation)">
+              Re-book
+            </button>
 
           </div>
 
         </div>
 
-
-        @if (isLoading) {
-
-          <div class="empty-state">
-
-            <span class="material-symbols-outlined">
-              hourglass_top
-            </span>
-
-            <h3>
-              Loading dining history
-            </h3>
-
-            <p>
-              Please wait while we retrieve your previous visits.
-            </p>
-
-          </div>
-
-        } @else {
-
-          <div class="past-table">
+        }
 
 
-            <!-- Table headings -->
-            <div class="past-table-header">
+        <!-- No past reservations -->
+        @if (filteredReservations.length === 0) {
 
-              <span>
-                DATE &amp; SEATING
-              </span>
+        <div class="empty-state compact-empty">
 
-              <span>
-                EXPERIENCE &amp; MENU
-              </span>
+          <span class="material-symbols-outlined">
+            history
+          </span>
 
-              <span>
-                PARTY &amp; AREA
-              </span>
+          <h3>
+            No past reservations found
+          </h3>
 
-              <span class="align-right">
-                STATUS
-              </span>
+          <p>
+            Your completed dining experiences
+            will appear here.
+          </p>
 
-              <span class="align-right">
-                ACTIONS
-              </span>
-
-            </div>
-
-
-            <!-- Past reservations -->
-            @for (
-              reservation of filteredReservations;
-              track reservation._id
-            ) {
-
-              <div class="past-row">
-
-
-                <!-- Date -->
-                <div class="past-cell date-cell">
-
-                  <strong>
-                    {{ formatReservationDate(reservation.date) }}
-                  </strong>
-
-                  <span>
-                    {{ reservation.time }}
-                    ·
-                    {{ reservation.reservationId }}
-                  </span>
-
-                </div>
-
-
-                <!-- Experience -->
-                <div class="past-cell">
-
-                  <strong>
-                    {{ getDiningLabel(reservation) }}
-                  </strong>
-
-                  <span class="completed-label">
-
-                    <span class="material-symbols-outlined">
-                      done_all
-                    </span>
-
-                    {{ reservation.status }}
-
-                  </span>
-
-                </div>
-
-
-                <!-- Party -->
-                <div class="past-cell">
-
-                  <strong>
-                    {{ reservation.partySize }}
-                    {{
-                      reservation.partySize === 1
-                        ? 'Guest'
-                        : 'Guests'
-                    }}
-                  </strong>
-
-                  <span>
-                    {{ reservation.seating }}
-                  </span>
-
-                </div>
-
-
-                <!-- Status -->
-                <div class="past-cell amount-cell">
-
-                  <strong>
-                    {{ reservation.status }}
-                  </strong>
-
-                  <span>
-                    Dining experience
-                  </span>
-
-                </div>
-
-
-                <!-- Actions -->
-                <div class="past-actions">
-
-                  <button
-                    type="button"
-                    class="button button-rebook"
-                    (click)="rebookReservation(reservation)"
-                  >
-                    Re-book
-                  </button>
-
-                </div>
-
-              </div>
-
-            }
-
-
-            <!-- No past reservations -->
-            @if (filteredReservations.length === 0) {
-
-              <div class="empty-state compact-empty">
-
-                <span class="material-symbols-outlined">
-                  history
-                </span>
-
-                <h3>
-                  No past reservations found
-                </h3>
-
-                <p>
-                  Your completed dining experiences
-                  will appear here.
-                </p>
-
-              </div>
-
-            }
-
-          </div>
+        </div>
 
         }
 
-      </section>
+      </div>
+
+      }
+
+    </section>
 
     }
 
@@ -1026,141 +979,137 @@
     ====================================================== -->
     @if (activeTab === 'cancelled') {
 
-      <section class="cancelled-section">
+    <section class="cancelled-section">
 
-        <div class="section-heading">
+      <div class="section-heading">
 
-          <div>
+        <div>
 
-            <span class="step-label">
-              RESERVATION RECORDS
-            </span>
+          <span class="step-label">
+            RESERVATION RECORDS
+          </span>
 
-            <h2>
-              Cancelled Reservations
-            </h2>
+          <h2>
+            Cancelled Reservations
+          </h2>
 
-            <p>
-              View reservations that have been cancelled.
-            </p>
+          <p>
+            View reservations that have been cancelled.
+          </p>
 
-          </div>
+        </div>
+
+      </div>
+
+
+      @if (isLoading) {
+
+      <div class="empty-state">
+
+        <span class="material-symbols-outlined">
+          hourglass_top
+        </span>
+
+        <h3>
+          Loading cancelled reservations
+        </h3>
+
+        <p>
+          Please wait while we retrieve your reservation records.
+        </p>
+
+      </div>
+
+      } @else {
+
+
+      @for (
+      reservation of filteredReservations;
+      track reservation._id
+      ) {
+
+      <article class="cancelled-card">
+
+
+        <div class="cancelled-icon">
+
+          <span class="material-symbols-outlined">
+            event_busy
+          </span>
 
         </div>
 
 
-        @if (isLoading) {
+        <div class="cancelled-info">
 
-          <div class="empty-state">
+          <span class="cancelled-badge">
+            CANCELLED
+          </span>
 
-            <span class="material-symbols-outlined">
-              hourglass_top
-            </span>
+          <h3>
+            {{ formatReservationDate(reservation.date) }}
+            ·
+            {{ reservation.time }}
+          </h3>
 
-            <h3>
-              Loading cancelled reservations
-            </h3>
+          <p>
+            {{ reservation.reservationId }}
+            ·
+            {{ getDiningLabel(reservation) }}
+          </p>
 
-            <p>
-              Please wait while we retrieve your reservation records.
-            </p>
+          <span>
+            {{ reservation.seating }}
+            ·
+            {{ reservation.partySize }}
+            {{
+            reservation.partySize === 1
+            ? 'guest'
+            : 'guests'
+            }}
+          </span>
 
-          </div>
-
-        } @else {
-
-
-          @for (
-            reservation of filteredReservations;
-            track reservation._id
-          ) {
-
-            <article class="cancelled-card">
-
-
-              <div class="cancelled-icon">
-
-                <span class="material-symbols-outlined">
-                  event_busy
-                </span>
-
-              </div>
+        </div>
 
 
-              <div class="cancelled-info">
+        <button type="button" class="button button-rebook" (click)="rebookReservation(reservation)">
+          Re-book
+        </button>
 
-                <span class="cancelled-badge">
-                  CANCELLED
-                </span>
+      </article>
 
-                <h3>
-                  {{ formatReservationDate(reservation.date) }}
-                  ·
-                  {{ reservation.time }}
-                </h3>
-
-                <p>
-                  {{ reservation.reservationId }}
-                  ·
-                  {{ getDiningLabel(reservation) }}
-                </p>
-
-                <span>
-                  {{ reservation.seating }}
-                  ·
-                  {{ reservation.partySize }}
-                  {{
-                    reservation.partySize === 1
-                      ? 'guest'
-                      : 'guests'
-                  }}
-                </span>
-
-              </div>
+      }
 
 
-              <button
-                type="button"
-                class="button button-rebook"
-                (click)="rebookReservation(reservation)"
-              >
-                Re-book
-              </button>
+      <!-- No cancelled reservations -->
+      @if (filteredReservations.length === 0) {
 
-            </article>
+      <div class="empty-state">
 
-          }
+        <span class="material-symbols-outlined">
+          event_available
+        </span>
 
+        <h3>
+          No cancelled reservations
+        </h3>
 
-          <!-- No cancelled reservations -->
-          @if (filteredReservations.length === 0) {
+        <p>
+          Your cancelled reservations will appear
+          here if you cancel a booking.
+        </p>
 
-            <div class="empty-state">
+      </div>
 
-              <span class="material-symbols-outlined">
-                event_available
-              </span>
+      }
 
-              <h3>
-                No cancelled reservations
-              </h3>
+      }
 
-              <p>
-                Your cancelled reservations will appear
-                here if you cancel a booking.
-              </p>
-
-            </div>
-
-          }
-
-        }
-
-      </section>
+    </section>
 
     }
 
-  }
+    }
   </div>
 </main>
 
@@ -1171,128 +1120,112 @@ CANCEL RESERVATION CONFIRMATION
 
 @if (showCancelModal && selectedReservation) {
 
-<div
-class="message-modal-backdrop"
-(click)="closeCancelModal()"
->
+<div class="message-modal-backdrop" (click)="closeCancelModal()">
 
-<div
- class="message-card confirm-card"
- role="alertdialog"
- aria-modal="true"
- aria-labelledby="cancel-title"
- (click)="$event.stopPropagation()"
->
+  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="cancel-title"
+    (click)="$event.stopPropagation()">
 
- <!-- Icon -->
- <div class="message-icon cancel-message-icon">
+    <!-- Icon -->
+    <div class="message-icon cancel-message-icon">
 
-   <span class="material-symbols-outlined">
-     event_busy
-   </span>
+      <span class="material-symbols-outlined">
+        event_busy
+      </span>
 
- </div>
+    </div>
 
 
- <!-- Message -->
- <div class="message-copy">
+    <!-- Message -->
+    <div class="message-copy">
 
-   <span class="message-eyebrow">
-     CANCEL RESERVATION
-   </span>
+      <span class="message-eyebrow">
+        CANCEL RESERVATION
+      </span>
 
-   <h2 id="cancel-title">
-     Cancel Reservation?
-   </h2>
+      <h2 id="cancel-title">
+        Cancel Reservation?
+      </h2>
 
-   <p>
-     Are you sure you want to cancel
-     reservation
-     <strong>
-       {{ selectedReservation.reservationId }}
-     </strong>?
-   </p>
+      <p>
+        Are you sure you want to cancel
+        reservation
+        <strong>
+          {{ selectedReservation.reservationId }}
+        </strong>?
+      </p>
 
-   <p class="confirmation-details">
+      <p class="confirmation-details">
 
-     {{ formatReservationDate(selectedReservation.date) }}
+        {{ formatReservationDate(selectedReservation.date) }}
 
-     ·
+        ·
 
-     {{ selectedReservation.time }}
+        {{ selectedReservation.time }}
 
-     ·
+        ·
 
-     {{ selectedReservation.partySize }}
+        {{ selectedReservation.partySize }}
 
-     {{
-       selectedReservation.partySize === 1
-         ? 'Guest'
-         : 'Guests'
-     }}
+        {{
+        selectedReservation.partySize === 1
+        ? 'Guest'
+        : 'Guests'
+        }}
 
-   </p>
+      </p>
 
- </div>
-
-
- <!-- Actions -->
- <div class="message-actions">
-
-   <button
-     type="button"
-     class="button button-light modal-button"
-     (click)="closeCancelModal()"
-     [disabled]="isCancelling"
-   >
-     Keep Reservation
-   </button>
+    </div>
 
 
-   <button
-     type="button"
-     class="button cancel-confirm-button modal-button"
-     (click)="confirmCancellation()"
-     [disabled]="isCancelling"
-   >
+    <!-- Actions -->
+    <div class="message-actions">
 
-     @if (isCancelling) {
-
-       Cancelling...
-
-     } @else {
-
-       <span class="material-symbols-outlined">
-         event_busy
-       </span>
-
-       Cancel
-
-     }
-
-   </button>
-
- </div>
+      <button type="button" class="button button-light modal-button" (click)="closeCancelModal()"
+        [disabled]="isCancelling">
+        Keep Reservation
+      </button>
 
 
- <!-- Error -->
- @if (errorMessage) {
+      <button type="button" class="button cancel-confirm-button modal-button" (click)="confirmCancellation()"
+        [disabled]="isCancelling">
 
-   <div class="confirmation-error">
+        @if (isCancelling) {
 
-     <span class="material-symbols-outlined">
-       error
-     </span>
+        Cancelling...
 
-     <span>
-       {{ errorMessage }}
-     </span>
+        } @else {
 
-   </div>
+        <span class="material-symbols-outlined">
+          event_busy
+        </span>
 
- }
+        Cancel
 
-</div>
+        }
+
+      </button>
+
+    </div>
+
+
+    <!-- Error -->
+    @if (errorMessage) {
+
+    <div class="confirmation-error">
+
+      <span class="material-symbols-outlined">
+        error
+      </span>
+
+      <span>
+        {{ errorMessage }}
+      </span>
+
+    </div>
+
+    }
+
+  </div>
 
 </div>
 
@@ -1306,56 +1239,39 @@ SUCCESS MESSAGE
 
 @if (successMessage) {
 
-<div
-class="message-modal-backdrop success-backdrop"
-role="status"
->
+<div class="message-modal-backdrop success-backdrop" role="status">
 
-<div class="message-card success-card">
+  <div class="message-card success-card">
 
- <div class="success-animation">
+    <div class="success-animation">
 
-   <svg
-     class="success-svg"
-     viewBox="0 0 52 52"
-     aria-hidden="true"
-   >
+      <svg class="success-svg" viewBox="0 0 52 52" aria-hidden="true">
 
-     <circle
-       class="success-circle"
-       cx="26"
-       cy="26"
-       r="24"
-       fill="none"
-     ></circle>
+        <circle class="success-circle" cx="26" cy="26" r="24" fill="none"></circle>
 
-     <path
-       class="success-check"
-       fill="none"
-       d="M14 27 L22 35 L39 18"
-     ></path>
+        <path class="success-check" fill="none" d="M14 27 L22 35 L39 18"></path>
 
-   </svg>
+      </svg>
 
- </div>
+    </div>
 
- <div class="message-copy">
+    <div class="message-copy">
 
-   <span class="message-eyebrow success-eyebrow">
-     SUCCESS
-   </span>
+      <span class="message-eyebrow success-eyebrow">
+        SUCCESS
+      </span>
 
-   <h2>
-     {{ successTitle }}
-   </h2>
+      <h2>
+        {{ successTitle }}
+      </h2>
 
-   <p>
-     {{ successMessage }}
-   </p>
+      <p>
+        {{ successMessage }}
+      </p>
 
- </div>
+    </div>
 
-</div>
+  </div>
 
 </div>
 

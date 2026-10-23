@@ -6,6 +6,29 @@
   font-family: "Plus Jakarta Sans", sans-serif;
 }
 
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+
+  color: #536251;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hero-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #ec861d;
+  animation: pulse 2s infinite;
+}
+
 button,
 input,
 textarea {
@@ -25,7 +48,7 @@ button {
   padding: 0 15px;
   border: 1px solid transparent;
   border-radius: 6px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.7px;
   text-transform: uppercase;
@@ -72,7 +95,7 @@ button {
   gap: 10px;
   margin-bottom: 14px;
   color: #536251;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -140,7 +163,7 @@ button {
 .small-label,
 .step-label {
   color: #6b7168;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -155,7 +178,7 @@ button {
 
 .season-caption {
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -212,7 +235,7 @@ button {
 .optional-label {
   flex-shrink: 0;
   color: #6d7469;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -274,7 +297,7 @@ button {
 
 .service-copy>span {
   color: inherit;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
   opacity: 0.8;
 }
@@ -343,7 +366,7 @@ button {
 .weekday-row span {
   padding: 6px 0;
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   text-align: center;
   text-transform: uppercase;
@@ -415,7 +438,7 @@ button {
   padding-top: 14px;
   border-top: 1px solid #eeebef;
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .calendar-legend>span:first-child {
@@ -434,7 +457,7 @@ button {
 .inline-note {
   margin: 14px 0 0;
   color: #747871;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.7;
 }
 
@@ -476,7 +499,7 @@ button {
 }
 
 .private-party {
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .private-party .material-symbols-outlined {
@@ -525,7 +548,7 @@ button {
 }
 
 .dining-option-top strong {
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -536,7 +559,7 @@ button {
 
 .dining-option>span:last-child {
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.6;
 }
 
@@ -581,13 +604,13 @@ button {
 
 .menu-topline .small-label {
   color: #536251;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .menu-courses {
   flex-shrink: 0;
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .tasting-menu>strong {
@@ -597,7 +620,7 @@ button {
 
 .menu-description {
   color: #62675f;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.7;
 }
 
@@ -614,7 +637,7 @@ button {
 
 .menu-price small {
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 400;
 }
 
@@ -623,7 +646,7 @@ button {
   align-items: center;
   gap: 4px;
   color: #536251;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -677,7 +700,7 @@ button {
 
 .selection-copy strong {
   color: #182418;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.5;
 }
@@ -685,7 +708,7 @@ button {
 
 .selection-copy span {
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.6;
 }
 
@@ -698,7 +721,7 @@ button {
   flex-shrink: 0;
 
   color: #536251;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
@@ -740,13 +763,13 @@ button {
 
 .pairing-copy strong {
   color: #182418;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
 .pairing-copy>span {
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.6;
 }
 
@@ -810,7 +833,7 @@ button {
   border-radius: 4px;
   background: #ffffff;
   color: #536251;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -823,13 +846,13 @@ button {
 .seating-description {
   flex: 1;
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.7;
 }
 
 .seating-choice {
   color: #536251;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -884,7 +907,7 @@ button {
 }
 
 .time-option>span {
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.4;
   opacity: 0.8;
 }
@@ -938,7 +961,7 @@ button {
   border-radius: 5px;
   background: #d3e5cf;
   color: #3c4b3b;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
 }
@@ -962,7 +985,7 @@ button {
 
 .summary-detail>span {
   color: #747871;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
 }
@@ -992,7 +1015,7 @@ button {
 
 .summary-menu .small-label {
   color: #536251;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .summary-menu>strong {
@@ -1003,7 +1026,7 @@ button {
 
 .summary-menu>span:not(.small-label) {
   color: #62675f;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
@@ -1020,7 +1043,7 @@ button {
   justify-content: space-between;
   gap: 12px;
   color: #62675f;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
@@ -1031,7 +1054,7 @@ button {
 .price-row>strong {
   flex-shrink: 0;
   color: #182418;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   text-align: right;
 }
@@ -1058,7 +1081,7 @@ button {
 
 .summary-total>span {
   color: #536251;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -1072,7 +1095,7 @@ button {
 .summary-disclaimer {
   margin: 13px 0 0;
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.7;
 }
 
@@ -1104,7 +1127,7 @@ button {
 
 .form-field label {
   color: #444842;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -1168,7 +1191,7 @@ button {
   border-radius: 8px;
   background: #2d3a2c;
   color: #ffffff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.07em;
   text-align: center;
@@ -1202,7 +1225,7 @@ button {
   gap: 9px;
   padding: 12px;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
@@ -1226,7 +1249,7 @@ button {
   align-items: center;
   gap: 8px;
   color: #182418;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .guidelines-heading .material-symbols-outlined {
@@ -1248,7 +1271,7 @@ button {
   align-items: flex-start;
   gap: 7px;
   color: #62675f;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.7;
 }
 
@@ -1327,7 +1350,7 @@ button {
 
 .atmosphere-overlay>span {
   color: #d6e7d2;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.13em;
 }
@@ -1418,7 +1441,7 @@ button {
 
 .eyebrow {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 1.6px;
   color: #8b8175;
@@ -1574,7 +1597,7 @@ button {
 
   color: #8b8175;
 
-  font-size: 11px;
+  font-size: 13px;
 
   white-space: nowrap;
 }
@@ -1592,7 +1615,7 @@ button {
 
   color: #8b8175;
 
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -1663,7 +1686,7 @@ button {
 
   color: #8c7d70;
 
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 1.6px;
 }
@@ -1953,7 +1976,7 @@ button {
   }
 
   .eyebrow {
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.1em;
   }
 
@@ -1977,7 +2000,7 @@ button {
 
   .optional-label {
     padding-top: 3px;
-    font-size: 9px;
+    font-size: 11px;
     text-align: right;
   }
 
@@ -1995,7 +2018,7 @@ button {
 
   .month-navigation strong {
     min-width: 90px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .month-navigation button {
@@ -2009,12 +2032,12 @@ button {
   }
 
   .weekday-row span {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .calendar-day {
     height: 39px;
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .calendar-legend {
@@ -2041,7 +2064,7 @@ button {
   }
 
   .dining-option>span:last-child {
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .seating-options {

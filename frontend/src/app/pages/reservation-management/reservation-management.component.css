@@ -63,7 +63,7 @@
   gap: 8px;
   margin-bottom: 12px;
   color: #536251;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.14em;
 }
@@ -110,7 +110,7 @@ tr:focus-visible {
   padding: 0 15px;
   border: 1px solid transparent;
   border-radius: 6px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.7px;
   text-transform: uppercase;
@@ -174,7 +174,7 @@ tr:focus-visible {
 .service-date-label {
   display: block;
   color: #536251;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.3px;
 }
@@ -222,7 +222,7 @@ tr:focus-visible {
 
 .service-date div>span:last-child {
   color: #747871;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 /* Summary cards */
@@ -251,7 +251,7 @@ tr:focus-visible {
   justify-content: space-between;
   gap: 10px;
   color: #62675f;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -280,7 +280,7 @@ tr:focus-visible {
 .stat-foot {
   margin-top: 7px;
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 /* =====================================================
@@ -294,7 +294,7 @@ tr:focus-visible {
   background: #fff;
   border: 1px solid #ece8ed;
   border-top: none;
-  border-bottom:none;
+  border-bottom: none;
 
   border-radius: 0;
 
@@ -383,7 +383,7 @@ tr:focus-visible {
 
   font-family: inherit;
 
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .search-box input::placeholder {
@@ -465,7 +465,7 @@ tr:focus-visible {
   background: #f0edf1;
   color: #53584f;
   font-family: inherit;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -482,7 +482,7 @@ tr:focus-visible {
 
 .filter-tabs button span {
   opacity: 0.75;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .tab-count {
@@ -556,7 +556,7 @@ tr:focus-visible {
 
   color: #747871;
 
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
 
   letter-spacing: 0.07em;
@@ -575,7 +575,7 @@ tr:focus-visible {
 
   color: #536251;
 
-  font-size: 10px;
+  font-size: 12px;
 
   vertical-align: middle;
 }
@@ -644,7 +644,7 @@ tr:focus-visible {
 .reservation-details strong {
   color: #182418;
 
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 
   line-height: 1.4;
@@ -677,7 +677,7 @@ tr:focus-visible {
 
   color: #182418;
 
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 
   line-height: 1.4;
@@ -724,7 +724,7 @@ tr:focus-visible {
 .reservation-datetime strong {
   color: #182418;
 
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -794,7 +794,7 @@ tr:focus-visible {
 .package-details strong {
   color: #182418;
 
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
 
   line-height: 1.4;
@@ -813,17 +813,15 @@ tr:focus-visible {
 
 .status-pill {
   display: inline-flex;
+  width: fit-content;
   align-items: center;
-
   gap: 6px;
+  padding: 6px 9px;
 
-  padding: 5px 8px;
+  border-radius: 20px;
 
-  border-radius: 4px;
-
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
-
   white-space: nowrap;
 }
 
@@ -1028,7 +1026,7 @@ tr:focus-visible {
 
   color: #536251;
 
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -1120,7 +1118,7 @@ tr:focus-visible {
 .table-panel-heading p {
   margin: 7px 0 0;
   color: #747871;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .sync-label {
@@ -1148,7 +1146,7 @@ tr:focus-visible {
 
 .table-add-button {
   min-height: 37px;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 
@@ -1192,13 +1190,13 @@ tr:focus-visible {
 
 .reference-cell strong {
   color: #182418;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .reference-cell>span {
   color: #858981;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .guest-name {
@@ -1210,13 +1208,13 @@ tr:focus-visible {
 
 .guest-name strong {
   color: #182418;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .guest-cell>span {
   color: #666b64;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -1249,7 +1247,7 @@ tr:focus-visible {
 
 .time-cell span {
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
@@ -1263,7 +1261,7 @@ tr:focus-visible {
   border: 1px solid #d8d8d3;
   border-radius: 6px;
   font-family: inherit;
-  font-size: 11px;
+  font-size: 13px;
   outline: none;
   cursor: pointer;
 }
@@ -1274,18 +1272,18 @@ tr:focus-visible {
 
 .package-cell strong {
   color: #182418;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
 .package-cell span {
   color: #666b64;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .package-cell small {
   color: #536251;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -1296,7 +1294,7 @@ tr:focus-visible {
   gap: 6px;
   padding: 6px 9px;
   border-radius: 20px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1433,7 +1431,7 @@ tr:focus-visible {
   color: #666b64;
   background: #f6f2f7;
   border-top: 1px solid #eae7eb;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .service-window {
@@ -1481,7 +1479,7 @@ tr:focus-visible {
   align-items: center;
   gap: 7px;
   color: #536251;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1.2px;
 }
@@ -1599,7 +1597,7 @@ tr:focus-visible {
 .helper-text {
   margin: 10px 0 0;
   color: #747871;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.7;
 }
 
@@ -1615,7 +1613,7 @@ tr:focus-visible {
   flex-direction: column;
   gap: 7px;
   color: #444842;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -1706,7 +1704,7 @@ tr:focus-visible {
 .bill-row {
   padding: 7px 0;
   color: #666b64;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
@@ -1826,7 +1824,7 @@ tr:focus-visible {
 
   color: #536251;
 
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
 
   white-space: nowrap;
@@ -1897,7 +1895,7 @@ tr:focus-visible {
 .reservation-table th {
   padding: 14px 17px;
   color: #747871;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.8px;
   text-transform: uppercase;
@@ -1965,13 +1963,13 @@ tr:focus-visible {
 
 .reservation-details strong {
   color: #182418;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .reservation-details span {
   color: #858981;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 
@@ -1988,20 +1986,20 @@ tr:focus-visible {
 
 .guest-details strong {
   color: #182418;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .guest-details span {
   color: #666b64;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
 .guest-details small {
   overflow: hidden;
   color: #858981;
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.4;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2027,7 +2025,7 @@ tr:focus-visible {
 
 .reservation-datetime span {
   color: #747871;
-  font-size: 10px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
@@ -2048,7 +2046,7 @@ tr:focus-visible {
   border-radius: 6px;
 
   font-family: inherit;
-  font-size: 10px;
+  font-size: 12px;
   outline: none;
   cursor: pointer;
 }
@@ -2076,14 +2074,14 @@ tr:focus-visible {
 
 .package-details strong {
   color: #182418;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.45;
 }
 
 .package-details span {
   color: #666b64;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 
@@ -2091,19 +2089,7 @@ tr:focus-visible {
   STATUS
   ========================================================= */
 
-.status-pill {
-  display: inline-flex;
-  width: fit-content;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 9px;
 
-  border-radius: 20px;
-
-  font-size: 10px;
-  font-weight: 700;
-  white-space: nowrap;
-}
 
 
 /* Default */
@@ -2264,7 +2250,7 @@ tr:focus-visible {
 .empty-state>span:not(.material-symbols-outlined) {
   display: block;
   color: #858981;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 
@@ -2284,7 +2270,7 @@ tr:focus-visible {
   background: #f6f2f7;
   border-top: 1px solid #eae7eb;
 
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .table-footer strong {
@@ -2294,7 +2280,7 @@ tr:focus-visible {
 
 .demo-note {
   color: #858981;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 /* =========================================================
@@ -2439,7 +2425,7 @@ tr:focus-visible {
 .floor-matrix-header p {
   margin: 0;
   color: #747871;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .floor-matrix-legend {
@@ -2456,7 +2442,7 @@ tr:focus-visible {
   align-items: center;
   gap: 7px;
   color: #666b64;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -2543,7 +2529,7 @@ tr:focus-visible {
 .floor-table-guest strong {
   overflow: hidden;
   color: #182418;
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -2582,14 +2568,14 @@ tr:focus-visible {
 .reservation-locked-message strong {
   display: block;
   color: #354034;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .reservation-locked-message p {
   margin: 3px 0 0;
   color: #777d75;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -3211,7 +3197,7 @@ tr:focus-visible {
 
   .toolbar-actions .button {
     padding: 0 9px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .table-panel-heading {

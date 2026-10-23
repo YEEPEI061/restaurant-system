@@ -641,7 +641,7 @@
   pointer-events: none;
 }
 
-.form-group > label i {
+.form-group>label i {
   color: #a34b36;
   font-style: normal;
 }

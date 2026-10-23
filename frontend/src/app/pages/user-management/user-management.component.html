@@ -295,7 +295,7 @@
 
                     @if (member.active) {
 
-                    <button class="icon-button" type="button" title="Edit user" aria-label="Edit user"
+                    <button class="icon-button icon-edit" type="button" title="Edit user" aria-label="Edit user"
                       (click)="$event.stopPropagation(); openUser(member)">
                       <span class="material-symbols-outlined">
                         edit
@@ -313,7 +313,7 @@
 
                     }
 
-                    <button class="icon-button" type="button" title="Delete user" aria-label="Delete user"
+                    <button class="icon-button icon-delete" type="button" title="Delete user" aria-label="Delete user"
                       (click)="$event.stopPropagation(); deleteUser(member)">
                       <span class="material-symbols-outlined">
                         delete
