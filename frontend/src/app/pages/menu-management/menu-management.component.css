@@ -67,7 +67,7 @@
   border-radius: 4px;
   background: #d3e5cf;
   color: #3c4b3b;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .sync-status {
@@ -570,7 +570,16 @@
 }
 
 .dish-info {
+  flex: 1;
   min-width: 0;
+}
+
+.dish-info p {
+  max-width: 500px;
+  margin: 5px 0 8px;
+  color: #747871;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .dish-title-row {
@@ -597,14 +606,6 @@
   letter-spacing: 0.04em;
 }
 
-.dish-info p {
-  max-width: 330px;
-  margin: 5px 0 8px;
-  color: #747871;
-  font-size: 12px;
-  line-height: 1.6;
-}
-
 .dish-meta {
   display: flex;
   align-items: center;
@@ -624,7 +625,7 @@
   border-radius: 3px;
   background: #f0edf1;
   color: #444842;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -643,7 +644,7 @@
   border-radius: 4px;
   background: #f0edf1;
   color: #53584f;
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.4;
 }
 
@@ -667,7 +668,7 @@
   display: inline-block;
   margin-top: 5px;
   color: #536251;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -779,7 +780,8 @@
 
   padding: 0;
 
-  border: 1px solid #e7e3e8;
+  /* border: 1px solid #e7e3e8; */
+  border: none;
   border-radius: 5px;
 
   background: #fff;
@@ -915,7 +917,7 @@
 
 .drawer-eyebrow {
   color: #536251;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.13em;
 }
@@ -1226,7 +1228,7 @@
 
   color: #8c7d70;
 
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 1.6px;
 }
@@ -1705,7 +1707,7 @@
 
   .breadcrumb {
     gap: 6px;
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .season-badge {
@@ -1736,7 +1738,7 @@
   }
 
   .stat-foot {
-    font-size: 9px;
+    font-size: 11px;
     line-height: 1.5;
   }
 
@@ -1747,7 +1749,7 @@
   .heading-actions .button {
     flex: 1;
     padding: 0 10px;
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .catalog-heading {
@@ -1759,7 +1761,7 @@
   }
 
   .result-count {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .filter-spacer {
@@ -1802,7 +1804,7 @@
   .drawer-footer .button {
     flex: 1;
     padding: 0 10px;
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .toast-message {

@@ -302,6 +302,8 @@ export class ReservationManagementComponent
           this.reservations =
             response.reservations || [];
 
+          this.completePastReservations();
+
           this.isLoading = false;
 
         },
@@ -875,12 +877,6 @@ export class ReservationManagementComponent
    * UPDATE STATUS
    * --------------------------------------------------
    */
-
-  /*
- * --------------------------------------------------
- * UPDATE STATUS
- * --------------------------------------------------
- */
 
   updateStatus(
     reservation: Reservation,
@@ -2112,6 +2108,61 @@ export class ReservationManagementComponent
   get isReservationEditable(): boolean {
 
     return this.form.status === 'Pending';
+
+  }
+
+  private completePastReservations(): void {
+
+    const today =
+      this.toDateInputValue(new Date());
+
+    const pastReservations =
+      this.reservations.filter(
+        reservation =>
+          reservation.date < today &&
+          reservation.status !== 'Completed' &&
+          reservation.status !== 'Cancelled'
+      );
+
+    for (const reservation of pastReservations) {
+
+      this.reservationService
+        .updateReservationStatus(
+          reservation.reservationId,
+          'Completed'
+        )
+        .subscribe({
+
+          next: (response) => {
+
+            const index =
+              this.reservations.findIndex(
+                item =>
+                  item.reservationId ===
+                  reservation.reservationId
+              );
+
+            if (index !== -1) {
+
+              this.reservations[index] =
+                response.reservation;
+
+            }
+
+          },
+
+          error: (error) => {
+
+            console.error(
+              `Failed to complete past reservation ${reservation.reservationId}:`,
+              error
+            );
+
+          }
+
+        });
+
+    }
 
   }
 

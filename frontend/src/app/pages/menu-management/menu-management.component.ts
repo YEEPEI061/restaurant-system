@@ -133,7 +133,7 @@ export class MenuManagementComponent implements OnInit {
 
   constructor(
     private menuService: MenuService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadMenuItems();
@@ -473,30 +473,30 @@ export class MenuManagementComponent implements OnInit {
 
     const name =
       this.form.name.trim();
-  
+
     const description =
       this.form.description.trim();
-  
+
     // =========================
     // FRONTEND VALIDATION
     // =========================
-  
+
     // =========================
     // FRONTEND VALIDATION
     // =========================
-    
+
     if (!name) {
       return;
     }
-    
+
     if (!this.form.category) {
       return;
     }
-    
+
     if (!this.form.price || this.form.price <= 0) {
       return;
     }
-    
+
     if (!description) {
       return;
     }
@@ -662,7 +662,7 @@ export class MenuManagementComponent implements OnInit {
           this.dishes =
             this.dishes.map(item =>
               item.id ===
-              updatedDish.id
+                updatedDish.id
                 ? updatedDish
                 : item
             );
@@ -1033,5 +1033,18 @@ export class MenuManagementComponent implements OnInit {
 
     this.errorTitle =
       '';
+  }
+
+  getDietaryFullName(tag: string): string {
+    const dietaryNames: Record<string, string> = {
+      V: 'Vegetarian',
+      VG: 'Vegan',
+      GF: 'Gluten-Free',
+      DF: 'Dairy-Free',
+      NF: 'Nut-Free',
+      SF: 'Seafood-Free'
+    };
+
+    return dietaryNames[tag] || tag;
   }
 }

@@ -11,50 +11,106 @@ import { MenuManagementComponent } from './pages/menu-management/menu-management
 import { UserManagementComponent } from './pages/user-management/user-management.component';
 import { ReservationManagementComponent } from './pages/reservation-management/reservation-management.component';
 
+import {
+  guestGuard
+} from './guards/guest.guard';
+
+import {
+  adminGuard
+} from './guards/admin.guard';
+
+
 export const routes: Routes = [
+
+  // =========================
+  // DEFAULT
+  // =========================
+
   {
     path: '',
     redirectTo: 'menu',
     pathMatch: 'full'
   },
-  {
-    path: 'guest-login',
-    component: GuestLoginComponent
-  },
-  {
-    path: 'admin-login',
-    component: AdminLoginComponent
-  },
-  {
-    path: 'register',
-    component: RegisterComponent
-  },
+
+
+  // =========================
+  // PUBLIC ROUTES
+  // =========================
+
   {
     path: 'menu',
     component: MenuComponent
   },
+
+  {
+    path: 'guest-login',
+    component: GuestLoginComponent
+  },
+
+  {
+    path: 'register',
+    component: RegisterComponent
+  },
+
+  {
+    path: 'admin-login',
+    component: AdminLoginComponent
+  },
+
+
+  // =========================
+  // GUEST ROUTES
+  // =========================
+
   {
     path: 'reservations',
-    component: ReservationsComponent
+    component: ReservationsComponent,
+    canActivate: [guestGuard]
   },
+
   {
     path: 'my-reservations',
-    component: MyReservationsComponent
+    component: MyReservationsComponent,
+    canActivate: [guestGuard]
   },
+
+
+  // =========================
+  // ADMIN ROUTES
+  // =========================
+
   {
     path: 'admin-dashboard',
-    component: AdminDashboardComponent
+    component: AdminDashboardComponent,
+    canActivate: [adminGuard]
   },
+
   {
     path: 'menu-management',
-    component: MenuManagementComponent
+    component: MenuManagementComponent,
+    canActivate: [adminGuard]
   },
+
   {
     path: 'user-management',
-    component: UserManagementComponent
+    component: UserManagementComponent,
+    canActivate: [adminGuard]
   },
+
   {
     path: 'reservation-management',
-    component: ReservationManagementComponent
+    component: ReservationManagementComponent,
+    canActivate: [adminGuard]
+  },
+
+
+  // =========================
+  // UNKNOWN ROUTE
+  // =========================
+
+  {
+    path: '**',
+    redirectTo: 'menu'
   }
+
 ];

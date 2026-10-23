@@ -1815,24 +1815,15 @@ tr:focus-visible {
    ===================================================== */
 
 .result-count {
+  flex-shrink: 0;
   padding: 7px 10px;
-
-  border: 1px solid #eae7eb;
   border-radius: 5px;
-
-  background: #fff;
-
-  color: #536251;
-
+  background: #f0edf1;
+  color: #444842;
   font-size: 12px;
   font-weight: 700;
-
-  white-space: nowrap;
 }
 
-.result-label {
-  margin-left: 3px;
-}
 
 
 

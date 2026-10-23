@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  ActivatedRoute,
   Router,
   RouterLink
 } from '@angular/router';
@@ -45,7 +46,8 @@ export class GuestLoginComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
 
@@ -122,9 +124,14 @@ export class GuestLoginComponent {
 
             this.clearSuccess();
 
-            this.router.navigate([
-              '/reservations'
-            ]);
+            const returnUrl =
+              this.route.snapshot.queryParamMap.get(
+                'returnUrl'
+              );
+
+            this.router.navigateByUrl(
+              returnUrl || '/menu'
+            );
 
           }, 1400);
         },

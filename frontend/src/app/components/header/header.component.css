@@ -139,6 +139,41 @@
   box-shadow: 0 2px 5px rgba(24, 36, 24, 0.15);
 }
 
+.portal-link {
+  padding: 6px 12px;
+
+  border: 0;
+  border-radius: 999px;
+
+  color: #444842;
+  background: transparent;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background 140ms ease,
+    color 140ms ease;
+}
+
+.portal-link:hover {
+  color: #182418;
+}
+
+.portal-link.portal-active {
+  background: #182418;
+  color: #ffffff;
+
+  box-shadow:
+    0 2px 5px rgba(24, 36, 24, 0.15);
+}
+
 .reserve-button {
   display: inline-flex;
   align-items: center;
@@ -239,6 +274,66 @@
 .profile-dropdown a .material-symbols-outlined {
   font-size: 18px;
   color: #536251;
+}
+
+.dropdown-user {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  padding: 10px 12px 12px;
+
+  border-bottom: 1px solid #ece8ed;
+}
+
+.dropdown-user strong {
+  color: #182418;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.dropdown-user span {
+  overflow: hidden;
+
+  color: #747871;
+  font-size: 13px;
+  line-height: 1.4;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* Buttons inside the profile dropdown */
+.dropdown-action {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+
+  padding: 12px;
+
+  color: #1b1b1e;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+
+  font-family: inherit;
+  font-size: 14px;
+  text-align: left;
+
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.dropdown-action:hover {
+  background: #f0edf1;
+}
+
+.dropdown-action .material-symbols-outlined {
+  color: #536251;
+  font-size: 18px;
 }
 
 /* Staff notification button */
@@ -373,79 +468,79 @@
     flex-shrink: 0;
   }
 
-  
-/* Active navigation link */
-.main-nav a.nav-active {
-  color: #182418;
-  font-weight: 700;
-}
 
-/* Staff portal label beside the brand */
-.portal-label {
-  padding-left: 24px;
-  border-left: 1px solid #c4c8c0;
-  color: #444842;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
+  /* Active navigation link */
+  .main-nav a.nav-active {
+    color: #182418;
+    font-weight: 700;
+  }
 
-/* Allow the staff navigation to fit into the shared header */
-.staff-nav {
-  gap: 18px;
-}
+  /* Staff portal label beside the brand */
+  .portal-label {
+    padding-left: 24px;
+    border-left: 1px solid #c4c8c0;
+    color: #444842;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
 
-.staff-nav a {
-  font-size: 10px;
-}
-
-
-
-/* Dropdown heading */
-.dropdown-heading {
-  padding: 10px 12px 7px;
-  color: #747871;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* Keep dropdown items consistent */
-.profile-dropdown a {
-  white-space: nowrap;
-}
-
-.profile-dropdown a .material-symbols-outlined {
-  font-size: 18px;
-  color: #536251;
-}
-
-/* Responsive staff navigation */
-@media (max-width: 1250px) {
+  /* Allow the staff navigation to fit into the shared header */
   .staff-nav {
-    gap: 12px;
+    gap: 18px;
   }
 
   .staff-nav a {
-    font-size: 9px;
-    letter-spacing: 0.04em;
+    font-size: 10px;
   }
 
-  .portal-label {
-    padding-left: 16px;
-  }
-}
 
-@media (max-width: 900px) {
-  .portal-label {
-    display: none;
+
+  /* Dropdown heading */
+  .dropdown-heading {
+    padding: 10px 12px 7px;
+    color: #747871;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
 
-  .staff-nav {
-    display: none;
+  /* Keep dropdown items consistent */
+  .profile-dropdown a {
+    white-space: nowrap;
   }
-}
+
+  .profile-dropdown a .material-symbols-outlined {
+    font-size: 18px;
+    color: #536251;
+  }
+
+  /* Responsive staff navigation */
+  @media (max-width: 1250px) {
+    .staff-nav {
+      gap: 12px;
+    }
+
+    .staff-nav a {
+      font-size: 9px;
+      letter-spacing: 0.04em;
+    }
+
+    .portal-label {
+      padding-left: 16px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .portal-label {
+      display: none;
+    }
+
+    .staff-nav {
+      display: none;
+    }
+  }
 }

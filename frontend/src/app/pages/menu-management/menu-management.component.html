@@ -211,7 +211,7 @@
         @for (tag of dietaryOptions; track tag) {
 
         <button type="button" class="filter-chip" [class.chip-active]="isDietaryActive(tag)"
-          (click)="toggleDietary(tag)">
+          [title]="getDietaryFullName(tag)" (click)="toggleDietary(tag)">
           {{ tag }}
         </button>
 
@@ -478,11 +478,7 @@
 
         <span class="demo-note">
 
-          <span class="material-symbols-outlined">
-            info
-          </span>
-
-          Demo data — not connected to MongoDB
+          Menu directory
 
         </span>
 
