@@ -13,6 +13,10 @@ import {
   ReservationService
 } from '../../services/reservation.service';
 
+import {
+  WebSocketService
+} from '../../services/websocket.service';
+
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -61,7 +65,8 @@ export class AdminDashboardComponent implements OnInit {
 
   constructor(
     private reservationService: ReservationService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private webSocketService: WebSocketService
   ) { }
 
 
@@ -70,8 +75,50 @@ export class AdminDashboardComponent implements OnInit {
   // =========================
 
   ngOnInit(): void {
+
     this.loadReservations();
     this.loadMenuItems();
+
+    this.webSocketService.connect();
+
+    this.webSocketService.messages$
+      .subscribe(message => {
+
+        console.log(
+          'Dashboard WebSocket message:',
+          message
+        );
+
+        switch (message.type) {
+
+          case 'reservation.created':
+            this.loadReservations();
+            break;
+
+          case 'reservation.updated':
+            this.loadReservations();
+            break;
+
+          case 'reservation.cancelled':
+            this.loadReservations();
+            break;
+
+          case 'menu.created':
+            this.loadMenuItems();
+            break;
+
+          case 'menu.updated':
+            this.loadMenuItems();
+            break;
+
+          case 'menu.deleted':
+            this.loadMenuItems();
+            break;
+
+        }
+
+      });
+
   }
 
 
@@ -126,7 +173,7 @@ export class AdminDashboardComponent implements OnInit {
           'Failed to load menu items:',
           error
         );
-  
+
         this.menuItems = [];
       }
     });
@@ -135,7 +182,7 @@ export class AdminDashboardComponent implements OnInit {
   get menuItemCount(): number {
     return this.menuItems.length;
   }
-  
+
   get availableMenuItemCount(): number {
     return this.menuItems.filter(
       item => item.available

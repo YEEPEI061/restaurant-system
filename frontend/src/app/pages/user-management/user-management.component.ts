@@ -11,6 +11,10 @@ import {
   UserRole
 } from '../../services/user.service';
 
+import {
+  WebSocketService
+} from '../../services/websocket.service';
+
 type RoleFilter = 'all' | UserRole;
 type StatusFilter = 'all' | 'active' | 'deactivated';
 
@@ -89,11 +93,42 @@ export class UserManagementComponent {
   users: UserMember[] = [];
 
   constructor(
-    private userService: UserService
-  ) {}
+    private userService: UserService,
+    private webSocketService: WebSocketService
+  ) { }
 
   ngOnInit(): void {
+
     this.loadUsers();
+
+    this.webSocketService.connect();
+
+    this.webSocketService.messages$
+      .subscribe(message => {
+
+        console.log(
+          'User WebSocket message:',
+          message
+        );
+
+        switch (message.type) {
+
+          case 'user.created':
+            this.loadUsers();
+            break;
+
+          case 'user.updated':
+            this.loadUsers();
+            break;
+
+          case 'user.deleted':
+            this.loadUsers();
+            break;
+
+        }
+
+      });
+
   }
 
   // =========================
@@ -218,12 +253,12 @@ export class UserManagementComponent {
         this.statusFilter === 'all' ||
         (
           this.statusFilter ===
-            'active' &&
+          'active' &&
           user.active
         ) ||
         (
           this.statusFilter ===
-            'deactivated' &&
+          'deactivated' &&
           !user.active
         );
 
@@ -271,8 +306,7 @@ export class UserManagementComponent {
     ).length;
   }
 
-  get roleBreakdown():
-    { label: string; count: number }[] {
+  get roleBreakdown(): { label: string; count: number }[] {
 
     return [
       {
@@ -375,9 +409,9 @@ export class UserManagementComponent {
       const password =
         this.form.password?.trim();
 
-        if (!password) {
-          return;
-        }
+      if (!password) {
+        return;
+      }
 
       if (password.length < 6) {
         return;
@@ -565,7 +599,7 @@ export class UserManagementComponent {
           this.users =
             this.users.map(user =>
               user.id ===
-              updatedUser.id
+                updatedUser.id
                 ? updatedUser
                 : user
             );
@@ -743,28 +777,28 @@ export class UserManagementComponent {
   // ERROR MESSAGE
   // =========================
 
-  
+
   showError(
     title: string,
     message: string
   ): void {
-  
+
     // Remove existing success message
     this.clearSuccess();
-  
+
     // Cancel any previous error timer
     if (this.errorTimeout) {
       clearTimeout(
         this.errorTimeout
       );
-  
+
       this.errorTimeout =
         undefined;
     }
-  
+
     this.errorTitle =
       title;
-  
+
     this.errorMessage =
       message;
   }

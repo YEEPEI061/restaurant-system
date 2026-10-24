@@ -1,4 +1,7 @@
 const MenuItem = require('../models/MenuItem');
+const {
+  broadcast
+} = require('../services/websocketService');
 
 async function generateNextDishId() {
   const menuItems = await MenuItem.find(
@@ -106,6 +109,14 @@ async function createMenuItem(req, res) {
       allergens
     });
 
+    broadcast({
+      type: 'menu.created',
+      message: 'A new menu item has been created.',
+      data: {
+        dishId: menuItem.dishId
+      }
+    });
+
     res.status(201).json({
       message: 'Menu item created successfully',
       menuItem
@@ -155,6 +166,14 @@ async function updateMenuItem(req, res) {
 
     await menuItem.save();
 
+    broadcast({
+      type: 'menu.updated',
+      message: 'A menu item has been updated.',
+      data: {
+        dishId: menuItem.dishId
+      }
+    });
+
     res.status(200).json({
       message: 'Menu item updated successfully',
       menuItem
@@ -183,6 +202,14 @@ async function deleteMenuItem(req, res) {
 
     await MenuItem.deleteOne({
       _id: menuItem._id
+    });
+
+    broadcast({
+      type: 'menu.deleted',
+      message: 'A menu item has been deleted.',
+      data: {
+        dishId: menuItem.dishId
+      }
     });
 
     res.status(200).json({
@@ -226,6 +253,14 @@ async function updateAvailability(req, res) {
         message: 'Menu item not found'
       });
     }
+
+    broadcast({
+      type: 'menu.updated',
+      message: 'A menu item availability has been updated.',
+      data: {
+        dishId: menuItem.dishId
+      }
+    });
 
     res.status(200).json({
       message: 'Menu item availability updated successfully',

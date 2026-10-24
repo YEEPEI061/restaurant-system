@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http');
+
 require('dotenv').config();
 
 const { connectDatabase } = require('./config/db');
@@ -11,10 +13,15 @@ const {
   notFoundHandler,
   errorHandler
 } = require('./middleware/errorMiddleware');
+const {
+  initializeWebSocket
+} = require('./services/websocketService');
 
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+
+const server = http.createServer(app);
 
 // Middleware
 app.use(cors());
@@ -36,13 +43,17 @@ app.get('/', (req, res) => {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+initializeWebSocket(server);
+
 // Start server after connecting to MongoDB
 async function startServer() {
   try {
     await connectDatabase();
 
-    app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
+    server.listen(PORT, () => {
+      console.log(
+        `Server running on port ${PORT}`
+      );
     });
   } catch (error) {
     console.error(`Failed to start server: ${error.message}`);

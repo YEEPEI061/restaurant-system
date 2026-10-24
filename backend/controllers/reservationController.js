@@ -1,5 +1,9 @@
 const Reservation = require('../models/Reservation');
 
+const {
+  broadcast
+} = require('../services/websocketService');
+
 async function getReservations(req, res) {
   try {
     const reservations = await Reservation.find()
@@ -228,6 +232,20 @@ async function createReservation(req, res) {
         status: 'Pending'
       });
 
+    // =========================
+    // WEBSOCKET NOTIFICATION
+    // =========================
+
+    broadcast({
+      type: 'reservation.created',
+      message:
+        'A new reservation has been created.',
+      data: {
+        reservationId:
+          reservation.reservationId
+      }
+    });
+
 
     // =========================
     // SUCCESS RESPONSE
@@ -369,6 +387,20 @@ async function updateReservation(req, res) {
     // =========================
 
     await reservation.save();
+
+    // =========================
+    // WEBSOCKET NOTIFICATION
+    // =========================
+
+    broadcast({
+      type: 'reservation.updated',
+      message:
+        'A reservation has been updated.',
+      data: {
+        reservationId:
+          reservation.reservationId
+      }
+    });
 
 
     // =========================
@@ -528,10 +560,50 @@ async function updateReservationStatus(
     }
 
     // Update status
+    // =========================
+    // UPDATE STATUS
+    // =========================
+
     reservation.status =
       status;
 
     await reservation.save();
+
+
+    // =========================
+    // WEBSOCKET NOTIFICATION
+    // =========================
+
+    if (status === 'Cancelled') {
+
+      broadcast({
+        type: 'reservation.cancelled',
+        message:
+          'A reservation has been cancelled.',
+        data: {
+          reservationId:
+            reservation.reservationId
+        }
+      });
+
+    } else {
+
+      broadcast({
+        type: 'reservation.updated',
+        message:
+          'A reservation status has been updated.',
+        data: {
+          reservationId:
+            reservation.reservationId
+        }
+      });
+
+    }
+
+
+    // =========================
+    // SUCCESS RESPONSE
+    // =========================
 
     res.status(200).json({
 

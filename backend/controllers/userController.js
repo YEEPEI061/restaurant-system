@@ -2,6 +2,10 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const User = require('../models/User');
 
+const {
+  broadcast
+} = require('../services/websocketService');
+
 async function getUsers(req, res) {
   try {
     const users = await User.find()
@@ -81,6 +85,14 @@ async function createUser(req, res) {
 
     const safeUser = user.toObject();
     delete safeUser.password;
+
+    broadcast({
+      type: 'user.created',
+      message: 'A new user has been created.',
+      data: {
+        userId: user._id
+      }
+    });
 
     res.status(201).json({
       message: 'User created successfully',
@@ -162,6 +174,14 @@ async function updateUser(req, res) {
     const safeUser = user.toObject();
     delete safeUser.password;
 
+    broadcast({
+      type: 'user.updated',
+      message: 'A user has been updated.',
+      data: {
+        userId: user._id
+      }
+    });
+
     res.status(200).json({
       message: 'User updated successfully',
       user: safeUser
@@ -193,6 +213,14 @@ async function deleteUser(req, res) {
 
     await User.deleteOne({
       _id: user._id
+    });
+
+    broadcast({
+      type: 'user.deleted',
+      message: 'A user has been deleted.',
+      data: {
+        userId: user._id
+      }
     });
 
     res.status(200).json({
@@ -237,6 +265,14 @@ async function updateUserStatus(req, res) {
         message: 'User not found'
       });
     }
+
+    broadcast({
+      type: 'user.updated',
+      message: 'A user status has been updated.',
+      data: {
+        userId: user._id
+      }
+    });
 
     res.status(200).json({
       message: 'User status updated successfully',

@@ -13,6 +13,10 @@ import {
   DietaryTag
 } from '../../services/menu.service';
 
+import {
+  WebSocketService
+} from '../../services/websocket.service';
+
 interface MenuDish {
   id: string;
   name: string;
@@ -132,11 +136,42 @@ export class MenuManagementComponent implements OnInit {
   dishes: MenuDish[] = [];
 
   constructor(
-    private menuService: MenuService
+    private menuService: MenuService,
+    private webSocketService: WebSocketService
   ) { }
 
   ngOnInit(): void {
+
     this.loadMenuItems();
+
+    this.webSocketService.connect();
+
+    this.webSocketService.messages$
+      .subscribe(message => {
+
+        console.log(
+          'Menu WebSocket message:',
+          message
+        );
+
+        switch (message.type) {
+
+          case 'menu.created':
+            this.loadMenuItems();
+            break;
+
+          case 'menu.updated':
+            this.loadMenuItems();
+            break;
+
+          case 'menu.deleted':
+            this.loadMenuItems();
+            break;
+
+        }
+
+      });
+
   }
 
   // =========================

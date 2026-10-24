@@ -16,6 +16,10 @@ import {
 } from '../../services/tasting.service';
 import { AuthService } from '../../services/auth.service';
 
+import {
+  WebSocketService
+} from '../../services/websocket.service';
+
 interface MenuItem {
   _id: string;
   dishId: string;
@@ -52,8 +56,9 @@ export class MenuComponent implements OnInit {
     private menuService: MenuService,
     private tastingService: TastingService,
     private authService: AuthService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private webSocketService: WebSocketService
+  ) { }
 
   activeCategory = 'all';
 
@@ -127,17 +132,47 @@ export class MenuComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+
     this.loadMenuItems();
+
+    this.webSocketService.connect();
+
+    this.webSocketService.messages$
+      .subscribe(message => {
+
+        console.log(
+          'Menu WebSocket message:',
+          message
+        );
+
+        switch (message.type) {
+
+          case 'menu.created':
+            this.loadMenuItems();
+            break;
+
+          case 'menu.updated':
+            this.loadMenuItems();
+            break;
+
+          case 'menu.deleted':
+            this.loadMenuItems();
+            break;
+
+        }
+
+      });
+
   }
-  
+
   loadMenuItems(): void {
-  
+
     this.isLoading = true;
     this.loadError = '';
-  
+
     this.menuService.getMenuItems().subscribe({
       next: (response) => {
-  
+
         this.menuItems = response.menuItems
           .filter(item => item.available)
           .map(item => ({
@@ -155,18 +190,18 @@ export class MenuComponent implements OnInit {
             signature: item.signature,
             allergens: item.allergens
           }));
-  
+
         this.isLoading = false;
       },
-  
+
       error: (error) => {
-  
+
         console.error('Failed to load menu:', error);
-  
+
         this.loadError =
           error?.error?.message ||
           'Unable to load the menu at this time.';
-  
+
         this.isLoading = false;
       }
     });
@@ -178,32 +213,32 @@ export class MenuComponent implements OnInit {
     const query = this.searchQuery
       .toLowerCase()
       .trim();
-  
+
     return this.menuItems.filter(item => {
-  
+
       const categoryMatch =
         this.activeCategory === 'all' ||
         item.category === this.activeCategory;
-  
+
       const dietaryMatch =
         this.activeFilters.size === 0 ||
         [...this.activeFilters].every(filter => {
-  
+
           if (filter === 'SPECIAL') {
             return item.signature;
           }
-  
+
           return item.dietary.includes(
             filter as DietaryTag
           );
         });
-  
+
       const searchMatch =
         !query ||
         item.name.toLowerCase().includes(query) ||
         item.description.toLowerCase().includes(query) ||
         item.provenance.toLowerCase().includes(query);
-  
+
       return (
         categoryMatch &&
         dietaryMatch &&
@@ -242,45 +277,45 @@ export class MenuComponent implements OnInit {
       price: item.price,
       id: item.dishId
     });
-  
+
     this.tastingList =
       this.tastingService.getItems();
-  
+
     this.openTastingDrawer();
   }
 
   selectTastingMenu(
     type: '5-course' | '7-course'
   ): void {
-  
+
     if (type === '5-course') {
-  
+
       this.tastingService.addItem({
         name: '5-Course Prelude Tasting Menu',
         price: 125,
         id: 'tasting-5-course'
       });
-  
+
     } else {
-  
+
       this.tastingService.addItem({
         name: '7-Course Odyssey Tasting Menu',
         price: 175,
         id: 'tasting-7-course'
       });
-  
+
     }
-  
+
     this.tastingList =
       this.tastingService.getItems();
-  
+
     this.openTastingDrawer();
   }
 
   removeFromTasting(id: string): void {
 
     this.tastingService.removeItem(id);
-  
+
     this.tastingList =
       this.tastingService.getItems();
   }
@@ -307,18 +342,18 @@ export class MenuComponent implements OnInit {
 
     // Close the tasting drawer first
     this.closeTastingDrawer();
-  
+
     // Check whether the guest is logged in
     if (this.authService.isLoggedIn()) {
-  
+
       // Already logged in
       this.router.navigate(['/reservations']);
-  
+
     } else {
-  
+
       // Not logged in
       this.router.navigate(['/guest-login']);
-  
+
     }
   }
 
@@ -326,27 +361,27 @@ export class MenuComponent implements OnInit {
 
     const grouped =
       new Map<string, TastingItem & { quantity: number }>();
-  
+
     for (const item of this.tastingList) {
-  
+
       const existing =
         grouped.get(item.id);
-  
+
       if (existing) {
-  
+
         existing.quantity += 1;
-  
+
       } else {
-  
+
         grouped.set(item.id, {
           ...item,
           quantity: 1
         });
-  
+
       }
-  
+
     }
-  
+
     return Array.from(grouped.values());
   }
 

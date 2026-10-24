@@ -19,6 +19,10 @@ import {
   SelectedDish
 } from '../../services/reservation.service';
 
+import {
+  WebSocketService
+} from '../../services/websocket.service';
+
 
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
@@ -264,7 +268,8 @@ export class ReservationManagementComponent
 
   constructor(
     private reservationService:
-      ReservationService
+      ReservationService,
+    private webSocketService: WebSocketService
   ) { }
 
 
@@ -277,6 +282,34 @@ export class ReservationManagementComponent
   ngOnInit(): void {
 
     this.loadReservations();
+
+    this.webSocketService.connect();
+
+    this.webSocketService.messages$
+      .subscribe(message => {
+
+        console.log(
+          'WebSocket message:',
+          message
+        );
+
+        switch (message.type) {
+
+          case 'reservation.created':
+            this.loadReservations();
+            break;
+
+          case 'reservation.updated':
+            this.loadReservations();
+            break;
+
+          case 'reservation.cancelled':
+            this.loadReservations();
+            break;
+
+        }
+
+      });
 
   }
 
