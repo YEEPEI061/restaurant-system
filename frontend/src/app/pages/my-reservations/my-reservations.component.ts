@@ -11,6 +11,8 @@ import {
   ReservationService
 } from '../../services/reservation.service';
 
+import { WebSocketService } from '../../services/websocket.service';
+
 type ReservationTab = 'upcoming' | 'past' | 'cancelled';
 
 @Component({
@@ -55,21 +57,50 @@ export class MyReservationsComponent implements OnInit {
 
   constructor(
     private reservationService: ReservationService,
-    private router: Router
+    private router: Router,
+    private webSocketService: WebSocketService
   ) { }
 
   ngOnInit(): void {
 
     const token =
       localStorage.getItem('aurelia_token');
-
+  
     this.isLoggedIn = !!token;
-
+  
     if (!this.isLoggedIn) {
       return;
     }
-
+  
     this.loadReservations();
+  
+    this.webSocketService.connect();
+  
+    this.webSocketService.messages$
+      .subscribe(message => {
+  
+        console.log(
+          'My Reservations WebSocket message:',
+          message
+        );
+  
+        switch (message.type) {
+  
+          case 'reservation.created':
+            this.loadReservations();
+            break;
+  
+          case 'reservation.updated':
+            this.loadReservations();
+            break;
+  
+          case 'reservation.cancelled':
+            this.loadReservations();
+            break;
+  
+        }
+  
+      });
   }
 
 

@@ -1,29 +1,71 @@
 services:
-  backend:
-    build: ./backend
-    container_name: restaurant-backend
-    ports:
-      - "3000:3000"
-    environment:
-      - MONGODB_URI=mongodb://mongodb:27017/restaurant_system
-    depends_on:
-      - mongodb
-
-  frontend:
-    build: ./frontend
-    container_name: restaurant-frontend
-    ports:
-      - "4200:80"
-    depends_on:
-      - backend
 
   mongodb:
     image: mongo:8
     container_name: restaurant-mongodb
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+
+      MONGO_APP_USERNAME: ${MONGO_APP_USERNAME}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
+
     ports:
       - "27017:27017"
+
     volumes:
       - mongodb_data:/data/db
+      - ./mongo/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+
+    restart: unless-stopped
+
+    networks:
+      - aurelia-network
+
+
+  backend:
+    build: ./backend
+    container_name: restaurant-backend
+
+    environment:
+      MONGO_URI: mongodb://${MONGO_APP_USERNAME}:${MONGO_APP_PASSWORD}@mongodb:27017/${MONGO_DB}?authSource=${MONGO_DB}
+      PORT: 3000
+      NODE_ENV: production
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      - mongodb
+
+    restart: unless-stopped
+
+    networks:
+      - aurelia-network
+
+
+  frontend:
+    build: ./frontend
+    container_name: restaurant-frontend
+
+    ports:
+      - "4200:80"
+
+    depends_on:
+      - backend
+
+    restart: unless-stopped
+
+    networks:
+      - aurelia-network
+
 
 volumes:
   mongodb_data:
+
+
+networks:
+  aurelia-network:
+    driver: bridge

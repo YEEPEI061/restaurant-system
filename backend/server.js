@@ -16,6 +16,9 @@ const {
 const {
   initializeWebSocket
 } = require('./services/websocketService');
+const {
+  initialiseSampleData
+} = require('./services/sampleDataService');
 
 const app = express();
 
@@ -50,10 +53,10 @@ async function startServer() {
   try {
     await connectDatabase();
 
+    await initialiseSampleData();
+
     server.listen(PORT, () => {
-      console.log(
-        `Server running on port ${PORT}`
-      );
+      console.log(`Server running on port ${PORT}`);
     });
   } catch (error) {
     console.error(`Failed to start server: ${error.message}`);

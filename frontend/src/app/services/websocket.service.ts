@@ -7,6 +7,10 @@ import {
     Subject
 } from 'rxjs';
 
+import {
+    environment
+} from '../../environments/environment';
+
 export interface WebSocketMessage {
     type: string;
     message?: string;
@@ -46,9 +50,30 @@ export class WebSocketService {
             return;
         }
 
+        // this.socket =
+        //     new WebSocket(
+        //         'ws://localhost:3000/ws'
+        //     );
+
+        let webSocketUrl =
+            environment.websocketUrl;
+
+        if (
+            webSocketUrl.startsWith('/')
+        ) {
+
+            const protocol =
+                window.location.protocol === 'https:'
+                    ? 'wss:'
+                    : 'ws:';
+
+            webSocketUrl =
+                `${protocol}//${window.location.host}${webSocketUrl}`;
+        }
+
         this.socket =
             new WebSocket(
-                'ws://localhost:3000/ws'
+                webSocketUrl
             );
 
         this.socket.onopen = () => {
