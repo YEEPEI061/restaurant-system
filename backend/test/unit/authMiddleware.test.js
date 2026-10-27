@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const jwt = require('jsonwebtoken');
 
-const authenticateToken = require('../middleware/authMiddleware');
+const authenticateToken = require('../../middleware/authMiddleware');
 
 describe('authenticateToken Middleware', function () {
 

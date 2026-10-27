@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
-const User = require('../models/User');
+const User = require('../../models/User');
 
 const {
     getUsers,
@@ -12,7 +12,7 @@ const {
     updateUser,
     deleteUser,
     updateUserStatus
-} = require('../controllers/userController');
+} = require('../../controllers/userController');
 
 
 describe('User Controller', function () {

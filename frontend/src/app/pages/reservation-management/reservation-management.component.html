@@ -585,6 +585,21 @@
 
                     }
 
+                    <!-- Delete cancelled reservation -->
+                    @if (
+                    reservation.status === 'Cancelled'
+                    ) {
+
+                    <button class="icon-button icon-delete" type="button" title="Delete reservation"
+                      aria-label="Delete reservation"
+                      (click)="$event.stopPropagation(); openDeleteConfirmation(reservation)">
+                      <span class="material-symbols-outlined">
+                        delete
+                      </span>
+                    </button>
+
+                    }
+
 
                     <!-- View / edit -->
                     <button class="icon-button icon-edit" type="button" title="Edit reservation"
@@ -1529,6 +1544,69 @@ ERROR MESSAGE
     <button type="button" class="button button-light error-close-button" (click)="clearError()">
       Close
     </button>
+
+  </div>
+
+</div>
+
+}
+
+<!-- =====================================================
+DELETE CONFIRMATION
+===================================================== -->
+
+@if (deleteConfirmOpen) {
+
+<div class="message-modal-backdrop" (click)="closeDeleteConfirmation()">
+
+  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="delete-title"
+    (click)="$event.stopPropagation()">
+
+    <div class="message-icon delete-message-icon">
+
+      <span class="material-symbols-outlined">
+        delete
+      </span>
+
+    </div>
+
+    <div class="message-copy">
+
+      <span class="message-eyebrow">
+        CONFIRM ACTION
+      </span>
+
+      <h2 id="delete-title">
+        Delete Reservation?
+      </h2>
+
+      <p>
+        Are you sure you want to delete
+        <strong>
+          {{ reservationToDelete?.reservationId }}
+        </strong>?
+        This action cannot be undone.
+      </p>
+
+    </div>
+
+    <div class="message-actions">
+
+      <button type="button" class="button button-light modal-button" (click)="closeDeleteConfirmation()">
+        Cancel
+      </button>
+
+      <button type="button" class="button delete-confirm-button modal-button" (click)="deleteReservation()">
+
+        <span class="material-symbols-outlined">
+          delete
+        </span>
+
+        Delete
+
+      </button>
+
+    </div>
 
   </div>
 

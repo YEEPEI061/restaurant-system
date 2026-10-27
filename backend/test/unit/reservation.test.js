@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 
-const Reservation = require('../models/Reservation');
+const Reservation = require('../../models/Reservation');
 
 const {
     getReservations,
@@ -11,7 +11,7 @@ const {
     updateReservation,
     deleteReservation,
     updateReservationStatus
-} = require('../controllers/reservationController');
+} = require('../../controllers/reservationController');
 
 
 describe('Reservation Controller', function () {

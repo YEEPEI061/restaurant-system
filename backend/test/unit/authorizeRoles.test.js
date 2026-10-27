@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 
-const authorizeRoles = require('../middleware/roleMiddleware');
+const authorizeRoles = require('../../middleware/roleMiddleware');
 
 describe('authorizeRoles Middleware', function () {
 

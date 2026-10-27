@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 
-const MenuItem = require('../models/MenuItem');
+const MenuItem = require('../../models/MenuItem');
 
 const {
     getMenuItems,
@@ -10,7 +10,7 @@ const {
     updateMenuItem,
     deleteMenuItem,
     updateAvailability
-} = require('../controllers/menuController');
+} = require('../../controllers/menuController');
 
 
 describe('Menu Controller', function () {

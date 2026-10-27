@@ -3,14 +3,14 @@ const sinon = require('sinon');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const User = require('../models/User');
+const User = require('../../models/User');
 
 const {
     guestSignup,
     guestLogin,
     adminLogin,
     getCurrentUser
-} = require('../controllers/authController');
+} = require('../../controllers/authController');
 
 describe('Authentication Controller', function () {
 

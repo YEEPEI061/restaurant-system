@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const { body, validationResult } = require('express-validator');
 
-const validateRequest = require('../middleware/validationMiddleware');
+const validateRequest = require('../../middleware/validationMiddleware');
 
 describe('validateRequest Middleware', function () {
 
@@ -63,7 +63,7 @@ describe('validateRequest Middleware', function () {
       }
     };
 
-    const next = function () {};
+    const next = function () { };
 
     const validationChain = body('email')
       .isEmail()

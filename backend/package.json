@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "mocha --exit"
+    "test": "mocha \"test/**/*.test.js\" --exit"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

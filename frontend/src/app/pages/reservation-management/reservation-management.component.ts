@@ -259,6 +259,9 @@ export class ReservationManagementComponent
 
   reservationToCancel: Reservation | null = null;
 
+  deleteConfirmOpen = false;
+
+  reservationToDelete: Reservation | null = null;
 
   /*
    * --------------------------------------------------
@@ -1089,6 +1092,114 @@ export class ReservationManagementComponent
 
     this.reservationToCancel =
       null;
+
+  }
+
+  /*
+  * --------------------------------------------------
+  * DELETE CONFIRMATION
+  * --------------------------------------------------
+  */
+
+  openDeleteConfirmation(
+    reservation: Reservation
+  ): void {
+
+    this.reservationToDelete =
+      reservation;
+
+    this.deleteConfirmOpen =
+      true;
+
+  }
+
+
+  closeDeleteConfirmation(): void {
+
+    this.deleteConfirmOpen =
+      false;
+
+    this.reservationToDelete =
+      null;
+
+  }
+
+  /*
+  * --------------------------------------------------
+  * DELETE RESERVATION
+  * --------------------------------------------------
+  */
+
+  deleteReservation(): void {
+
+    if (!this.reservationToDelete) {
+      return;
+    }
+
+
+    const reservation =
+      this.reservationToDelete;
+
+
+    this.reservationService
+      .deleteReservation(
+        reservation.reservationId
+      )
+      .subscribe({
+
+        next: (response) => {
+
+          /*
+           * Remove the deleted reservation
+           * from the current list immediately.
+           */
+          this.reservations =
+            this.reservations.filter(
+              item =>
+                item.reservationId !==
+                reservation.reservationId
+            );
+
+
+          this.deleteConfirmOpen =
+            false;
+
+          this.reservationToDelete =
+            null;
+
+
+          this.showSuccess(
+            'Reservation Deleted',
+            response?.message ||
+            `${reservation.reservationId} has been deleted successfully.`
+          );
+
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Delete reservation failed:',
+            error
+          );
+
+
+          this.deleteConfirmOpen =
+            false;
+
+          this.reservationToDelete =
+            null;
+
+
+          this.showError(
+            'Unable to Delete Reservation',
+            error?.error?.message ||
+            'Unable to delete this reservation.'
+          );
+
+        }
+
+      });
 
   }
 
