@@ -4,6 +4,10 @@ const {
   broadcast
 } = require('../services/websocketService');
 
+const {
+  createNotification
+} = require('../services/notificationService');
+
 async function getReservations(req, res) {
   try {
     const reservations = await Reservation.find()
@@ -246,6 +250,16 @@ async function createReservation(req, res) {
       }
     });
 
+    await createNotification({
+      recipientRole: 'admin',
+      type: 'reservation_created',
+      title: 'New reservation',
+      message:
+        `${reservation.guestName} created reservation ${reservation.reservationId}.`,
+      reservationId:
+        reservation.reservationId
+    });
+
 
     // =========================
     // SUCCESS RESPONSE
@@ -276,6 +290,79 @@ async function createReservation(req, res) {
   }
 }
 
+function getReservationChanges(previous, updated) {
+
+  const fields = {
+    guestName: 'Guest name',
+    email: 'Email',
+    phone: 'Phone',
+    date: 'Reservation date',
+    time: 'Reservation time',
+    partySize: 'Party size',
+    servicePeriod: 'Service period',
+    seating: 'Seating',
+    diningOption: 'Dining option',
+    tastingMenu: 'Tasting menu',
+    selectedDishes: 'Dining selections',
+    beveragePairing: 'Beverage pairing',
+    packageName: 'Package',
+    table: 'Table',
+    specialRequests: 'Special requests'
+  };
+
+  function formatValue(field, value) {
+
+    if (value === undefined || value === null || value === '') {
+      return 'Not specified';
+    }
+
+    if (field === 'partySize') {
+      return `${value} ${Number(value) === 1 ? 'guest' : 'guests'}`;
+    }
+
+    if (field === 'table') {
+      return `Table ${String(value).replace(/^T/, '')}`;
+    }
+
+    if (field === 'beveragePairing') {
+      return value ? 'Included' : 'Not included';
+    }
+
+    if (field === 'selectedDishes' && Array.isArray(value)) {
+      return value
+        .map(dish => dish.name || dish)
+        .join(', ');
+    }
+
+    if (field === 'date') {
+      return new Date(value).toLocaleDateString('en-MY');
+    }
+
+    return String(value);
+  }
+
+  const changes = [];
+
+  for (const field of Object.keys(fields)) {
+
+    const oldValue = previous[field];
+    const newValue = updated[field];
+
+    if (
+      JSON.stringify(oldValue ?? null) !==
+      JSON.stringify(newValue ?? null)
+    ) {
+
+      changes.push(
+        `${fields[field]}: ${formatValue(field, oldValue)} → ${formatValue(field, newValue)}`
+      );
+
+    }
+  }
+
+  return changes;
+}
+
 async function updateReservation(req, res) {
   try {
 
@@ -289,6 +376,8 @@ async function updateReservation(req, res) {
         message: 'Reservation not found'
       });
     }
+
+    const previousReservation = reservation.toObject();
 
 
     // =========================
@@ -360,6 +449,17 @@ async function updateReservation(req, res) {
 
     ];
 
+    // =========================
+    // CHECK TABLE ASSIGNMENT
+    // =========================
+
+    const previousTable =
+      reservation.table;
+
+    const tableChanged =
+      req.user.role === 'admin' &&
+      req.body.table !== undefined &&
+      req.body.table !== previousTable;
 
     // =========================
     // UPDATE FIELDS
@@ -388,6 +488,11 @@ async function updateReservation(req, res) {
 
     await reservation.save();
 
+    const changes = getReservationChanges(
+      previousReservation,
+      reservation.toObject()
+    );
+
     // =========================
     // WEBSOCKET NOTIFICATION
     // =========================
@@ -402,6 +507,43 @@ async function updateReservation(req, res) {
       }
     });
 
+
+    if (changes.length > 0) {
+
+      const changeDetails = changes
+        .map(change => `• ${change}`)
+        .join('\n');
+
+      if (req.user.role === 'guest') {
+
+        await createNotification({
+          recipientRole: 'admin',
+          type: 'reservation_updated',
+          title: 'Reservation updated',
+          message:
+            `${reservation.guestName} updated reservation ${reservation.reservationId}:\n${changeDetails}`,
+          reservationId: reservation.reservationId
+        });
+
+      } else if (req.user.role === 'admin') {
+
+        await createNotification({
+          recipient: reservation.guest,
+          recipientRole: 'guest',
+          type: tableChanged
+            ? 'table_assigned'
+            : 'reservation_updated',
+          title: tableChanged
+            ? 'Table assignment updated'
+            : 'Reservation updated',
+          message:
+            `Your reservation ${reservation.reservationId} has been updated:\n${changeDetails}`,
+          reservationId: reservation.reservationId
+        });
+
+      }
+
+    }
 
     // =========================
     // SUCCESS RESPONSE
@@ -559,7 +701,7 @@ async function updateReservationStatus(
 
     }
 
-    // Update status
+
     // =========================
     // UPDATE STATUS
     // =========================
@@ -600,6 +742,62 @@ async function updateReservationStatus(
 
     }
 
+
+    // =========================
+    // DATABASE NOTIFICATION
+    // =========================
+
+    if (req.user.role === 'guest') {
+
+      await createNotification({
+        recipientRole: 'admin',
+        type: 'reservation_cancelled',
+        title: 'Reservation cancelled',
+        message:
+          `${reservation.guestName} cancelled reservation ${reservation.reservationId}.`,
+        reservationId:
+          reservation.reservationId
+      });
+
+    }
+
+
+    if (req.user.role === 'admin') {
+
+      if (status === 'Confirmed') {
+
+        await createNotification({
+          recipient:
+            reservation.guest,
+          recipientRole: 'guest',
+          type: 'reservation_confirmed',
+          title: 'Reservation confirmed',
+          message:
+            `Your reservation ${reservation.reservationId} has been confirmed.`,
+          reservationId:
+            reservation.reservationId
+        });
+
+      }
+
+
+      if (status === 'Cancelled') {
+
+        await createNotification({
+          recipient:
+            reservation.guest,
+          recipientRole: 'guest',
+          type: 'reservation_cancelled',
+          title: 'Reservation cancelled',
+          message:
+            `Your reservation ${reservation.reservationId} has been cancelled.`,
+          reservationId:
+            reservation.reservationId
+        });
+
+      }
+
+    }
 
     // =========================
     // SUCCESS RESPONSE

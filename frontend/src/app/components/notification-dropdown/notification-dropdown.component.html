@@ -1,0 +1,142 @@
+<div class="notification-dropdown">
+
+    <div class="notification-header">
+
+        <div>
+            <h3>Notifications</h3>
+
+            @if (unreadCount > 0) {
+            <span>
+                {{ unreadCount }} unread
+            </span>
+            }
+        </div>
+
+        @if (unreadCount > 0) {
+
+        <button type="button" class="mark-all-button" (click)="markAllAsRead()">
+            Mark all as read
+        </button>
+
+        }
+
+    </div>
+
+
+    <div class="notification-list">
+
+        @if (loading) {
+
+        <div class="notification-empty">
+            Loading notifications...
+        </div>
+
+        }
+
+        @else if (notifications.length === 0) {
+
+        <div class="notification-empty">
+
+            <span class="material-symbols-outlined">
+                notifications_none
+            </span>
+
+            <p>No notifications</p>
+
+        </div>
+
+        }
+
+        @else {
+
+        @for (
+        notification of notifications;
+        track notification._id
+        ) {
+
+        <button type="button" class="notification-item" [class.unread]="!notification.read"
+            (click)="markAsRead(notification)">
+
+            <div class="notification-icon" [class.notification-created]="
+              notification.type === 'reservation_created'
+            " [class.notification-updated]="
+              notification.type === 'reservation_updated'
+            " [class.notification-cancelled]="
+              notification.type === 'reservation_cancelled'
+            " [class.notification-confirmed]="
+              notification.type === 'reservation_confirmed'
+            " [class.notification-assigned]="
+              notification.type === 'table_assigned'
+            ">
+
+                <span class="material-symbols-outlined">
+
+                    @if (
+                    notification.type ===
+                    'reservation_created'
+                    ) {
+                    event_available
+                    }
+
+                    @else if (
+                    notification.type ===
+                    'reservation_confirmed'
+                    ) {
+                    check_circle
+                    }
+
+                    @else if (
+                    notification.type ===
+                    'reservation_cancelled'
+                    ) {
+                    event_busy
+                    }
+
+                    @else if (
+                    notification.type ===
+                    'table_assigned'
+                    ) {
+                    table_restaurant
+                    }
+
+                    @else {
+                    edit_calendar
+                    }
+
+                </span>
+
+            </div>
+
+            <div class="notification-content">
+
+                <div class="notification-title-row">
+
+                    <strong>
+                        {{ notification.title }}
+                    </strong>
+
+                    @if (!notification.read) {
+                    <span class="unread-dot"></span>
+                    }
+
+                </div>
+
+                <p class="notification-message">
+                    {{ notification.message }}
+                </p>
+
+                <small>
+                    {{ notification.createdAt | date:'dd MMM, h:mm a' }}
+                </small>
+
+            </div>
+
+        </button>
+
+        }
+
+        }
+
+    </div>
+
+</div>

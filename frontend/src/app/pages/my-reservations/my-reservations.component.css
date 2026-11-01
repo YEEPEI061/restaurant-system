@@ -1017,7 +1017,7 @@ select:focus-visible {
 .past-table-header,
 .past-row {
   display: grid;
-  grid-template-columns: 1.15fr 1.25fr 0.8fr 0.85fr 0.9fr;
+  grid-template-columns: 1.2fr 1.4fr 1fr 0.8fr;
   align-items: center;
   gap: 14px;
 }
@@ -1854,6 +1854,86 @@ select:focus-visible {
   }
 }
 
+
+/* =========================================
+   TABLE ASSIGNMENT
+========================================= */
+
+.table-assignment {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  background: #faf9f6;
+  border: 1px solid #e9e5dc;
+  border-radius: 12px;
+}
+
+.table-assignment-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  background: #eee9df;
+  color: #806b4e;
+  border-radius: 10px;
+}
+
+.table-assignment-icon .material-symbols-outlined {
+  font-size: 23px;
+}
+
+.table-assignment-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.table-assignment-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #888;
+}
+
+.table-assignment-content strong {
+  font-size: 15px;
+  color: #292929;
+}
+
+.table-assignment-content small {
+  font-size: 12px;
+  color: #888;
+}
+
+.table-assigned-badge,
+.table-pending-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.table-assigned-badge {
+  background: #e8f3eb;
+  color: #39734d;
+}
+
+.table-assigned-badge .material-symbols-outlined {
+  font-size: 14px;
+}
+
+.table-pending-badge {
+  background: #f2eee5;
+  color: #8b7655;
+}
 
 /* Responsive layout */
 

@@ -1,0 +1,247 @@
+.notification-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+
+    width: 380px;
+    max-height: 520px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.12);
+
+    overflow: hidden;
+
+    z-index: 1000;
+}
+
+
+/* =========================
+     HEADER
+     ========================= */
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 18px 20px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+.notification-header h3 {
+    margin: 0;
+
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.notification-header span {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 12px;
+    color: #777777;
+}
+
+.mark-all-button {
+    border: none;
+    background: none;
+
+    padding: 4px;
+
+    font-size: 12px;
+    color: #555555;
+
+    cursor: pointer;
+}
+
+.mark-all-button:hover {
+    color: #111111;
+}
+
+
+/* =========================
+     LIST
+     ========================= */
+
+.notification-list {
+    max-height: 440px;
+
+    overflow-y: auto;
+}
+
+
+/* =========================
+     ITEM
+     ========================= */
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    width: 100%;
+
+    padding: 16px 20px;
+
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+
+    background: #ffffff;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    background: #fafafa;
+}
+
+.notification-item.unread {
+    background: #f8f8f8;
+}
+
+
+/* =========================
+     ICON
+     ========================= */
+
+.notification-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+}
+
+.notification-icon .material-symbols-outlined {
+    font-size: 18px;
+}
+
+/* New reservation */
+.notification-created {
+    background: #e9f7ef;
+    color: #2e7d52;
+}
+
+/* Reservation updated */
+.notification-updated {
+    background: #fff3e0;
+    color: #c77800;
+}
+
+/* Reservation cancelled */
+.notification-cancelled {
+    background: #fdecec;
+    color: #c43d3d;
+}
+
+/* Reservation confirmed */
+.notification-confirmed {
+    background: #eaf2ff;
+    color: #3d6fb6;
+}
+
+/* Table assigned */
+.notification-assigned {
+    background: #f2ecff;
+    color: #7251a8;
+}
+
+.notification-message {
+    white-space: pre-line;
+  }
+
+
+/* =========================
+     CONTENT
+     ========================= */
+
+.notification-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.notification-title-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.notification-title-row strong {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.notification-content p {
+    margin: 4px 0;
+
+    font-size: 12px;
+    line-height: 1.45;
+
+    color: #555555;
+}
+
+.notification-content small {
+    font-size: 11px;
+    color: #999999;
+}
+
+
+/* =========================
+     UNREAD DOT
+     ========================= */
+
+.unread-dot {
+    width: 6px !important;
+    height: 6px !important;
+
+    margin: 0 !important;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #111111;
+}
+
+
+/* =========================
+     EMPTY
+     ========================= */
+
+.notification-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 180px;
+
+    color: #888888;
+
+    text-align: center;
+}
+
+.notification-empty .material-symbols-outlined {
+    font-size: 32px;
+}
+
+.notification-empty p {
+    margin: 8px 0 0;
+
+    font-size: 13px;
+}

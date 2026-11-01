@@ -65,13 +65,49 @@
       </div>
 
       <!-- Staff notification shortcut -->
-      @if (isStaffMode()) {
-      <button type="button" class="notification-button" aria-label="Staff notifications" title="Staff Notifications"
-        (click)="closeProfileMenu()">
-        <span class="material-symbols-outlined">notifications</span>
-      </button>
-      }
+      <!-- Notification shortcut -->
+      @if (isAdminLoggedIn() || isGuestLoggedIn()) {
 
+      <div class="notification-wrapper">
+
+        <button type="button" class="notification-button" [attr.aria-label]="
+            isAdminLoggedIn()
+              ? 'Staff notifications'
+              : 'Guest notifications'
+          " [attr.title]="
+            isAdminLoggedIn()
+              ? 'Staff Notifications'
+              : 'Guest Notifications'
+          " (click)="toggleNotifications()">
+
+          <span class="material-symbols-outlined">
+            notifications
+          </span>
+
+          @if (notificationUnreadCount > 0) {
+
+          <span class="notification-badge">
+            {{
+            notificationUnreadCount > 99
+            ? '99+'
+            : notificationUnreadCount
+            }}
+          </span>
+
+          }
+
+        </button>
+
+        @if (notificationOpen) {
+
+        <app-notification-dropdown (close)="closeNotifications()"
+          (unreadCountChange)="notificationUnreadCount = $event" />
+
+        }
+
+      </div>
+
+      }
       <!-- Profile dropdown -->
       <div class="profile-menu">
         <button type="button" class="profile-icon" (click)="toggleProfileMenu()" aria-label="Open profile menu"

@@ -63,7 +63,7 @@ export interface Reservation {
   beveragePairing: boolean;
 
   packageName: string;
-  table: string;
+  table?: string | null;
 
   specialRequests: string;
 
@@ -148,7 +148,7 @@ export class ReservationService {
   constructor(
     private http: HttpClient,
     private api: ApiService
-  ) {}
+  ) { }
 
   // =========================
   // GET ALL RESERVATIONS

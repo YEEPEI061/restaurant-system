@@ -343,6 +343,67 @@
 
             </div>
 
+            <!-- TABLE ASSIGNMENT -->
+            <div class="table-assignment">
+
+              <div class="table-assignment-icon">
+
+                <span class="material-symbols-outlined">
+                  table_restaurant
+                </span>
+
+              </div>
+
+              <div class="table-assignment-content">
+
+                <span class="table-assignment-label">
+                  YOUR TABLE
+                </span>
+
+                @if (reservation.table) {
+
+                <strong>
+                  Table {{ reservation.table.replace('T', '') }}
+                </strong>
+
+                <small>
+                  Your table has been assigned by our staff.
+                </small>
+
+                } @else {
+
+                <strong>
+                  Awaiting Table Assignment
+                </strong>
+
+                <small>
+                  Your table details will appear here once assigned.
+                </small>
+
+                }
+
+              </div>
+
+              @if (reservation.table) {
+
+              <span class="table-assigned-badge">
+                <span class="material-symbols-outlined">
+                  check_circle
+                </span>
+
+                Assigned
+              </span>
+
+              } @else {
+
+              <span class="table-pending-badge">
+                Pending
+              </span>
+
+              }
+
+            </div>
+
           </div>
 
         </div>
@@ -841,10 +902,6 @@
           </span>
 
           <span class="align-right">
-            STATUS
-          </span>
-
-          <span class="align-right">
             ACTIONS
           </span>
 
@@ -910,20 +967,6 @@
 
             <span>
               {{ reservation.seating }}
-            </span>
-
-          </div>
-
-
-          <!-- Status -->
-          <div class="past-cell amount-cell">
-
-            <strong>
-              {{ reservation.status }}
-            </strong>
-
-            <span>
-              Dining experience
             </span>
 
           </div>

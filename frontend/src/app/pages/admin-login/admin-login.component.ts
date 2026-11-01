@@ -6,6 +6,8 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
+
 
 @Component({
   selector: 'app-admin-login',
@@ -46,6 +48,7 @@ export class AdminLoginComponent {
 
   constructor(
     private authService: AuthService,
+    private notificationService: NotificationService,
     private router: Router
   ) { }
 
@@ -197,6 +200,29 @@ export class AdminLoginComponent {
               ]);
 
             }, 1400);
+
+          // Retrieve saved notifications immediately after login.
+          this.notificationService
+            .loadNotifications()
+            .subscribe({
+
+              next: () => {
+
+                // Start receiving new notifications in real time.
+                this.notificationService.connectWebSocket();
+
+              },
+
+              error: error => {
+
+                console.error(
+                  'Failed to retrieve notifications after login:',
+                  error
+                );
+
+              }
+
+            });
         },
 
 

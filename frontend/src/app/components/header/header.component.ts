@@ -1,8 +1,12 @@
 import {
   Component,
   ElementRef,
-  HostListener
+  HostListener,
+  OnInit,
+  OnDestroy
 } from '@angular/core';
+
+import { Subscription } from 'rxjs';
 
 import {
   Router,
@@ -14,28 +18,65 @@ import {
   AuthService
 } from '../../services/auth.service';
 
+import {
+  NotificationDropdownComponent
+} from '../notification-dropdown/notification-dropdown.component';
+
+import {
+  NotificationService
+} from '../../services/notification.service';
+
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    NotificationDropdownComponent
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
 
   isProfileMenuOpen = false;
+
+  notificationOpen = false;
+
+  notificationUnreadCount = 0;
+
+  private notificationSubscription?: Subscription;
+  private unreadCountSubscription?: Subscription;
 
 
   constructor(
     private router: Router,
     private elementRef: ElementRef,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationService: NotificationService
   ) { }
 
+  ngOnInit(): void {
+
+    this.unreadCountSubscription =
+      this.notificationService
+        .unreadCount$
+        .subscribe(count => {
+
+          this.notificationUnreadCount = count;
+
+        });
+
+    this.connectNotifications();
+
+  }
+
+  ngOnDestroy(): void {
+
+    this.unreadCountSubscription?.unsubscribe();
+
+  }
 
   // =========================
   // CLICK OUTSIDE
@@ -59,7 +100,11 @@ export class HeaderComponent {
       );
 
     if (!clickedInside) {
+
       this.closeProfileMenu();
+
+      this.closeNotifications();
+
     }
   }
 
@@ -119,6 +164,12 @@ export class HeaderComponent {
   // GUEST AUTHENTICATION
   // =========================
 
+  isLoggedIn(): boolean {
+
+    return this.authService.isLoggedIn();
+
+  }
+
   isGuestLoggedIn(): boolean {
 
     const user =
@@ -142,6 +193,8 @@ export class HeaderComponent {
 
 
   guestLogout(): void {
+
+    this.notificationService.clearNotifications();
 
     this.authService.logout();
 
@@ -181,6 +234,7 @@ export class HeaderComponent {
 
   adminLogout(): void {
 
+    this.notificationService.clearNotifications();
     this.authService.logout();
 
     this.closeProfileMenu();
@@ -199,6 +253,13 @@ export class HeaderComponent {
 
     this.isProfileMenuOpen =
       !this.isProfileMenuOpen;
+
+    if (this.isProfileMenuOpen) {
+
+      this.closeNotifications();
+
+    }
+
   }
 
 
@@ -224,6 +285,45 @@ export class HeaderComponent {
     this.router.navigate([
       '/admin-login'
     ]);
+  }
+
+  // =========================
+  // NOTIFICATIONS
+  // =========================
+  toggleNotifications(): void {
+
+    if (!this.isLoggedIn()) {
+      return;
+    }
+
+    this.notificationOpen =
+      !this.notificationOpen;
+
+    if (this.notificationOpen) {
+      this.closeProfileMenu();
+    }
+
+  }
+
+
+  // =========================
+  // CLOSE NOTIFICATIONS
+  // =========================
+
+  closeNotifications(): void {
+
+    this.notificationOpen = false;
+
+  }
+
+  connectNotifications(): void {
+
+    if (!this.isLoggedIn()) {
+      return;
+    }
+
+    this.notificationService.connectWebSocket();
+
   }
 
 }
