@@ -22,6 +22,10 @@ export class TastingService {
     return this.tastingItemsSubject.value;
   }
 
+  setItems(items: TastingItem[]): void {
+    this.tastingItemsSubject.next([...items]);
+  }
+
   addItem(item: TastingItem): void {
     const currentItems =
       this.tastingItemsSubject.value;

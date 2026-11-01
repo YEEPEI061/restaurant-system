@@ -58,6 +58,7 @@ interface ReservationForm {
   date: string;
   time: string;
 
+  seating: string;
   packageName: string;
   table: string;
 
@@ -395,6 +396,8 @@ export class ReservationManagementComponent
 
       time: '18:00',
 
+      seating: 'Main Dining Room',
+
       packageName:
         'Seven Course Odyssey',
 
@@ -467,6 +470,8 @@ export class ReservationManagementComponent
 
       time:
         reservation.time || '18:00',
+
+      seating: reservation.seating || 'Main Dining Room',
 
       packageName:
         reservation.packageName ||
@@ -906,6 +911,25 @@ export class ReservationManagementComponent
 
       });
 
+  }
+
+  getGroupedReservationDishes(reservation: Reservation): {
+    name: string;
+    quantity: number;
+  }[] {
+    const grouped = new Map<string, number>();
+
+    for (const dish of reservation.selectedDishes || []) {
+      grouped.set(
+        dish.name,
+        (grouped.get(dish.name) || 0) + 1
+      );
+    }
+
+    return Array.from(grouped, ([name, quantity]) => ({
+      name,
+      quantity
+    }));
   }
 
   /*
@@ -1751,6 +1775,9 @@ export class ReservationManagementComponent
 
   }
 
+  hasSelectedDishes(reservation: Reservation): boolean {
+    return (reservation.selectedDishes?.length ?? 0) > 0;
+  }
 
   /*
    * --------------------------------------------------

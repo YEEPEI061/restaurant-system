@@ -302,6 +302,10 @@
                 </th>
 
                 <th>
+                  Seating
+                </th>
+
+                <th>
                   Dining Package
                 </th>
 
@@ -449,6 +453,13 @@
 
                 </td>
 
+                <!-- Seating -->
+                <td>
+                  <div class="reservation-seating">
+                    {{ reservation.seating || 'Not specified' }}
+                  </div>
+                </td>
+
 
                 <!-- Dining package -->
                 <td>
@@ -459,6 +470,24 @@
                     <strong>
                       À La Carte
                     </strong>
+
+                    @if (hasSelectedDishes(reservation)) {
+
+                    <div class="reservation-dishes">
+                      @for (dish of getGroupedReservationDishes(reservation); track dish.name) {
+                      <span>
+                        {{ dish.name }}{{ dish.quantity > 1 ? ' x' + dish.quantity : '' }}
+                      </span>
+                      }
+                    </div>
+
+                    } @else {
+
+                    <span>
+                      No dishes selected
+                    </span>
+
+                    }
 
                     } @else if (reservation.diningOption === 'tasting') {
 
@@ -482,16 +511,11 @@
 
                     <span>
                       {{ reservation.partySize }}
-                      {{
-                      reservation.partySize === 1
-                      ? 'guest'
-                      : 'guests'
-                      }}
+                      {{ reservation.partySize === 1 ? 'guest' : 'guests' }}
                     </span>
 
                   </div>
                 </td>
-
 
                 <!-- Status -->
                 <td>
@@ -585,9 +609,10 @@
 
                     }
 
-                    <!-- Delete cancelled reservation -->
+                    <!-- Delete cancelled or completed reservation -->
                     @if (
-                    reservation.status === 'Cancelled'
+                    reservation.status === 'Cancelled' ||
+                    reservation.status === 'Completed'
                     ) {
 
                     <button class="icon-button icon-delete" type="button" title="Delete reservation"
@@ -636,7 +661,7 @@
 
               <tr>
 
-                <td class="empty-state" colspan="7">
+                <td class="empty-state" colspan="8">
 
                   <span class="material-symbols-outlined">
                     event_busy

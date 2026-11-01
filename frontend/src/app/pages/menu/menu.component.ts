@@ -340,18 +340,30 @@ export class MenuComponent implements OnInit {
 
   proceedToReservation(): void {
 
-    // Close the tasting drawer first
     this.closeTastingDrawer();
 
-    // Check whether the guest is logged in
     if (this.authService.isLoggedIn()) {
 
-      // Already logged in
-      this.router.navigate(['/reservations']);
+      const editingReservation =
+        sessionStorage.getItem('editingReservation');
+
+      if (editingReservation) {
+
+        this.router.navigate(
+          ['/reservations'],
+          {
+            queryParams: { edit: 'true' }
+          }
+        );
+
+      } else {
+
+        this.router.navigate(['/reservations']);
+
+      }
 
     } else {
 
-      // Not logged in
       this.router.navigate(['/guest-login']);
 
     }

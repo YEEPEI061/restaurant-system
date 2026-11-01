@@ -345,6 +345,15 @@ function getReservationChanges(previous, updated) {
 
   for (const field of Object.keys(fields)) {
 
+    // Ignore tasting menu and package changes
+    // when the dining option is Table
+    if (
+      updated.diningOption === 'table' &&
+      (field === 'tastingMenu' || field === 'packageName')
+    ) {
+      continue;
+    }
+
     const oldValue = previous[field];
     const newValue = updated[field];
 
@@ -353,9 +362,52 @@ function getReservationChanges(previous, updated) {
       JSON.stringify(newValue ?? null)
     ) {
 
-      changes.push(
-        `${fields[field]}: ${formatValue(field, oldValue)} → ${formatValue(field, newValue)}`
-      );
+      const oldIsEmpty =
+        oldValue === undefined ||
+        oldValue === null ||
+        oldValue === '';
+
+      const newIsEmpty =
+        newValue === undefined ||
+        newValue === null ||
+        newValue === '';
+
+      if (oldIsEmpty && !newIsEmpty) {
+
+        changes.push(
+          `${fields[field]}: ${formatValue(field, newValue)}`
+        );
+
+      } else if (!oldIsEmpty && newIsEmpty) {
+
+        changes.push(
+          `${fields[field]}: Removed`
+        );
+
+      } else {
+
+        // Handle cleared dining selections
+        if (
+          field === 'selectedDishes' &&
+          Array.isArray(oldValue) &&
+          oldValue.length > 0 &&
+          Array.isArray(newValue) &&
+          newValue.length === 0
+        ) {
+
+          changes.push(
+            `${fields[field]}: Removed`
+          );
+
+        } else {
+
+          changes.push(
+            `${fields[field]}: ${formatValue(field, oldValue)} → ${formatValue(field, newValue)}`
+          );
+
+        }
+
+      }
 
     }
   }
@@ -376,9 +428,6 @@ async function updateReservation(req, res) {
         message: 'Reservation not found'
       });
     }
-
-    const previousReservation = reservation.toObject();
-
 
     // =========================
     // GUEST PERMISSION CHECK
@@ -408,7 +457,10 @@ async function updateReservation(req, res) {
             'Only pending or confirmed reservations can be modified'
         });
       }
+
     }
+
+    const previousReservation = reservation.toObject();
 
 
     // =========================
@@ -524,6 +576,7 @@ async function updateReservation(req, res) {
             `${reservation.guestName} updated reservation ${reservation.reservationId}:\n${changeDetails}`,
           reservationId: reservation.reservationId
         });
+
 
       } else if (req.user.role === 'admin') {
 
@@ -668,39 +721,23 @@ async function updateReservationStatus(
         reservation.guest.toString() !==
         req.user.userId.toString()
       ) {
-
         return res.status(403).json({
           message:
             'You are not allowed to modify this reservation'
         });
-
       }
 
-      // Guest can only cancel
-      if (status !== 'Cancelled') {
-
-        return res.status(403).json({
-          message:
-            'Guests can only cancel their reservations'
-        });
-
-      }
-
-      // Guest can only cancel Pending or Confirmed
+      // Guest can only modify Pending or Confirmed reservations
       if (
         reservation.status !== 'Pending' &&
         reservation.status !== 'Confirmed'
       ) {
-
         return res.status(403).json({
           message:
-            'Only pending or confirmed reservations can be cancelled'
+            'Only pending or confirmed reservations can be modified'
         });
-
       }
-
     }
-
 
     // =========================
     // UPDATE STATUS

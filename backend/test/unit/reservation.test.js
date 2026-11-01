@@ -2,6 +2,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 
 const Reservation = require('../../models/Reservation');
+const Notification = require('../../models/Notification');
 
 const {
     getReservations,
@@ -15,6 +16,13 @@ const {
 
 
 describe('Reservation Controller', function () {
+
+    beforeEach(function () {
+        sinon.stub(Notification, 'create')
+            .resolves({
+                _id: 'notification123'
+            });
+    });
 
     afterEach(function () {
         sinon.restore();
@@ -460,6 +468,19 @@ describe('Reservation Controller', function () {
                 guestName: 'Old Name',
                 partySize: 2,
                 status: 'Pending',
+                table: null,
+
+                toObject: function () {
+                    return {
+                        reservationId: this.reservationId,
+                        guest: this.guest,
+                        guestName: this.guestName,
+                        partySize: this.partySize,
+                        status: this.status,
+                        table: this.table
+                    };
+                },
+
                 save: sinon.stub().resolves()
             };
 
@@ -514,6 +535,21 @@ describe('Reservation Controller', function () {
 
             expect(reservation.save.calledOnce)
                 .to.equal(true);
+
+            expect(Notification.create.calledOnce)
+                .to.equal(true);
+
+            const notificationData =
+                Notification.create.firstCall.args[0];
+
+            expect(notificationData.type)
+                .to.equal('reservation_updated');
+
+            expect(notificationData.message)
+                .to.include('Guest name: Old Name → Updated Name');
+
+            expect(notificationData.message)
+                .to.include('Party size: 2 guests → 4 guests');
         });
 
 
