@@ -190,8 +190,18 @@
             search
           </span>
 
-          <input type="search" name="menuSearch" [(ngModel)]="searchTerm"
+          <input type="search" name="menuSearch" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
             placeholder="Search dish name, description or ID..." aria-label="Search menu" />
+
+          @if (searchTerm) {
+
+          <button type="button" class="search-clear" aria-label="Clear search" (click)="searchTerm = ''">
+            <span class="material-symbols-outlined">
+              close
+            </span>
+          </button>
+
+          }
 
         </label>
 
@@ -223,7 +233,7 @@
         <!-- Signature Filter -->
 
         <button type="button" class="filter-chip signature-chip" [class.chip-active]="signatureOnly"
-          (click)="signatureOnly = !signatureOnly">
+          (click)="toggleSignatureFilter()">
           <span class="material-symbols-outlined">
             star
           </span>
@@ -235,7 +245,7 @@
         <!-- Unavailable Filter -->
 
         <button type="button" class="filter-chip unavailable-chip" [class.chip-active]="unavailableOnly"
-          (click)="unavailableOnly = !unavailableOnly">
+          (click)="toggleUnavailableFilter()">
           <span class="material-symbols-outlined">
             block
           </span>
@@ -246,13 +256,7 @@
 
         <!-- Reset Filters -->
 
-        <button type="button" class="reset-button" (click)="
-            activeCategory = 'All Courses';
-            searchTerm = '';
-            activeDietary = [];
-            signatureOnly = false;
-            unavailableOnly = false
-          ">
+        <button type="button" class="reset-button" (click)="resetFilters()">
           Reset filters
         </button>
 
@@ -294,7 +298,7 @@
 
           <tbody>
 
-            @for (dish of filteredDishes; track dish.id) {
+            @for (dish of paginatedDishes; track dish.id) {
 
             <tr [class.unavailable-row]="!dish.available">
 
@@ -471,19 +475,68 @@
 
       <div class="table-footer">
 
-        <span>
-          Showing {{ filteredDishes.length }}
-          of {{ dishes.length }} menu items
-        </span>
+        <div class="table-footer-info">
 
-        <span class="demo-note">
+          <span>
+            Showing
+            <strong>{{ startRecord }}–{{ endRecord }}</strong>
+            of
+            <strong>{{ filteredDishes.length }}</strong>
+            menu items
+          </span>
 
-          Menu directory
+          <label class="page-size-selector">
 
-        </span>
+            Show
+
+            <select [(ngModel)]="pageSize" [ngModelOptions]="{ standalone: true }" (ngModelChange)="changePageSize()"
+              aria-label="Menu items per page">
+              @for (size of pageSizeOptions; track size) {
+              <option [ngValue]="size">
+                {{ size }}
+              </option>
+              }
+            </select>
+
+            entries
+
+          </label>
+
+        </div>
+
+
+        <div class="pagination-controls">
+
+          <button type="button" class="pagination-button" [disabled]="currentPage === 1"
+            (click)="changePage(currentPage - 1)">
+            <span class="material-symbols-outlined">
+              chevron_left
+            </span>
+            Previous
+          </button>
+
+
+          @for (page of pageNumbers; track page) {
+
+          <button type="button" class="pagination-button page-number" [class.active]="currentPage === page"
+            (click)="changePage(page)">
+            {{ page }}
+          </button>
+
+          }
+
+
+          <button type="button" class="pagination-button" [disabled]="currentPage === totalPages"
+            (click)="changePage(currentPage + 1)">
+            Next
+            <span class="material-symbols-outlined">
+              chevron_right
+            </span>
+          </button>
+
+        </div>
 
       </div>
-
     </section>
 
   </div>

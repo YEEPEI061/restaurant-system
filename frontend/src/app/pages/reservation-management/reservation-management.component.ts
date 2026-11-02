@@ -112,6 +112,17 @@ export class ReservationManagementComponent
   activeFilter:
     ReservationFilter = 'All';
 
+  /*
+  * --------------------------------------------------
+  * PAGINATION
+  * --------------------------------------------------
+  */
+
+  pageSize = 10;
+
+  currentPage = 1;
+
+  pageSizeOptions = [10, 50, 100];
 
   /*
    * --------------------------------------------------
@@ -526,13 +537,9 @@ export class ReservationManagementComponent
    * --------------------------------------------------
    */
 
-  setFilter(
-    filter: ReservationFilter
-  ): void {
-
-    this.activeFilter =
-      filter;
-
+  setFilter(filter: ReservationFilter): void {
+    this.activeFilter = filter;
+    this.currentPage = 1;
   }
 
 
@@ -608,6 +615,56 @@ export class ReservationManagementComponent
 
   }
 
+  /*
+ * --------------------------------------------------
+ * PAGINATION
+ * --------------------------------------------------
+ */
+
+  get totalPages(): number {
+    return Math.max(
+      1,
+      Math.ceil(this.filteredReservations.length / this.pageSize)
+    );
+  }
+
+  get paginatedReservations(): Reservation[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+
+    return this.filteredReservations.slice(
+      startIndex,
+      startIndex + this.pageSize
+    );
+  }
+
+  get startRecord(): number {
+    return this.filteredReservations.length === 0
+      ? 0
+      : (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get endRecord(): number {
+    return Math.min(
+      this.currentPage * this.pageSize,
+      this.filteredReservations.length
+    );
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 1;
+  }
+
+  changePageSize(): void {
+    this.currentPage = 1;
+  }
+
+  changePage(page: number): void {
+    if (page < 1 || page > this.totalPages) {
+      return;
+    }
+
+    this.currentPage = page;
+  }
 
   /*
    * --------------------------------------------------

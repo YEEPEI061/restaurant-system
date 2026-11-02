@@ -199,7 +199,7 @@
           </a>
 
 
-          <button type="button" class="dropdown-action" (click)="guestLogout()">
+          <button type="button" class="dropdown-action" (click)="openLogoutConfirmation('guest')">
             <span class="material-symbols-outlined">
               logout
             </span>
@@ -258,16 +258,7 @@
 
             Operations Dashboard
           </a>
-
-          <a routerLink="/reservation-management" (click)="closeProfileMenu()">
-            <span class="material-symbols-outlined">
-              calendar_month
-            </span>
-
-            Manage Reservations
-          </a>
-
-          <button type="button" class="dropdown-action" (click)="adminLogout()">
+          <button type="button" class="dropdown-action" (click)="openLogoutConfirmation('staff')">
             <span class="material-symbols-outlined">
               logout
             </span>
@@ -310,3 +301,63 @@
     </div>
   </div>
 </header>
+
+<!-- =====================================================
+SIGN OUT CONFIRMATION
+====================================================== -->
+
+@if (logoutConfirmOpen) {
+
+<div class="message-modal-backdrop" (click)="cancelLogout()">
+
+  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="logout-title"
+    (click)="$event.stopPropagation()">
+
+    <div class="message-icon logout-message-icon">
+
+      <span class="material-symbols-outlined">
+        logout
+      </span>
+
+    </div>
+
+    <div class="message-copy">
+
+      <span class="message-eyebrow">
+        CONFIRM ACTION
+      </span>
+
+      <h2 id="logout-title">
+        Sign Out?
+      </h2>
+
+      <p>
+        Are you sure you want to sign out
+        of your Aurelia account?
+      </p>
+
+    </div>
+
+    <div class="message-actions">
+
+      <button type="button" class="button button-light modal-button" (click)="cancelLogout()">
+        Stay Logged In
+      </button>
+
+      <button type="button" class="button logout-confirm-button modal-button" (click)="confirmLogout()">
+
+        <span class="material-symbols-outlined">
+          logout
+        </span>
+
+        Sign Out
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+}

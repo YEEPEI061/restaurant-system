@@ -2933,6 +2933,78 @@ tr:focus-visible {
   min-width: 100px;
 }
 
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.table-footer-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #686d67;
+}
+
+.page-size-selector select {
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid #e2e5df;
+  border-radius: 6px;
+  background: #fff;
+  color: #333b33;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.pagination-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 9px;
+  border: 1px solid #e2e5df;
+  border-radius: 6px;
+  background: #fff;
+  color: #51594f;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pagination-button .material-symbols-outlined {
+  font-size: 17px;
+}
+
+.pagination-button.active {
+  background: #263b2b;
+  border-color: #263b2b;
+  color: #fff;
+}
+
+.pagination-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* =========================================================
    ANIMATIONS
    ========================================================= */
@@ -3012,49 +3084,16 @@ tr:focus-visible {
   content: "•";
 }
 
+/* Remove Chrome / Edge search clear button */
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
 
 /* =========================================================
   MOBILE TABLE
   ========================================================= */
-
-@media (max-width: 650px) {
-
-  .table-card {
-    border-radius: 8px;
-  }
-
-  .reservation-table th {
-    padding: 12px 13px;
-  }
-
-  .reservation-table td {
-    padding: 13px;
-  }
-
-  .reservation-identity {
-    min-width: 135px;
-  }
-
-  .reservation-icon {
-    width: 32px;
-    height: 32px;
-  }
-
-  .reservation-icon .material-symbols-outlined {
-    font-size: 16px;
-  }
-
-  .guest-details {
-    min-width: 145px;
-  }
-
-  .table-footer {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 15px;
-  }
-
-}
 
 /* Tablet */
 
@@ -3120,7 +3159,6 @@ tr:focus-visible {
     align-items: stretch;
     flex-direction: column;
     padding: 18px;
-
   }
 
   .service-copy h2 {
@@ -3177,10 +3215,58 @@ tr:focus-visible {
     padding: 17px;
   }
 
+  .table-card {
+    border-radius: 8px;
+  }
+
+  .reservation-table th {
+    padding: 12px 13px;
+  }
+
+  .reservation-table td {
+    padding: 13px;
+  }
+
+  .reservation-identity {
+    min-width: 135px;
+  }
+
+  .reservation-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .reservation-icon .material-symbols-outlined {
+    font-size: 16px;
+  }
+
+  .guest-details {
+    min-width: 145px;
+  }
+
   .table-footer {
     align-items: flex-start;
     flex-direction: column;
-    padding: 16px;
+    padding: 15px;
+  }
+
+  .table-footer-info {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .pagination-controls {
+    width: 100%;
+  }
+
+  .pagination-button {
+    min-width: 32px;
+    padding: 0 7px;
+  }
+
+  .pagination-button:not(.page-number) {
+    flex: 1;
   }
 
   .reservation-drawer {

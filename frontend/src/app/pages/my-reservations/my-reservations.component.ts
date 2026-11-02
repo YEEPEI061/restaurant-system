@@ -34,6 +34,10 @@ export class MyReservationsComponent implements OnInit {
   searchTerm = '';
   sortNewestFirst = true;
 
+  pageSize = 10;
+  currentPage = 1;
+  pageSizeOptions = [10, 50, 100];
+
   reservations: Reservation[] = [];
 
   isLoggedIn = false;
@@ -65,41 +69,41 @@ export class MyReservationsComponent implements OnInit {
 
     const token =
       localStorage.getItem('aurelia_token');
-  
+
     this.isLoggedIn = !!token;
-  
+
     if (!this.isLoggedIn) {
       return;
     }
-  
+
     this.loadReservations();
-  
+
     this.webSocketService.connect();
-  
+
     this.webSocketService.messages$
       .subscribe(message => {
-  
+
         console.log(
           'My Reservations WebSocket message:',
           message
         );
-  
+
         switch (message.type) {
-  
+
           case 'reservation.created':
             this.loadReservations();
             break;
-  
+
           case 'reservation.updated':
             this.loadReservations();
             break;
-  
+
           case 'reservation.cancelled':
             this.loadReservations();
             break;
-  
+
         }
-  
+
       });
   }
 
@@ -270,11 +274,66 @@ export class MyReservationsComponent implements OnInit {
     });
   }
 
+  // =========================================================
+  // PAST RESERVATIONS PAGINATION
+  // =========================================================
+
+  get totalPages(): number {
+    return Math.max(
+      1,
+      Math.ceil(this.filteredReservations.length / this.pageSize)
+    );
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from(
+      { length: this.totalPages },
+      (_, index) => index + 1
+    );
+  }
+
+  get paginatedPastReservations(): Reservation[] {
+    const startIndex =
+      (this.currentPage - 1) * this.pageSize;
+
+    return this.filteredReservations.slice(
+      startIndex,
+      startIndex + this.pageSize
+    );
+  }
+
+  get startRecord(): number {
+    return this.filteredReservations.length === 0
+      ? 0
+      : (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get endRecord(): number {
+    return Math.min(
+      this.currentPage * this.pageSize,
+      this.filteredReservations.length
+    );
+  }
+
+  changePage(page: number): void {
+    if (page < 1 || page > this.totalPages) {
+      return;
+    }
+
+    this.currentPage = page;
+  }
+
+  changePageSize(): void {
+    this.currentPage = 1;
+  }
+
   setActiveTab(tab: ReservationTab): void {
 
     this.activeTab = tab;
 
     this.searchTerm = '';
+
+    this.currentPage = 1;
 
     this.clearError();
   }

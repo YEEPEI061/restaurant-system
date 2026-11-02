@@ -1008,6 +1008,69 @@
 
         }
 
+        @if (filteredReservations.length > 0) {
+
+        <div class="table-footer">
+
+          <div class="table-footer-info">
+
+            <span>
+              Showing
+              <strong>{{ startRecord }}–{{ endRecord }}</strong>
+              of
+              <strong>{{ filteredReservations.length }}</strong>
+              reservations
+            </span>
+
+            <label class="page-size-selector">
+              Show
+
+              <select [(ngModel)]="pageSize" [ngModelOptions]="{ standalone: true }" (ngModelChange)="changePageSize()"
+                aria-label="Reservations per page">
+                @for (size of pageSizeOptions; track size) {
+                <option [ngValue]="size">{{ size }}</option>
+                }
+              </select>
+
+              entries
+            </label>
+
+          </div>
+
+
+          <div class="pagination-controls">
+
+            <button type="button" class="pagination-button" [disabled]="currentPage === 1"
+              (click)="changePage(currentPage - 1)">
+              <span class="material-symbols-outlined">
+                chevron_left
+              </span>
+              Previous
+            </button>
+
+            @for (page of pageNumbers; track page) {
+
+            <button type="button" class="pagination-button page-number" [class.active]="currentPage === page"
+              (click)="changePage(page)">
+              {{ page }}
+            </button>
+
+            }
+
+            <button type="button" class="pagination-button" [disabled]="currentPage === totalPages"
+              (click)="changePage(currentPage + 1)">
+              Next
+              <span class="material-symbols-outlined">
+                chevron_right
+              </span>
+            </button>
+
+          </div>
+
+        </div>
+
+        }
+
       </div>
 
       }
@@ -1067,10 +1130,9 @@
 
 
       @for (
-      reservation of filteredReservations;
+      reservation of paginatedPastReservations;
       track reservation._id
       ) {
-
       <article class="cancelled-card">
 
 

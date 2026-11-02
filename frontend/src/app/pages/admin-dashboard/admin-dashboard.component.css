@@ -1398,374 +1398,242 @@
    RESPONSIVE
    ===================================================== */
 
-@media (max-width: 1150px) {
-
-  .page-heading {
-    align-items: center;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 20px;
-  }
-
-  .heading-copy {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .heading-copy p {
-    max-width: 520px;
-  }
-
-  .heading-actions {
-    flex-shrink: 0;
-    margin-left: auto;
-  }
-
-  .service-overview-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .overview-card:last-child {
-    grid-column: 1 / -1;
-  }
-
-}
-
-
-@media (max-width: 760px) {
-
-  .service-date {
-    margin-bottom: 15px;
-  }
-
-  .service-overview-panel>.panel-heading {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 19px 16px;
-  }
-
-  .service-overview-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .overview-card:last-child {
-    grid-column: auto;
-  }
-
-  .overview-card {
-    min-height: auto;
-    padding: 17px 16px;
-  }
-
-  .table-summary {
-    grid-template-columns: 1fr;
-  }
-
-  .dining-summary {
-    padding: 17px 16px;
-  }
-
-  .dining-metrics {
-    grid-template-columns: 1fr;
-  }
-
-  .assignment-item {
-    grid-template-columns: 58px minmax(0, 1fr);
-  }
-
-  .assignment-item>.status-badge {
-    grid-column: 2;
-    justify-self: flex-start;
-  }
-
-  .arrival-item {
-    grid-template-columns: 50px minmax(0, 1fr);
-  }
-
-  .arrival-status {
-    grid-column: 2;
-    justify-content: flex-start;
-  }
-
-}
-
-
-@media (max-width: 420px) {
-
-  .service-date {
-    flex-wrap: wrap;
-    row-gap: 4px;
-  }
-
-  .service-date-divider {
-    display: none;
-  }
-
-  .overview-card {
-    padding: 15px 13px;
-  }
-
-  .dining-summary {
-    padding: 15px 13px;
-  }
-
-  .arrival-item {
-    grid-template-columns: 1fr;
-    gap: 5px;
-  }
-
-  .arrival-status {
-    grid-column: auto;
-  }
-
-  .assignment-item {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-
-  .assignment-item>.status-badge {
-    grid-column: auto;
-  }
-
-}
-
-@media (max-width: 1150px) {
-
-  .quick-actions {
-    justify-content: flex-start;
-  }
-
-  .view-bookings-button {
-    width: 30%;
-    min-height: 42px;
-    padding: 0 10px;
-    font-size: 11px;
-  }
-
-  .metrics-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .service-overview-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .overview-card:last-child {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 760px) {
-  .page-container {
-    width: min(100% - 32px, 1280px);
-  }
-
-  .admin-page {
-    padding-top: 72px;
-  }
-
-  .shift-content {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .shift-right {
-    gap: 7px;
-  }
-
-  .dashboard-content {
-    padding-top: 26px;
-    padding-bottom: 45px;
-  }
-
-  .page-heading {
-    gap: 18px;
-    padding-bottom: 22px;
-    margin-bottom: 20px;
-  }
-
-  .page-heading h1 {
-    font-size: 30px;
-  }
-
-  .quick-actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: 100%;
-  }
-
-  .button {
-    padding: 10px;
-    font-size: 12px;
-  }
-
-  .metrics-grid {
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .metric-card {
-    min-height: 150px;
-    padding: 14px;
-  }
-
-  .metric-value {
-    font-size: 29px;
-  }
-
-  .metric-label {
-    font-size: 9px;
-  }
-
-  .panel-heading {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
-    padding: 19px 16px;
-  }
-
-  .toolbar {
-    align-items: stretch;
-    flex-direction: column;
-    padding: 14px 16px;
-  }
-
-  .filter-tabs {
-    width: 100%;
-  }
-
-  .filter-tabs button {
-    flex: 1;
-    justify-content: center;
-    padding: 9px 5px;
-  }
-
-  .search-box {
-    width: 100%;
-  }
-
-  .reservations-table {
-    min-width: 950px;
-  }
-
-  .reservations-table th:first-child,
-  .reservations-table td:first-child {
-    padding-left: 16px;
-  }
-
-  .reservations-table th:last-child,
-  .reservations-table td:last-child {
-    padding-right: 16px;
-  }
-
-  .panel-footer {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 14px 16px;
-  }
-
-  .toast-message {
-    right: 16px;
-    bottom: 16px;
-  }
-
-  .service-overview-panel>.panel-heading {
-    padding: 19px 16px;
-  }
-
-  .service-overview-grid {
-    grid-template-columns: 1fr;
-    gap: 1px;
-  }
-
-  .overview-card:last-child {
-    grid-column: auto;
-  }
-
-  .overview-card {
-    min-height: auto;
-    padding: 17px 16px;
-  }
-
-  .dining-summary {
-    padding: 17px 16px;
-  }
-
-  .dining-summary-header {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .dining-metrics {
-    grid-template-columns: 1fr;
-  }
-
-  .arrival-item {
-    grid-template-columns: 48px minmax(0, 1fr);
-  }
-
-  .arrival-status {
-    grid-column: 2;
-    justify-self: flex-start;
-  }
-}
-
-@media (max-width: 420px) {
-  .page-container {
-    width: calc(100% - 24px);
-  }
-
-  .page-heading h1 {
-    font-size: 27px;
-  }
-
-  .metrics-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .metric-card {
-    padding: 12px;
-  }
-
-  .metric-value {
-    gap: 4px;
-    font-size: 25px;
-  }
-
-  .metric-footer {
-    flex-direction: column;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .modal-card {
-    padding: 19px;
-  }
-
-  .overview-card {
-    padding: 15px 13px;
-  }
-
-  .dining-summary {
-    padding: 15px 13px;
-  }
-
-  .arrival-item {
-    grid-template-columns: 1fr;
-    gap: 5px;
-  }
-
-  .arrival-status {
-    grid-column: auto;
-  }
-
-  .assignment-item {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 7px;
-  }
-}
+   /* Tablet */
+   @media (max-width: 1050px) {
+     .page-heading {
+       align-items: center;
+       flex-direction: row;
+       justify-content: space-between;
+       gap: 20px;
+     }
+   
+     .heading-copy {
+       flex: 1;
+       min-width: 0;
+     }
+   
+     .heading-copy p {
+       max-width: 520px;
+     }
+   
+     .heading-actions {
+       flex-shrink: 0;
+       margin-left: auto;
+     }
+   
+     .quick-actions {
+       justify-content: flex-start;
+     }
+   
+     .view-bookings-button {
+       width: 30%;
+       min-height: 42px;
+       padding: 0 10px;
+       font-size: 11px;
+     }
+   
+     .metrics-grid {
+       grid-template-columns: repeat(2, minmax(0, 1fr));
+     }
+   
+     .service-overview-grid {
+       grid-template-columns: 1fr 1fr;
+     }
+   
+     .overview-card:last-child {
+       grid-column: 1 / -1;
+     }
+   }
+   
+   
+   /* Mobile */
+   @media (max-width: 650px) {
+     .page-container {
+       width: min(100% - 32px, 1280px);
+     }
+   
+     .admin-page {
+       padding-top: 72px;
+     }
+   
+     .shift-content {
+       align-items: flex-start;
+       flex-direction: column;
+     }
+   
+     .shift-right {
+       gap: 7px;
+     }
+   
+     .dashboard-content {
+       padding-top: 26px;
+       padding-bottom: 45px;
+     }
+   
+     .page-heading {
+       align-items: flex-start;
+       flex-direction: column;
+       gap: 18px;
+       padding-bottom: 22px;
+       margin-bottom: 20px;
+     }
+   
+     .page-heading h1 {
+       font-size: 30px;
+     }
+   
+     .heading-actions {
+       width: 100%;
+       margin-left: 0;
+     }
+   
+     .quick-actions {
+       display: grid;
+       grid-template-columns: repeat(2, minmax(0, 1fr));
+       width: 100%;
+     }
+   
+     .view-bookings-button {
+       width: 100%;
+       min-height: 42px;
+       padding: 10px;
+       font-size: 12px;
+     }
+   
+     .button {
+       padding: 10px;
+       font-size: 12px;
+     }
+   
+     .metrics-grid {
+       grid-template-columns: repeat(2, minmax(0, 1fr));
+       gap: 10px;
+       margin-bottom: 20px;
+     }
+   
+     .metric-card {
+       min-height: 150px;
+       padding: 14px;
+     }
+   
+     .metric-value {
+       font-size: 29px;
+     }
+   
+     .metric-label {
+       font-size: 9px;
+     }
+   
+     .panel-heading {
+       align-items: flex-start;
+       flex-direction: column;
+       gap: 12px;
+       padding: 19px 16px;
+     }
+   
+     .toolbar {
+       align-items: stretch;
+       flex-direction: column;
+       padding: 14px 16px;
+     }
+   
+     .filter-tabs {
+       width: 100%;
+     }
+   
+     .filter-tabs button {
+       flex: 1;
+       justify-content: center;
+       padding: 9px 5px;
+     }
+   
+     .search-box {
+       width: 100%;
+     }
+   
+     .reservations-table {
+       min-width: 950px;
+     }
+   
+     .reservations-table th:first-child,
+     .reservations-table td:first-child {
+       padding-left: 16px;
+     }
+   
+     .reservations-table th:last-child,
+     .reservations-table td:last-child {
+       padding-right: 16px;
+     }
+   
+     .panel-footer {
+       align-items: flex-start;
+       flex-direction: column;
+       padding: 14px 16px;
+     }
+   
+     .toast-message {
+       right: 16px;
+       bottom: 16px;
+     }
+   
+     .service-date {
+       margin-bottom: 15px;
+     }
+   
+     .service-overview-panel > .panel-heading {
+       align-items: flex-start;
+       flex-direction: column;
+       padding: 19px 16px;
+     }
+   
+     .service-overview-grid {
+       grid-template-columns: 1fr;
+       gap: 1px;
+     }
+   
+     .overview-card:last-child {
+       grid-column: auto;
+     }
+   
+     .overview-card {
+       min-height: auto;
+       padding: 17px 16px;
+     }
+   
+     .table-summary {
+       grid-template-columns: 1fr;
+     }
+   
+     .dining-summary {
+       padding: 17px 16px;
+     }
+   
+     .dining-summary-header {
+       align-items: flex-start;
+       flex-direction: column;
+       gap: 8px;
+     }
+   
+     .dining-metrics {
+       grid-template-columns: 1fr;
+     }
+   
+     .assignment-item {
+       grid-template-columns: 58px minmax(0, 1fr);
+     }
+   
+     .assignment-item > .status-badge {
+       grid-column: 2;
+       justify-self: flex-start;
+     }
+   
+     .arrival-item {
+       grid-template-columns: 48px minmax(0, 1fr);
+     }
+   
+     .arrival-status {
+       grid-column: 2;
+       justify-self: flex-start;
+       justify-content: flex-start;
+     }
+   }

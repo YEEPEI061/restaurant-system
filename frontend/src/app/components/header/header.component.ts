@@ -51,6 +51,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   mobileMenuOpen = false;
 
+  logoutConfirmOpen = false;
+  logoutRole: 'guest' | 'staff' | null = null;
+
 
   constructor(
     private router: Router,
@@ -163,6 +166,42 @@ export class HeaderComponent implements OnInit, OnDestroy {
     );
   }
 
+  // =========================
+  // LOGOUT CONFIRMATION
+  // =========================
+
+  openLogoutConfirmation(role: 'guest' | 'staff'): void {
+
+    this.logoutRole = role;
+
+    this.logoutConfirmOpen = true;
+
+    this.closeProfileMenu();
+  }
+
+  cancelLogout(): void {
+
+    this.logoutConfirmOpen = false;
+
+    this.logoutRole = null;
+  }
+
+  confirmLogout(): void {
+
+    if (!this.logoutRole) {
+      return;
+    }
+
+    const role = this.logoutRole;
+
+    this.cancelLogout();
+
+    if (role === 'guest') {
+      this.guestLogout();
+    } else {
+      this.adminLogout();
+    }
+  }
 
   // =========================
   // GUEST AUTHENTICATION
@@ -205,7 +244,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.closeProfileMenu();
 
     this.router.navigate([
-      '/menu'
+      '/guest-login'
     ]);
   }
 

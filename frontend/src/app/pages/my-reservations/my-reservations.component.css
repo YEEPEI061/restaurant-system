@@ -1935,16 +1935,94 @@ select:focus-visible {
   color: #8b7655;
 }
 
+/* =========================================================
+   PAST RESERVATIONS PAGINATION
+========================================================= */
+
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 18px 20px;
+  border-top: 1px solid #e8e9e4;
+}
+
+.table-footer-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #686d67;
+}
+
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #686d67;
+}
+
+.page-size-selector select {
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid #e2e5df;
+  border-radius: 6px;
+  background: #fff;
+  color: #333b33;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.pagination-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 9px;
+  border: 1px solid #e2e5df;
+  border-radius: 6px;
+  background: #fff;
+  color: #51594f;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pagination-button .material-symbols-outlined {
+  font-size: 17px;
+}
+
+.pagination-button.active {
+  background: #263b2b;
+  border-color: #263b2b;
+  color: #fff;
+}
+
+.pagination-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* Responsive layout */
 
 @media (max-width: 1050px) {
-  .controls-ribbon {
-    align-items: stretch;
-    flex-direction: column;
-  }
 
   .search-controls {
     width: 100%;
+    display: flex;
+    justify-content: flex-end;
   }
 
   .search-box {
@@ -1973,7 +2051,7 @@ select:focus-visible {
     grid-template-columns: 1fr 1.1fr 0.8fr;
   }
 
-  
+
   .past-table-header> :nth-child(4) {
     display: none;
   }
@@ -1985,7 +2063,32 @@ select:focus-visible {
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 650px) {
+  .table-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .table-footer-info {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .pagination-controls {
+    width: 100%;
+  }
+
+  .pagination-button {
+    min-width: 32px;
+    padding: 0 7px;
+  }
+
+  .pagination-button:not(.page-number) {
+    flex: 1;
+  }
+
   .reservation-page {
     padding: 26px 16px 56px;
   }
@@ -2152,30 +2255,5 @@ select:focus-visible {
   .toast-message {
     right: 16px;
     bottom: 16px;
-  }
-}
-
-@media (max-width: 380px) {
-  .metrics-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .sort-button {
-    padding: 0 8px;
-    font-size: 12px;
-  }
-
-  .sort-button .material-symbols-outlined {
-    display: none;
-  }
-
-  .reservation-overview h2 {
-    font-size: 17px;
-  }
-
-  .balance-row {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 6px;
   }
 }

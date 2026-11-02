@@ -80,6 +80,16 @@ export class MenuManagementComponent implements OnInit {
   unavailableOnly = false;
 
   // =========================
+  // PAGINATION
+  // =========================
+
+  pageSize = 10;
+
+  currentPage = 1;
+
+  pageSizeOptions = [10, 50, 100];
+
+  // =========================
   // SUCCESS MESSAGE
   // =========================
 
@@ -316,6 +326,63 @@ export class MenuManagementComponent implements OnInit {
   }
 
   // =========================
+  // PAGINATION
+  // =========================
+
+  get totalPages(): number {
+    return Math.max(
+      1,
+      Math.ceil(this.filteredDishes.length / this.pageSize)
+    );
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from(
+      { length: this.totalPages },
+      (_, index) => index + 1
+    );
+  }
+
+  get paginatedDishes(): MenuDish[] {
+    const startIndex =
+      (this.currentPage - 1) * this.pageSize;
+
+    return this.filteredDishes.slice(
+      startIndex,
+      startIndex + this.pageSize
+    );
+  }
+
+  get startRecord(): number {
+    return this.filteredDishes.length === 0
+      ? 0
+      : (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get endRecord(): number {
+    return Math.min(
+      this.currentPage * this.pageSize,
+      this.filteredDishes.length
+    );
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 1;
+  }
+
+  changePageSize(): void {
+    this.currentPage = 1;
+  }
+
+  changePage(page: number): void {
+    if (page < 1 || page > this.totalPages) {
+      return;
+    }
+
+    this.currentPage = page;
+  }
+
+  // =========================
   // COUNTS
   // =========================
 
@@ -369,12 +436,9 @@ export class MenuManagementComponent implements OnInit {
   // CATEGORY FILTER
   // =========================
 
-  selectCategory(
-    category: string
-  ): void {
-
-    this.activeCategory =
-      category;
+  selectCategory(category: string): void {
+    this.activeCategory = category;
+    this.currentPage = 1;
   }
 
   // =========================
@@ -401,6 +465,8 @@ export class MenuManagementComponent implements OnInit {
         tag
       ];
     }
+
+    this.currentPage = 1;
   }
 
   isDietaryActive(
@@ -409,6 +475,25 @@ export class MenuManagementComponent implements OnInit {
 
     return this.activeDietary
       .includes(tag);
+  }
+
+  toggleSignatureFilter(): void {
+    this.signatureOnly = !this.signatureOnly;
+    this.currentPage = 1;
+  }
+
+  toggleUnavailableFilter(): void {
+    this.unavailableOnly = !this.unavailableOnly;
+    this.currentPage = 1;
+  }
+
+  resetFilters(): void {
+    this.activeCategory = 'All Courses';
+    this.searchTerm = '';
+    this.activeDietary = [];
+    this.signatureOnly = false;
+    this.unavailableOnly = false;
+    this.currentPage = 1;
   }
 
   // =========================

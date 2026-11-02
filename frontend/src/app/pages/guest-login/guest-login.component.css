@@ -1312,7 +1312,7 @@
      RESPONSIVE
   ================================ */
 
-@media (max-width: 1000px) {
+@media (max-width: 1050px) {
 
   .login-page {
     padding: 72px 24px;
@@ -1347,7 +1347,7 @@
 }
 
 
-@media (max-width: 700px) {
+@media (max-width: 650px) {
 
   .login-page {
     width: 100%;

@@ -241,8 +241,8 @@
               search
             </span>
 
-            <input type="search" [(ngModel)]="searchQuery" placeholder="Search guest, phone or booking reference..."
-              aria-label="Search reservations" />
+            <input type="search" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
+              placeholder="Search guest, phone or booking reference..." aria-label="Search reservations" />
 
             @if (searchQuery) {
 
@@ -325,7 +325,7 @@
             <tbody>
 
               @for (
-              reservation of filteredReservations;
+              reservation of paginatedReservations;
               track reservation.reservationId
               ) {
 
@@ -691,24 +691,64 @@
         <!-- Table footer -->
         <div class="table-footer">
 
-          <span>
-            Showing
-            <strong>
-              {{ filteredReservations.length }}
-            </strong>
-            of
-            <strong>
-              {{ reservations.length }}
-            </strong>
-            reservations
-          </span>
+          <div class="table-footer-info">
 
-          <span class="demo-note">
-            Reservation directory
-          </span>
+            <span>
+              Showing
+              <strong>{{ startRecord }}–{{ endRecord }}</strong>
+              of
+              <strong>{{ filteredReservations.length }}</strong>
+              reservations
+            </span>
+
+            <label class="page-size-selector">
+              Show
+
+              <select [(ngModel)]="pageSize" [ngModelOptions]="{ standalone: true }" (ngModelChange)="changePageSize()"
+                aria-label="Reservations per page">
+                @for (size of pageSizeOptions; track size) {
+                <option [ngValue]="size">
+                  {{ size }}
+                </option>
+                }
+              </select>
+
+              entries
+            </label>
+
+          </div>
+
+
+          <div class="pagination-controls">
+
+            <button type="button" class="pagination-button" [disabled]="currentPage === 1"
+              (click)="changePage(currentPage - 1)">
+              <span class="material-symbols-outlined">
+                chevron_left
+              </span>
+              Previous
+            </button>
+
+
+            @for (page of [].constructor(totalPages); track $index) {
+            <button type="button" class="pagination-button page-number" [class.active]="currentPage === $index + 1"
+              (click)="changePage($index + 1)">
+              {{ $index + 1 }}
+            </button>
+            }
+
+
+            <button type="button" class="pagination-button" [disabled]="currentPage === totalPages"
+              (click)="changePage(currentPage + 1)">
+              Next
+              <span class="material-symbols-outlined">
+                chevron_right
+              </span>
+            </button>
+
+          </div>
 
         </div>
-
       </div>
 
     </section>

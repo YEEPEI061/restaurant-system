@@ -174,6 +174,53 @@
     0 2px 5px rgba(24, 36, 24, 0.15);
 }
 
+
+.button {
+  min-height: 43px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 15px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.button .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button-primary {
+  background: #182418;
+  color: #fff;
+}
+
+.button-primary:hover {
+  background: #2d3a2c;
+}
+
+.button-light {
+  border-color: #e4e1e6;
+  background: #fff;
+  color: #182418;
+}
+
+.button-light:hover {
+  background: #f0edf1;
+}
+
 .reserve-button {
   display: inline-flex;
   align-items: center;
@@ -463,11 +510,176 @@
 }
 
 
+/* =========================================================
+   CENTER MESSAGE MODALS
+   ========================================================= */
+
+.message-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(18, 24, 18, 0.42);
+  backdrop-filter: blur(3px);
+
+  animation: modalBackdropIn 0.2s ease;
+}
+
+
+/* Main card */
+
+.message-card {
+  width: min(420px, 100%);
+  padding: 34px 32px 30px;
+
+  border: 1px solid #ece8ed;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 24px 70px rgba(20, 27, 20, 0.16),
+    0 4px 18px rgba(20, 27, 20, 0.08);
+
+  text-align: center;
+
+  animation: messageCardIn 0.3s ease;
+}
+
+
+/* =========================================================
+   MESSAGE TEXT
+   ========================================================= */
+
+.message-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.message-eyebrow {
+  display: inline-block;
+
+  margin-bottom: 9px;
+
+  color: #8c7d70;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+}
+
+.message-copy h2 {
+  margin: 0 0 10px;
+
+  color: #182418;
+
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.message-copy p {
+  max-width: 330px;
+
+  margin: 0;
+
+  color: #747871;
+
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.message-copy p strong {
+  color: #343a34;
+  font-weight: 700;
+}
+
+.logout-message-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 20px;
+
+  border-radius: 50%;
+
+  background: #fbefef;
+  color: #a65353;
+}
+
+.logout-message-icon .material-symbols-outlined {
+  font-size: 27px;
+}
+
+
+.message-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+  margin-top: 26px;
+}
+
+
+.modal-button {
+  min-height: 43px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+}
+
+
+.logout-confirm-button {
+  border: 1px solid #9d4e4e;
+  border-radius: 6px;
+
+  background: #9d4e4e;
+  color: #ffffff;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.logout-confirm-button:hover {
+  background: #894242;
+  border-color: #894242;
+}
+
+.logout-confirm-button:active {
+  transform: scale(0.98);
+}
+
+.logout-confirm-button .material-symbols-outlined {
+  font-size: 17px;
+}
+
+
 /* =================================
    TABLET
 ================================= */
 
-@media (max-width: 1100px) {
+@media (max-width: 1050px) {
 
   .header-inner {
     padding: 0 32px;

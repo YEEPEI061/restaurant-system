@@ -1300,7 +1300,7 @@
      RESPONSIVE
      ========================================================= */
 
-@media (max-width: 1000px) {
+@media (max-width: 1050px) {
 
   .register-container {
     grid-template-columns: 1fr 1fr;
@@ -1320,34 +1320,13 @@
 }
 
 
-@media (max-width: 800px) {
-
+@media (max-width: 650px) {
   .register-page {
-    padding: 70px 16px;
+    padding: 50px 12px;
   }
 
   .register-container {
     grid-template-columns: 1fr;
-  }
-
-  .visual-panel {
-    padding: 40px 32px;
-  }
-
-  .restaurant-image {
-    height: 220px;
-  }
-
-  .form-panel {
-    padding: 40px 32px;
-  }
-}
-
-
-@media (max-width: 600px) {
-
-  .register-page {
-    padding: 50px 12px;
   }
 
   .visual-panel {

@@ -145,19 +145,22 @@
       <!-- User type tabs -->
       <div class="user-tabs" role="tablist" aria-label="User type">
 
-        <button type="button" class="user-tab" [class.active]="roleFilter === 'all'" (click)="roleFilter = 'all'">
+        <button type="button" class="user-tab" [class.active]="roleFilter === 'all'"
+          (click)="roleFilter = 'all';currentPage = 1">
           <span class="material-symbols-outlined">group</span>
           All Users
           <span>{{ users.length }}</span>
         </button>
 
-        <button type="button" class="user-tab" [class.active]="roleFilter === 'guest'" (click)="roleFilter = 'guest'">
+        <button type="button" class="user-tab" [class.active]="roleFilter === 'guest'"
+          (click)="roleFilter = 'guest';currentPage = 1">
           <span class="material-symbols-outlined">person</span>
           Guests
           <span>{{ guestCount }}</span>
         </button>
 
-        <button type="button" class="user-tab" [class.active]="roleFilter === 'admin'" (click)="roleFilter = 'admin'">
+        <button type="button" class="user-tab" [class.active]="roleFilter === 'admin'"
+          (click)="roleFilter = 'admin';currentPage = 1">
           <span class="material-symbols-outlined">
             admin_panel_settings
           </span>
@@ -179,14 +182,24 @@
             search
           </span>
 
-          <input type="search" name="userSearch" [(ngModel)]="searchQuery"
+          <input type="search" name="userSearch" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()"
             placeholder="Search name, email, ID or role..." aria-label="Search users" />
+
+          @if (searchQuery) {
+
+          <button type="button" class="search-clear" aria-label="Clear search" (click)="searchQuery = ''">
+            <span class="material-symbols-outlined">
+              close
+            </span>
+          </button>
+
+          }
         </label>
 
         <label class="filter-control">
           <span>Status</span>
 
-          <select name="statusFilter" [(ngModel)]="statusFilter">
+          <select name="statusFilter" [(ngModel)]="statusFilter" (ngModelChange)="onStatusFilterChange()">
             <option value="all">
               All statuses
             </option>
@@ -222,8 +235,7 @@
             </thead>
 
             <tbody>
-
-              @for (member of filteredUsers; track member.id) {
+              @for (member of paginatedUsers; track member.id) {
 
               <tr [class.deactivated-row]="!member.active" (click)="openUser(member)" (keydown.enter)="openUser(member)"
                 tabindex="0" role="button" [attr.aria-label]="'Edit ' + member.name">
@@ -358,20 +370,68 @@
 
         <div class="table-footer">
 
-          <span>
-            Showing
-            <strong>{{ filteredUsers.length }}</strong>
-            of
-            <strong>{{ users.length }}</strong>
-            users
-          </span>
+          <div class="table-footer-info">
 
-          <span class="demo-note">
-            User directory
-          </span>
+            <span>
+              Showing
+              <strong>{{ startRecord }}–{{ endRecord }}</strong>
+              of
+              <strong>{{ filteredUsers.length }}</strong>
+              users
+            </span>
+
+            <label class="page-size-selector">
+
+              Show
+
+              <select [(ngModel)]="pageSize" [ngModelOptions]="{ standalone: true }" (ngModelChange)="changePageSize()"
+                aria-label="Users per page">
+                @for (size of pageSizeOptions; track size) {
+                <option [ngValue]="size">
+                  {{ size }}
+                </option>
+                }
+              </select>
+
+              entries
+
+            </label>
+
+          </div>
+
+
+          <div class="pagination-controls">
+
+            <button type="button" class="pagination-button" [disabled]="currentPage === 1"
+              (click)="changePage(currentPage - 1)">
+              <span class="material-symbols-outlined">
+                chevron_left
+              </span>
+              Previous
+            </button>
+
+
+            @for (page of pageNumbers; track page) {
+
+            <button type="button" class="pagination-button page-number" [class.active]="currentPage === page"
+              (click)="changePage(page)">
+              {{ page }}
+            </button>
+
+            }
+
+
+            <button type="button" class="pagination-button" [disabled]="currentPage === totalPages"
+              (click)="changePage(currentPage + 1)">
+              Next
+              <span class="material-symbols-outlined">
+                chevron_right
+              </span>
+            </button>
+
+          </div>
 
         </div>
-
       </div>
 
     </section>

@@ -49,6 +49,16 @@ export class UserManagementComponent {
   roleFilter: RoleFilter = 'all';
   statusFilter: StatusFilter = 'all';
 
+  // =========================
+  // PAGINATION
+  // =========================
+
+  pageSize = 10;
+
+  currentPage = 1;
+
+  pageSizeOptions = [10, 50, 100];
+
   drawerOpen = false;
   isCreating = false;
 
@@ -268,6 +278,71 @@ export class UserManagementComponent {
         matchesStatus
       );
     });
+  }
+
+  // =========================
+  // PAGINATION
+  // =========================
+
+  get totalPages(): number {
+    return Math.max(
+      1,
+      Math.ceil(this.filteredUsers.length / this.pageSize)
+    );
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from(
+      { length: this.totalPages },
+      (_, index) => index + 1
+    );
+  }
+
+  get paginatedUsers(): UserMember[] {
+    const startIndex =
+      (this.currentPage - 1) * this.pageSize;
+
+    return this.filteredUsers.slice(
+      startIndex,
+      startIndex + this.pageSize
+    );
+  }
+
+  get startRecord(): number {
+    return this.filteredUsers.length === 0
+      ? 0
+      : (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get endRecord(): number {
+    return Math.min(
+      this.currentPage * this.pageSize,
+      this.filteredUsers.length
+    );
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 1;
+  }
+
+  onRoleFilterChange(): void {
+    this.currentPage = 1;
+  }
+
+  onStatusFilterChange(): void {
+    this.currentPage = 1;
+  }
+
+  changePageSize(): void {
+    this.currentPage = 1;
+  }
+
+  changePage(page: number): void {
+    if (page < 1 || page > this.totalPages) {
+      return;
+    }
+
+    this.currentPage = page;
   }
 
   // =========================
@@ -734,8 +809,9 @@ export class UserManagementComponent {
     this.searchQuery = '';
     this.roleFilter = 'all';
     this.statusFilter = 'all';
-  }
 
+    this.currentPage = 1;
+  }
   // =========================
   // SUCCESS MESSAGE
   // =========================
