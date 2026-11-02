@@ -128,7 +128,7 @@
 }
 
 .page-heading p {
-  max-width: none;
+  max-width: 670px;
   margin: 12px 0 0;
   color: #62675f;
   font-size: 13px;
@@ -158,14 +158,6 @@
   font-size: 18px;
 }
 
-.page-heading h1 {
-  margin: 0;
-  color: #182418;
-  font-size: clamp(28px, 3.5vw, 40px);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.035em;
-}
 
 .today-label {
   color: #747871;
@@ -1408,6 +1400,27 @@
 
 @media (max-width: 1150px) {
 
+  .page-heading {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .heading-copy {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .heading-copy p {
+    max-width: 520px;
+  }
+
+  .heading-actions {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
   .service-overview-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -1517,13 +1530,16 @@
 }
 
 @media (max-width: 1150px) {
-  .page-heading {
-    align-items: flex-start;
-    flex-direction: column;
-  }
 
   .quick-actions {
     justify-content: flex-start;
+  }
+
+  .view-bookings-button {
+    width: 30%;
+    min-height: 42px;
+    padding: 0 10px;
+    font-size: 11px;
   }
 
   .metrics-grid {

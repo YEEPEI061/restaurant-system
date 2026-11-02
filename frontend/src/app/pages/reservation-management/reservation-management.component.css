@@ -32,7 +32,10 @@
 }
 
 .page-heading {
-  display: block;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
   margin-bottom: 30px;
 }
 
@@ -46,7 +49,7 @@
 }
 
 .page-heading p {
-  max-width: none;
+  max-width: 670px;
   margin: 12px 0 0;
   color: #62675f;
   font-size: 13px;
@@ -322,72 +325,45 @@ tr:focus-visible {
    ===================================================== */
 
 .search-box {
-  position: relative;
-
+  min-width: 180px;
+  height: 41px;
   display: flex;
-  align-items: center;
-
   flex: 1;
-
-  width: auto;
-  max-width: none;
-  min-width: 220px;
-
-  height: 36px;
-
-  gap: 8px;
-
-  padding: 0 11px;
-
-  background: #fff;
-
-  border: 1px solid #e5e1e6;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  border: 1px solid transparent;
   border-radius: 6px;
-
-  transition:
-    border-color 140ms ease,
-    box-shadow 140ms ease;
+  background: #f6f2f7;
+  color: #747871;
 }
 
 .search-box:focus-within {
-  background: #fff;
-
-  border-color: #9ba99a;
-
-  box-shadow:
-    0 0 0 3px rgba(83, 98, 81, 0.08);
+  border-color: #bccbb7;
 }
 
 .search-box>.material-symbols-outlined {
   flex-shrink: 0;
-
-  color: #8b9089;
-
-  font-size: 17px;
+  font-size: 19px;
 }
 
 .search-box input {
   width: 100%;
   min-width: 0;
-
-  height: 100%;
-
-  padding: 0;
-
-  color: #182418;
-
-  background: transparent;
-
   border: 0;
-  outline: none;
-
-  font-family: inherit;
-
+  outline: 0;
+  background: transparent;
+  color: #1b1b1e;
   font-size: 12px;
+  font-family: inherit;
 }
 
 .search-box input::placeholder {
-  color: #a0a39e;
+  color: #898d86;
+}
+
+.search-box input:focus-visible {
+  outline: none;
 }
 
 
@@ -3087,11 +3063,6 @@ tr:focus-visible {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .page-heading {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
   .heading-actions {
     width: 100%;
   }
@@ -3103,6 +3074,8 @@ tr:focus-visible {
 
   .search-box {
     max-width: none;
+    min-height: 43px;
+    padding: 0 14px;
   }
 
   .toolbar-actions {

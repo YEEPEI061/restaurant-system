@@ -49,6 +49,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private notificationSubscription?: Subscription;
   private unreadCountSubscription?: Subscription;
 
+  mobileMenuOpen = false;
+
 
   constructor(
     private router: Router,
@@ -77,6 +79,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.unreadCountSubscription?.unsubscribe();
 
   }
+
+
 
   // =========================
   // CLICK OUTSIDE
@@ -325,5 +329,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.notificationService.connectWebSocket();
 
   }
+
+  // =========================
+  // MENU BAR
+  // =========================
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen = false;
+  }
+
 
 }

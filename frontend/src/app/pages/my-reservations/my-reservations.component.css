@@ -1970,10 +1970,11 @@ select:focus-visible {
 
   .past-table-header,
   .past-row {
-    grid-template-columns: 1fr 1.1fr 0.75fr 0.8fr;
+    grid-template-columns: 1fr 1.1fr 0.8fr;
   }
 
-  .past-table-header> :nth-child(5) {
+  
+  .past-table-header> :nth-child(4) {
     display: none;
   }
 

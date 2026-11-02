@@ -50,6 +50,54 @@
       }
     </div>
 
+    <!-- Mobile navigation toggle -->
+    <button type="button" class="mobile-menu-button" (click)="toggleMobileMenu()" [attr.aria-expanded]="mobileMenuOpen"
+      aria-label="Toggle navigation menu">
+      <span class="material-symbols-outlined">
+        {{ mobileMenuOpen ? 'close' : 'menu' }}
+      </span>
+    </button>
+
+    <!-- Mobile navigation -->
+    @if (mobileMenuOpen) {
+    <nav class="mobile-nav-panel">
+
+      @if (!isStaffMode()) {
+
+      <a routerLink="/menu" routerLinkActive="nav-active" [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMobileMenu()">
+        Our Menu
+      </a>
+
+      <a routerLink="/reservations" routerLinkActive="nav-active" (click)="closeMobileMenu()">
+        Reservations
+      </a>
+
+      }
+
+      @if (isStaffMode() && isAdminLoggedIn()) {
+
+      <a routerLink="/admin-dashboard" (click)="closeMobileMenu()">
+        Dashboard
+      </a>
+
+      <a routerLink="/reservation-management" (click)="closeMobileMenu()">
+        Reservations
+      </a>
+
+      <a routerLink="/menu-management" (click)="closeMobileMenu()">
+        Menu Management
+      </a>
+
+      <a routerLink="/user-management" (click)="closeMobileMenu()">
+        User Management
+      </a>
+
+      }
+
+    </nav>
+    }
+
     <!-- Header actions -->
     <div class="header-actions">
 
@@ -64,7 +112,7 @@
         </button>
       </div>
 
-      <!-- Staff notification shortcut -->
+
       <!-- Notification shortcut -->
       @if (isAdminLoggedIn() || isGuestLoggedIn()) {
 

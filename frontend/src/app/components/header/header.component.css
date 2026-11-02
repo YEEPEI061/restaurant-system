@@ -435,6 +435,33 @@
   pointer-events: none;
 }
 
+/* Mobile menu button - hidden on desktop */
+.mobile-menu-button {
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #f0edf1;
+  color: #182418;
+
+  cursor: pointer;
+}
+
+.mobile-menu-button .material-symbols-outlined {
+  font-size: 23px;
+}
+
+/* Mobile navigation panel */
+.mobile-nav-panel {
+  display: none;
+}
+
 
 /* =================================
    TABLET
@@ -472,7 +499,11 @@
    SMALL TABLET
 ================================= */
 
-@media (max-width: 900px) {
+/* =================================
+   TABLET / HALF SCREEN
+================================= */
+
+@media (max-width: 1100px) {
 
   .main-nav {
     display: none;
@@ -486,12 +517,59 @@
     gap: 0;
   }
 
+  .mobile-menu-button {
+    display: flex;
+    margin-left: auto;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
   .header-actions {
     gap: 10px;
   }
 
   .reserve-button {
     display: none;
+  }
+
+  .mobile-nav-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 200;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    padding: 14px 24px 20px;
+
+    background: #fbf8fc;
+    border-top: 1px solid #e8e4e9;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .mobile-nav-panel a {
+    display: block;
+
+    padding: 14px 12px;
+
+    color: #444842;
+    text-decoration: none;
+
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    border-radius: 6px;
+  }
+
+  .mobile-nav-panel a:hover,
+  .mobile-nav-panel a.nav-active {
+    background: #f0edf1;
+    color: #182418;
   }
 }
 
