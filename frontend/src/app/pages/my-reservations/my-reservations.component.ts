@@ -517,16 +517,16 @@ export class MyReservationsComponent implements OnInit {
   // =========================================================
 
   goToLogin(): void {
-    this.router.navigate(['/guest-login']);
+    void this.router.navigate(['/guest-login']);
   }
 
   reserveAnotherTable(): void {
-    this.router.navigate(['/reservations']);
+    void this.router.navigate(['/reservations']);
   }
 
   modifyReservation(reservation: Reservation): void {
 
-    this.router.navigate(
+    void this.router.navigate(
       ['/reservations'],
       {
         state: {
@@ -541,7 +541,7 @@ export class MyReservationsComponent implements OnInit {
     reservation: Reservation
   ): void {
 
-    this.router.navigate(
+    void this.router.navigate(
       ['/reservations'],
       {
         queryParams: {

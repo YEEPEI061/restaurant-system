@@ -243,7 +243,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.closeProfileMenu();
 
-    this.router.navigate([
+    void this.router.navigate([
       '/guest-login'
     ]);
   }
@@ -282,7 +282,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.closeProfileMenu();
 
-    this.router.navigate([
+    void this.router.navigate([
       '/admin-login'
     ]);
   }
@@ -318,14 +318,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     if (this.isAdminLoggedIn()) {
 
-      this.router.navigate([
+      void this.router.navigate([
         '/admin-dashboard'
       ]);
 
       return;
     }
 
-    this.router.navigate([
+    void this.router.navigate([
       '/admin-login'
     ]);
   }

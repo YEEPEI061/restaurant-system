@@ -17,7 +17,7 @@ async function generateNextDishId() {
     const match = /^M-(\d+)$/.exec(item.dishId);
 
     if (match) {
-      const number = parseInt(match[1], 10);
+      const number = Number.parseInt(match[1], 10);
 
       if (number > maxNumber) {
         maxNumber = number;

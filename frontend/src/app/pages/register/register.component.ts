@@ -211,7 +211,7 @@ export class RegisterComponent {
 
     this.clearSuccess();
 
-    this.router.navigate([
+    void this.router.navigate([
       '/guest-login'
     ]);
   }

@@ -13,9 +13,16 @@ const {
 } = require('./middleware/errorMiddleware');
 
 const app = express();
+app.disable('x-powered-by');
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:4200'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json({ limit: '20mb' }));
 
 // Routes

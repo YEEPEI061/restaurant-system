@@ -31,8 +31,7 @@ export class NotificationDropdownComponent
     implements OnInit, OnDestroy {
 
     @Output()
-    close =
-        new EventEmitter<void>();
+    closeDropdownEvent = new EventEmitter<void>();
 
     @Output()
     unreadCountChange =
@@ -146,7 +145,7 @@ export class NotificationDropdownComponent
 
     closeDropdown(): void {
 
-        this.close.emit();
+        this.closeDropdownEvent.emit();
 
     }
 

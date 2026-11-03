@@ -131,7 +131,7 @@ export class GuestLoginComponent {
                 'returnUrl'
               );
 
-            this.router.navigateByUrl(
+              void this.router.navigateByUrl(
               returnUrl || '/menu'
             );
 

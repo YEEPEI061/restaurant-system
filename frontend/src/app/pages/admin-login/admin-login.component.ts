@@ -195,7 +195,7 @@ export class AdminLoginComponent {
 
               this.clearSuccess();
 
-              this.router.navigate([
+              void this.router.navigate([
                 '/admin-dashboard'
               ]);
 

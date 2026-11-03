@@ -1,2 +1,10 @@
 node_modules
 npm-debug.log
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+.dockerignore
+coverage
+.nyc_output

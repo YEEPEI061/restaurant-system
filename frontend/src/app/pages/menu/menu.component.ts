@@ -349,7 +349,7 @@ export class MenuComponent implements OnInit {
 
       if (editingReservation) {
 
-        this.router.navigate(
+        void this.router.navigate(
           ['/reservations'],
           {
             queryParams: { edit: 'true' }
@@ -358,13 +358,13 @@ export class MenuComponent implements OnInit {
 
       } else {
 
-        this.router.navigate(['/reservations']);
+        void this.router.navigate(['/reservations']);
 
       }
 
     } else {
 
-      this.router.navigate(['/guest-login']);
+      void this.router.navigate(['/guest-login']);
 
     }
   }

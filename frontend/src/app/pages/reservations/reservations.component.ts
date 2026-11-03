@@ -1288,7 +1288,7 @@ export class ReservationsComponent implements OnInit {
       this.tastingService.setItems(this.tastingList);
     }
 
-    this.router.navigate(['/menu']);
+    void this.router.navigate(['/menu']);
   }
 
   confirmReservation(): void {
@@ -1586,7 +1586,7 @@ export class ReservationsComponent implements OnInit {
           this.successMessage = '';
           this.successTitle = '';
 
-          this.router.navigate([
+          void this.router.navigate([
             '/my-reservations'
           ]);
 

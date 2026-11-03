@@ -163,7 +163,7 @@ async function createReservation(req, res) {
     if (latestReservation) {
 
       const latestNumber =
-        parseInt(
+        Number.parseInt(
           latestReservation
             .reservationId
             .replace('R-', ''),

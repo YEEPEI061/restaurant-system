@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { HeaderComponent } from '../../components/header/header.component';
@@ -42,7 +42,7 @@ interface UserMember {
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.css'
 })
-export class UserManagementComponent {
+export class UserManagementComponent implements OnInit {
 
   searchQuery = '';
 
