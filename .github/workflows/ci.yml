@@ -65,3 +65,44 @@ jobs:
       - name: Build Angular frontend
         working-directory: frontend
         run: npm run build
+
+  deploy:
+    name: Deploy Aurelia
+    needs:
+      - backend-tests
+      - frontend-build
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    runs-on: [self-hosted, windows, x64]
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Create production environment file
+        shell: pwsh
+        env:
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_INITDB_ROOT_USERNAME }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}
+          MONGO_DB: ${{ secrets.MONGO_DB }}
+          MONGO_APP_USERNAME: ${{ secrets.MONGO_APP_USERNAME }}
+          MONGO_APP_PASSWORD: ${{ secrets.MONGO_APP_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+        run: |
+          @(
+            "MONGO_INITDB_ROOT_USERNAME=$env:MONGO_INITDB_ROOT_USERNAME"
+            "MONGO_INITDB_ROOT_PASSWORD=$env:MONGO_INITDB_ROOT_PASSWORD"
+            "MONGO_DB=$env:MONGO_DB"
+            "MONGO_APP_USERNAME=$env:MONGO_APP_USERNAME"
+            "MONGO_APP_PASSWORD=$env:MONGO_APP_PASSWORD"
+            "JWT_SECRET=$env:JWT_SECRET"
+          ) | Set-Content -Path .env -Encoding ascii
+
+      - name: Deploy using Docker Compose
+        run: docker compose up -d --build
+
+      - name: Verify deployment
+        run: docker compose ps
