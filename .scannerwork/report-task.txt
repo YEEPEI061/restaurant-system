@@ -2,5 +2,5 @@ projectKey=aurelia-restaurant-system
 serverUrl=http://localhost:9000
 serverVersion=26.10.0.133078
 dashboardUrl=http://localhost:9000/dashboard?id=aurelia-restaurant-system
-ceTaskId=7f924be2-1f13-4092-af8b-c9e013a655e2
-ceTaskUrl=http://localhost:9000/api/ce/task?id=7f924be2-1f13-4092-af8b-c9e013a655e2
+ceTaskId=66c14e42-055d-4ed9-b682-f090cf1e8e86
+ceTaskUrl=http://localhost:9000/api/ce/task?id=66c14e42-055d-4ed9-b682-f090cf1e8e86

@@ -156,7 +156,7 @@ describe('User Controller', function () {
 
     describe('createUser', function () {
 
-        it('should create a user successfully', async function () {
+        it('should create a user successfully using a mock object', async function () {
 
             sinon.stub(User, 'findOne')
                 .resolves(null);
@@ -188,7 +188,19 @@ describe('User Controller', function () {
                 }
             };
 
-            sinon.stub(User, 'create')
+            const createMock = sinon.mock(User);
+
+            createMock.expects('create')
+                .once()
+                .withArgs(sinon.match({
+                    firstName: 'Jane',
+                    lastName: 'Lee',
+                    email: 'jane@example.com',
+                    password: 'hashed-password',
+                    phone: '0123456789',
+                    role: 'guest',
+                    active: true
+                }))
                 .resolves(createdUser);
 
             const req = {
@@ -231,11 +243,7 @@ describe('User Controller', function () {
             expect(responseBody.user.password)
                 .to.equal(undefined);
 
-            expect(bcrypt.hash.calledOnce)
-                .to.equal(true);
-
-            expect(User.create.calledOnce)
-                .to.equal(true);
+            createMock.verify();
         });
 
 
@@ -516,7 +524,11 @@ describe('User Controller', function () {
             sinon.stub(User, 'findById')
                 .resolves(user);
 
-            const deleteOneStub = sinon.stub(User, 'deleteOne')
+            const deleteMock = sinon.mock(User);
+
+            deleteMock.expects('deleteOne')
+                .once()
+                .withArgs({ _id: user._id })
                 .resolves({
                     deletedCount: 1
                 });
@@ -553,8 +565,7 @@ describe('User Controller', function () {
             expect(responseBody.message)
                 .to.equal('User deleted successfully');
 
-            expect(deleteOneStub.calledOnce)
-                .to.equal(true);
+            deleteMock.verify();
         });
 
         it('should prevent an admin from deleting their own account', async function () {

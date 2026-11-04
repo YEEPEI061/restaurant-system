@@ -137,7 +137,7 @@ describe('Menu Controller', function () {
 
     describe('createMenuItem', function () {
 
-        it('should create a menu item successfully', async function () {
+        it('should create a menu item successfully using a mock object', async function () {
 
             sinon.stub(MenuItem, 'find').resolves([
                 {
@@ -165,7 +165,16 @@ describe('Menu Controller', function () {
                 save: sinon.stub()
             };
 
-            sinon.stub(MenuItem, 'create')
+            const createMock = sinon.mock(MenuItem);
+
+            createMock.expects('create')
+                .once()
+                .withArgs(sinon.match({
+                    dishId: 'M-006',
+                    name: 'Truffle Pasta',
+                    price: 28,
+                    category: 'Main Course'
+                }))
                 .resolves(createdMenuItem);
 
             const req = {
@@ -211,8 +220,9 @@ describe('Menu Controller', function () {
 
             expect(responseBody.menuItem.name)
                 .to.equal('Truffle Pasta');
-        });
 
+            createMock.verify();
+        });
 
         it('should return 500 when creating a menu item fails', async function () {
 
@@ -417,7 +427,7 @@ describe('Menu Controller', function () {
 
     describe('deleteMenuItem', function () {
 
-        it('should delete a menu item successfully', async function () {
+        it('should delete a menu item successfully using a mock object', async function () {
 
             const menuItem = {
                 _id: 'menu123',
@@ -427,7 +437,11 @@ describe('Menu Controller', function () {
             sinon.stub(MenuItem, 'findOne')
                 .resolves(menuItem);
 
-            const deleteOneStub = sinon.stub(MenuItem, 'deleteOne')
+            const deleteOneMock = sinon.mock(MenuItem);
+
+            deleteOneMock.expects('deleteOne')
+                .once()
+                .withArgs({ _id: 'menu123' })
                 .resolves({
                     deletedCount: 1
                 });
@@ -460,12 +474,10 @@ describe('Menu Controller', function () {
             expect(responseBody.message)
                 .to.equal('Menu item deleted successfully');
 
-            expect(deleteOneStub.calledOnce)
-                .to.equal(true);
+            deleteOneMock.verify();
         });
 
     });
-
 
     /*
      * --------------------------------------------------

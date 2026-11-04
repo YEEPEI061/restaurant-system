@@ -280,7 +280,12 @@ describe('Authentication Controller', function () {
                 active: true
             });
 
-            sinon.stub(bcrypt, 'compare').resolves(true);
+            const compareMock = sinon.mock(bcrypt);
+
+            compareMock.expects('compare')
+                .once()
+                .withArgs('Password123!', 'hashed-password')
+                .resolves(true);
 
             const req = {
                 body: {
@@ -333,6 +338,8 @@ describe('Authentication Controller', function () {
 
             expect(decoded.role)
                 .to.equal('guest');
+
+            compareMock.verify();
         });
 
     });

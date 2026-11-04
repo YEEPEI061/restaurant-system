@@ -326,84 +326,6 @@ describe('Reservation Controller', function () {
 
     describe('createReservation', function () {
 
-        it('should create a reservation successfully', async function () {
-
-            const latestReservation = {
-                reservationId: 'R-009'
-            };
-
-            const createdReservation = {
-                reservationId: 'R-010',
-                guest: 'guest123',
-                guestName: 'Sofia Chen',
-                email: 'sofia@example.com',
-                phone: '0123456789',
-                date: '2026-11-01',
-                time: '19:00',
-                partySize: 2,
-                servicePeriod: 'Dinner',
-                seating: 'Indoor',
-                diningOption: 'alacarte',
-                selectedDishes: [],
-                status: 'Pending'
-            };
-
-            sinon.stub(Reservation, 'findOne')
-                .returns({
-                    sort: sinon.stub().resolves(latestReservation)
-                });
-
-            sinon.stub(Reservation, 'create')
-                .resolves(createdReservation);
-
-            const req = {
-                user: {
-                    userId: 'guest123'
-                },
-
-                body: {
-                    guestName: 'Sofia Chen',
-                    email: 'sofia@example.com',
-                    phone: '0123456789',
-                    date: '2026-11-01',
-                    time: '19:00',
-                    partySize: 2,
-                    servicePeriod: 'Dinner',
-                    seating: 'Indoor',
-                    diningOption: 'alacarte',
-                    selectedDishes: []
-                }
-            };
-
-            let statusCode;
-            let responseBody;
-
-            const res = {
-                status: function (code) {
-                    statusCode = code;
-                    return this;
-                },
-
-                json: function (body) {
-                    responseBody = body;
-                    return this;
-                }
-            };
-
-            await createReservation(req, res);
-
-            expect(statusCode).to.equal(201);
-
-            expect(responseBody.message)
-                .to.equal(
-                    'Reservation created successfully'
-                );
-
-            expect(responseBody.reservation)
-                .to.deep.equal(createdReservation);
-        });
-
-
         it('should return 500 when creating a reservation fails', async function () {
 
             sinon.stub(Reservation, 'findOne')
@@ -447,6 +369,80 @@ describe('Reservation Controller', function () {
                 .to.equal(
                     'Failed to create reservation'
                 );
+        });
+
+        it('should create a reservation using a mock object', async function () {
+
+            const latestReservation = {
+                reservationId: 'R-009'
+            };
+
+            const createdReservation = {
+                reservationId: 'R-010',
+                guest: 'guest123',
+                guestName: 'Sofia Chen',
+                status: 'Pending'
+            };
+
+            sinon.stub(Reservation, 'findOne')
+                .returns({
+                    sort: sinon.stub().resolves(latestReservation)
+                });
+
+            const createMock = sinon.mock(Reservation);
+
+            createMock.expects('create')
+                .once()
+                .withArgs(sinon.match({
+                    reservationId: 'R-010',
+                    guest: 'guest123',
+                    guestName: 'Sofia Chen',
+                    status: 'Pending'
+                }))
+                .resolves(createdReservation);
+
+            const req = {
+                user: {
+                    userId: 'guest123'
+                },
+
+                body: {
+                    guestName: 'Sofia Chen',
+                    email: 'sofia@example.com',
+                    phone: '0123456789',
+                    date: '2026-11-01',
+                    time: '19:00',
+                    partySize: 2,
+                    servicePeriod: 'Dinner',
+                    seating: 'Indoor',
+                    diningOption: 'alacarte',
+                    selectedDishes: []
+                }
+            };
+
+            let statusCode;
+            let responseBody;
+
+            const res = {
+                status: function (code) {
+                    statusCode = code;
+                    return this;
+                },
+
+                json: function (body) {
+                    responseBody = body;
+                    return this;
+                }
+            };
+
+            await createReservation(req, res);
+
+            expect(statusCode).to.equal(201);
+
+            expect(responseBody.message)
+                .to.equal('Reservation created successfully');
+
+            createMock.verify();
         });
 
     });
@@ -669,7 +665,11 @@ describe('Reservation Controller', function () {
             sinon.stub(Reservation, 'findOne')
                 .resolves(reservation);
 
-            const deleteOneStub = sinon.stub(Reservation, 'deleteOne')
+            const deleteMock = sinon.mock(Reservation);
+
+            deleteMock.expects('deleteOne')
+                .once()
+                .withArgs({ _id: 'reservation123' })
                 .resolves({
                     deletedCount: 1
                 });
@@ -704,8 +704,7 @@ describe('Reservation Controller', function () {
                     'Reservation deleted successfully'
                 );
 
-            expect(deleteOneStub.calledOnce)
-                .to.equal(true);
+            deleteMock.verify();
         });
 
     });
