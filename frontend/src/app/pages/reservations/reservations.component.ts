@@ -1,5 +1,6 @@
 import {
   Component,
+  HostListener,
   OnInit
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -1729,6 +1730,26 @@ export class ReservationsComponent implements OnInit {
   clearError(): void {
     this.errorMessage = '';
     this.errorTitle = '';
+  }
+
+  // =========================
+  // HANDLE ENTER KEY FOR MODALS
+  // =========================
+
+  @HostListener('document:keydown.enter', ['$event'])
+  handleModalEnter(event: KeyboardEvent): void {
+
+    // CLOSE ERROR MODAL
+    if (this.errorMessage) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.clearError();
+
+      return;
+    }
+
   }
 
 

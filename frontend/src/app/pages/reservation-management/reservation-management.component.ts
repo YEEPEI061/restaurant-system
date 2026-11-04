@@ -1,6 +1,6 @@
 import {
   Component,
-  OnInit
+  OnInit, HostListener
 } from '@angular/core';
 
 import {
@@ -1398,6 +1398,36 @@ export class ReservationManagementComponent
 
     this.errorTitle =
       '';
+  }
+
+  // =========================
+  // HANDLE ENTER KEY FOR MODALS
+  // =========================
+
+  @HostListener('document:keydown.enter', ['$event'])
+  handleModalEnter(event: KeyboardEvent): void {
+
+    // CLOSE ERROR MODAL
+    if (this.errorMessage) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.clearError();
+
+      return;
+    }
+
+    // CLOSE SUCCESS MODAL
+    if (this.successMessage) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.clearSuccess();
+
+    }
+
   }
 
 

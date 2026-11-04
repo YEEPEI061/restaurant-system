@@ -89,4 +89,17 @@ const menuItemSchema = new mongoose.Schema(
   }
 );
 
+// Prevent duplicate menu names (case-insensitive)
+menuItemSchema.index(
+  { name: 1 },
+  {
+    unique: true,
+    collation: {
+      locale: 'en',
+      strength: 2
+    },
+    name: 'unique_menu_name_case_insensitive'
+  }
+);
+
 module.exports = mongoose.model('MenuItem', menuItemSchema);

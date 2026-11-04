@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   ActivatedRoute,
@@ -131,7 +131,7 @@ export class GuestLoginComponent {
                 'returnUrl'
               );
 
-              void this.router.navigateByUrl(
+            void this.router.navigateByUrl(
               returnUrl || '/menu'
             );
 
@@ -290,6 +290,37 @@ export class GuestLoginComponent {
     this.errorTitle =
       '';
   }
+
+  // =========================
+  // HANDLE ENTER KEY FOR MODALS
+  // =========================
+
+  @HostListener('document:keydown.enter', ['$event'])
+  handleModalEnter(event: KeyboardEvent): void {
+
+    // CLOSE ERROR MODAL
+    if (this.errorMessage) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.clearError();
+
+      return;
+    }
+
+    // CLOSE SUCCESS MODAL
+    if (this.successMessage) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.clearSuccess();
+
+    }
+
+  }
+
 
 
   // =========================

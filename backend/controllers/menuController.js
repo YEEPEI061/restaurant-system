@@ -91,6 +91,20 @@ async function createMenuItem(req, res) {
       allergens
     } = req.body;
 
+    // Check for an existing menu item with the same name
+    const existingMenuItem = await MenuItem.findOne({
+      name: name.trim()
+    }).collation({
+      locale: 'en',
+      strength: 2
+    });
+
+    if (existingMenuItem) {
+      return res.status(409).json({
+        message: 'A menu item with this name already exists.'
+      });
+    }
+
     // Generate the next dish ID automatically
     const dishId = await generateNextDishId();
 
@@ -125,6 +139,12 @@ async function createMenuItem(req, res) {
   } catch (error) {
     console.error('Create menu item error:', error);
 
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: 'A menu item with this name already exists.'
+      });
+    }
+
     res.status(500).json({
       message: 'Failed to create menu item'
     });
@@ -142,6 +162,24 @@ async function updateMenuItem(req, res) {
       return res.status(404).json({
         message: 'Menu item not found'
       });
+    }
+
+    // Check for duplicate menu names when updating
+    if (req.body.name !== undefined) {
+
+      const existingMenuItem = await MenuItem.findOne({
+        name: req.body.name.trim(),
+        dishId: { $ne: req.params.id }
+      }).collation({
+        locale: 'en',
+        strength: 2
+      });
+
+      if (existingMenuItem) {
+        return res.status(409).json({
+          message: 'Another menu item with this name already exists.'
+        });
+      }
     }
 
     const allowedFields = [
@@ -180,6 +218,12 @@ async function updateMenuItem(req, res) {
     });
   } catch (error) {
     console.error('Update menu item error:', error);
+
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: 'Another menu item with this name already exists.'
+      });
+    }
 
     res.status(500).json({
       message: 'Failed to update menu item'

@@ -139,13 +139,15 @@ describe('Menu Controller', function () {
 
         it('should create a menu item successfully using a mock object', async function () {
 
+            // Mock duplicate-name check: no existing menu item
+            sinon.stub(MenuItem, 'findOne').returns({
+                collation: sinon.stub().resolves(null)
+            });
+
+            // Mock existing menu items for dish ID generation
             sinon.stub(MenuItem, 'find').resolves([
-                {
-                    dishId: 'M-001'
-                },
-                {
-                    dishId: 'M-005'
-                }
+                { dishId: 'M-001' },
+                { dishId: 'M-005' }
             ]);
 
             const createdMenuItem = {
@@ -153,7 +155,7 @@ describe('Menu Controller', function () {
                 dishId: 'M-006',
                 name: 'Truffle Pasta',
                 description: 'Fresh pasta with truffle',
-                category: 'Main Course',
+                category: 'Wood-Fire Mains',
                 price: 28,
                 available: true,
                 signature: true,
@@ -161,7 +163,7 @@ describe('Menu Controller', function () {
                 image: 'truffle-pasta.jpg',
                 provenance: 'France',
                 pairing: 'Red Wine',
-                allergens: ['gluten'],
+                allergens: 'Gluten',
                 save: sinon.stub()
             };
 
@@ -173,7 +175,7 @@ describe('Menu Controller', function () {
                     dishId: 'M-006',
                     name: 'Truffle Pasta',
                     price: 28,
-                    category: 'Main Course'
+                    category: 'Wood-Fire Mains'
                 }))
                 .resolves(createdMenuItem);
 
@@ -181,7 +183,7 @@ describe('Menu Controller', function () {
                 body: {
                     name: 'Truffle Pasta',
                     description: 'Fresh pasta with truffle',
-                    category: 'Main Course',
+                    category: 'Wood-Fire Mains',
                     price: 28,
                     available: true,
                     signature: true,
@@ -189,7 +191,7 @@ describe('Menu Controller', function () {
                     image: 'truffle-pasta.jpg',
                     provenance: 'France',
                     pairing: 'Red Wine',
-                    allergens: ['gluten']
+                    allergens: 'Gluten'
                 }
             };
 
@@ -292,8 +294,15 @@ describe('Menu Controller', function () {
                 save: sinon.stub().resolves()
             };
 
-            sinon.stub(MenuItem, 'findOne')
-                .resolves(menuItem);
+            const findOneStub = sinon.stub(MenuItem, 'findOne');
+
+            // First call: find the menu item being updated
+            findOneStub.onCall(0).resolves(menuItem);
+
+            // Second call: duplicate-name check finds no other item
+            findOneStub.onCall(1).returns({
+                collation: sinon.stub().resolves(null)
+            });
 
             const req = {
                 params: {
@@ -337,7 +346,6 @@ describe('Menu Controller', function () {
             expect(menuItem.save.calledOnce)
                 .to.equal(true);
         });
-
 
         it('should return 404 when updating a menu item that does not exist', async function () {
 

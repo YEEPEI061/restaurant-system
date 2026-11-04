@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+
 
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
@@ -622,6 +623,28 @@ export class MenuManagementComponent implements OnInit {
     }
 
     // =========================
+    // CHECK DUPLICATE MENU NAME
+    // =========================
+
+    const normalizedName = name.toLowerCase();
+
+    const duplicateName = this.dishes.some(
+      dish =>
+        dish.name.trim().toLowerCase() === normalizedName &&
+        dish.id !== this.editingDishId
+    );
+
+    if (duplicateName) {
+
+      this.showError(
+        'Duplicate Menu Item',
+        'A menu item with this name already exists. Please use a different name.'
+      );
+
+      return;
+    }
+
+    // =========================
     // CREATE / UPDATE DATA
     // =========================
 
@@ -1153,6 +1176,36 @@ export class MenuManagementComponent implements OnInit {
 
     this.errorTitle =
       '';
+  }
+
+  // =========================
+  // HANDLE ENTER KEY FOR MODALS
+  // =========================
+
+  @HostListener('document:keydown.enter', ['$event'])
+  handleModalEnter(event: KeyboardEvent): void {
+
+    // CLOSE ERROR MODAL
+    if (this.errorMessage) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.clearError();
+
+      return;
+    }
+
+    // CLOSE SUCCESS MODAL
+    if (this.successMessage) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.clearSuccess();
+
+    }
+
   }
 
   getDietaryFullName(tag: string): string {
