@@ -384,11 +384,12 @@ describe('Reservation Controller', function () {
                 status: 'Pending'
             };
 
-            sinon.stub(Reservation, 'findOne')
-                .returns({
-                    sort: sinon.stub().resolves(latestReservation)
-                });
+            // Mock existing reservations for ID generation
+            sinon.stub(Reservation, 'find').resolves([
+                latestReservation
+            ]);
 
+            // Mock reservation creation
             const createMock = sinon.mock(Reservation);
 
             createMock.expects('create')

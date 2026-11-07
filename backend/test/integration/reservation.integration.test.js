@@ -13,6 +13,7 @@ const {
 
 const Reservation = require('../../models/Reservation');
 const User = require('../../models/User');
+const Notification = require('../../models/Notification');
 
 
 describe('Reservation Integration Tests', function () {
@@ -24,11 +25,13 @@ describe('Reservation Integration Tests', function () {
 
         await Reservation.deleteMany({});
         await User.deleteMany({});
+        await Notification.deleteMany({});
     });
 
     afterEach(async function () {
         await Reservation.deleteMany({});
         await User.deleteMany({});
+        await Notification.deleteMany({});
     });
 
     after(async function () {
