@@ -236,12 +236,15 @@
 
           }
 
-        </div>
+          @if (activeFilters.size > 0) {
+          <button type="button" class="clear-filter-btn" (click)="clearDietaryFilters()">
+            Clear Filter
+          </button>
+          }
 
+        </div>
         <span class="results-indicator">
-          Showing {{ filteredItems.length }}
-          Curated
-          {{ filteredItems.length === 1 ? 'Preparation' : 'Preparations' }}
+          {{ filteredItems.length }} {{ filteredItems.length === 1 ? 'Item' : 'Items' }}
         </span>
 
       </div>
@@ -613,12 +616,10 @@
 
           </div>
 
-          <button type="button" (click)="removeFromTasting(item.id)">
-
+          <button type="button" (click)="openTastingDeleteConfirm(item)" aria-label="Remove from tasting list">
             <span class="material-symbols-outlined">
               delete
             </span>
-
           </button>
 
         </div>
@@ -664,5 +665,108 @@
   }
 
 </main>
+
+<!-- =====================================================
+TASTING LIST DELETE CONFIRMATION
+===================================================== -->
+
+@if (tastingDeleteConfirmOpen) {
+
+<div class="message-modal-backdrop" (click)="cancelTastingDelete()">
+
+  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="tasting-delete-title"
+    (click)="$event.stopPropagation()">
+
+    <div class="message-icon delete-message-icon">
+      <span class="material-symbols-outlined">
+        delete
+      </span>
+    </div>
+
+    <div class="message-copy">
+
+      <span class="message-eyebrow">
+        CONFIRM ACTION
+      </span>
+
+      <h2 id="tasting-delete-title">
+        Remove Dish?
+      </h2>
+
+      <p>
+        Are you sure you want to remove
+        <strong>{{ tastingItemToDelete?.name }}</strong>
+        from your tasting list?
+      </p>
+
+    </div>
+
+    <div class="message-actions">
+
+      <button type="button" class="button button-light modal-button" (click)="cancelTastingDelete()">
+        Cancel
+      </button>
+
+      <button type="button" class="button delete-confirm-button modal-button" (click)="confirmTastingDelete()">
+
+        <span class="material-symbols-outlined">
+          delete
+        </span>
+
+        Remove Dish
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+}
+
+<!-- =====================================================
+SUCCESS MESSAGE
+===================================================== -->
+
+@if (successMessage) {
+
+<div class="message-modal-backdrop success-backdrop" role="status">
+
+  <div class="message-card success-card">
+
+    <div class="success-animation">
+
+      <svg class="success-svg" viewBox="0 0 52 52" aria-hidden="true">
+
+        <circle class="success-circle" cx="26" cy="26" r="24" fill="none"></circle>
+
+        <path class="success-check" fill="none" d="M14 27 L22 35 L39 18"></path>
+
+      </svg>
+
+    </div>
+
+    <div class="message-copy">
+
+      <span class="message-eyebrow success-eyebrow">
+        SUCCESS
+      </span>
+
+      <h2>
+        {{ successTitle }}
+      </h2>
+
+      <p>
+        {{ successMessage }}
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+}
 
 <app-footer></app-footer>

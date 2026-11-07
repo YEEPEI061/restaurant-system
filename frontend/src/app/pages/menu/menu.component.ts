@@ -77,6 +77,12 @@ export class MenuComponent implements OnInit {
 
   tastingList: TastingItem[] = [];
 
+  tastingDeleteConfirmOpen = false;
+  tastingItemToDelete: any = null;
+  successMessage = '';
+  successTitle = '';
+  successTimeout?: ReturnType<typeof setTimeout>;
+
   categories = [
     {
       value: 'all',
@@ -207,6 +213,9 @@ export class MenuComponent implements OnInit {
     });
   }
 
+  clearDietaryFilters(): void {
+    this.activeFilters.clear();
+  }
 
   get filteredItems(): MenuItem[] {
 
@@ -338,6 +347,84 @@ export class MenuComponent implements OnInit {
     this.isTastingDrawerOpen = false;
   }
 
+  openTastingDeleteConfirm(item: any): void {
+    this.tastingItemToDelete = item;
+    this.tastingDeleteConfirmOpen = true;
+  }
+
+  cancelTastingDelete(): void {
+    this.tastingDeleteConfirmOpen = false;
+    this.tastingItemToDelete = null;
+  }
+
+  confirmTastingDelete(): void {
+    if (!this.tastingItemToDelete) return;
+
+    const dishName = this.tastingItemToDelete.name;
+
+    this.removeFromTasting(this.tastingItemToDelete.id);
+
+    this.cancelTastingDelete();
+
+    this.showSuccess(
+      'Dish Removed',
+      `${dishName} has been removed from your tasting list.`
+    );
+  }
+
+  showSuccess(
+    title: string,
+    message: string
+  ): void {
+
+    // Reset existing timer
+    if (this.successTimeout) {
+      clearTimeout(
+        this.successTimeout
+      );
+    }
+
+    this.successTitle =
+      title;
+
+    this.successMessage =
+      message;
+
+    this.successTimeout =
+      setTimeout(() => {
+
+        this.successMessage =
+          '';
+
+        this.successTitle =
+          '';
+
+      }, 1400);
+  }
+
+  // =========================
+  // CLEAR SUCCESS
+  // =========================
+
+  clearSuccess(): void {
+
+    if (this.successTimeout) {
+
+      clearTimeout(
+        this.successTimeout
+      );
+
+      this.successTimeout =
+        undefined;
+    }
+
+    this.successMessage =
+      '';
+
+    this.successTitle =
+      '';
+  }
+
   proceedToReservation(): void {
 
     this.closeTastingDrawer();
@@ -400,4 +487,6 @@ export class MenuComponent implements OnInit {
   trackByName(index: number, item: MenuItem): string {
     return item.name;
   }
+
+
 }

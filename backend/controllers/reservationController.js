@@ -116,6 +116,31 @@ async function getMyReservations(req, res) {
   }
 }
 
+async function generateNextReservationId() {
+  const reservations = await Reservation.find(
+    {},
+    {
+      reservationId: 1
+    }
+  );
+
+  let maxNumber = 0;
+
+  reservations.forEach(reservation => {
+    const match = /^R-(\d+)$/.exec(reservation.reservationId);
+
+    if (match) {
+      const number = Number.parseInt(match[1], 10);
+
+      if (number > maxNumber) {
+        maxNumber = number;
+      }
+    }
+  });
+
+  return `R-${String(maxNumber + 1).padStart(3, '0')}`;
+}
+
 async function createReservation(req, res) {
   try {
 
@@ -148,40 +173,7 @@ async function createReservation(req, res) {
     } = req.body;
 
 
-    // =========================
-    // GENERATE RESERVATION ID
-    // =========================
-
-    const latestReservation =
-      await Reservation.findOne()
-        .sort({
-          createdAt: -1
-        });
-
-    let nextNumber = 1;
-
-    if (latestReservation) {
-
-      const latestNumber =
-        Number.parseInt(
-          latestReservation
-            .reservationId
-            .replace('R-', ''),
-          10
-        );
-
-      if (
-        !Number.isNaN(
-          latestNumber
-        )
-      ) {
-        nextNumber =
-          latestNumber + 1;
-      }
-    }
-
-    const reservationId =
-      `R-${String(nextNumber).padStart(3, '0')}`;
+    const reservationId = await generateNextReservationId();
 
 
     // =========================

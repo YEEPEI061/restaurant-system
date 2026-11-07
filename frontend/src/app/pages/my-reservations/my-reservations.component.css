@@ -947,12 +947,12 @@ select:focus-visible {
 
 .button-light {
   border-color: #e4e1e6;
-  background: #f0edf1;
-  color: #1b1b1e;
+  background: #fff;
+  color: #182418;
 }
 
 .button-light:hover {
-  background: #e4e1e6;
+  background: #f0edf1;
 }
 
 .button-rebook {
