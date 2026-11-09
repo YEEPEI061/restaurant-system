@@ -17,6 +17,11 @@ import {
 
 type RoleFilter = 'all' | UserRole;
 type StatusFilter = 'all' | 'active' | 'deactivated';
+type UserSortOption =
+  | 'name-ascending'
+  | 'name-descending'
+  | 'newest'
+  | 'oldest';
 
 interface UserMember {
   id: string;
@@ -29,6 +34,7 @@ interface UserMember {
   active: boolean;
   password?: string;
 }
+
 
 @Component({
   selector: 'app-user-management',
@@ -48,6 +54,7 @@ export class UserManagementComponent implements OnInit {
 
   roleFilter: RoleFilter = 'all';
   statusFilter: StatusFilter = 'all';
+  sortOption: UserSortOption = 'name-ascending';
 
   // =========================
   // PAGINATION
@@ -227,33 +234,22 @@ export class UserManagementComponent implements OnInit {
   // FILTERING
   // =========================
 
-  get filteredUsers():
-    UserMember[] {
+  get filteredUsers(): UserMember[] {
 
     const query =
       this.searchQuery
         .trim()
         .toLowerCase();
 
-    return this.users.filter(user => {
+    const filtered = this.users.filter(user => {
 
       const matchesSearch =
         !query ||
-        user.name
-          .toLowerCase()
-          .includes(query) ||
-        user.email
-          .toLowerCase()
-          .includes(query) ||
-        user.phone
-          .toLowerCase()
-          .includes(query) ||
-        user.id
-          .toLowerCase()
-          .includes(query) ||
-        this.roleLabel(user.role)
-          .toLowerCase()
-          .includes(query);
+        user.name.toLowerCase().includes(query) ||
+        user.email.toLowerCase().includes(query) ||
+        user.phone.toLowerCase().includes(query) ||
+        user.id.toLowerCase().includes(query) ||
+        this.roleLabel(user.role).toLowerCase().includes(query);
 
       const matchesRole =
         this.roleFilter === 'all' ||
@@ -262,13 +258,11 @@ export class UserManagementComponent implements OnInit {
       const matchesStatus =
         this.statusFilter === 'all' ||
         (
-          this.statusFilter ===
-          'active' &&
+          this.statusFilter === 'active' &&
           user.active
         ) ||
         (
-          this.statusFilter ===
-          'deactivated' &&
+          this.statusFilter === 'deactivated' &&
           !user.active
         );
 
@@ -277,6 +271,29 @@ export class UserManagementComponent implements OnInit {
         matchesRole &&
         matchesStatus
       );
+
+    });
+
+    return filtered.sort((a, b) => {
+
+      switch (this.sortOption) {
+
+        case 'name-ascending':
+          return a.name.localeCompare(b.name);
+
+        case 'name-descending':
+          return b.name.localeCompare(a.name);
+
+        case 'newest':
+          return b.id.localeCompare(a.id);
+
+        case 'oldest':
+          return a.id.localeCompare(b.id);
+
+        default:
+          return 0;
+      }
+
     });
   }
 
@@ -809,9 +826,11 @@ export class UserManagementComponent implements OnInit {
     this.searchQuery = '';
     this.roleFilter = 'all';
     this.statusFilter = 'all';
+    this.sortOption = 'name-ascending';
 
     this.currentPage = 1;
   }
+
   // =========================
   // SUCCESS MESSAGE
   // =========================

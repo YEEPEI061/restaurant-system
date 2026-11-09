@@ -33,6 +33,12 @@ interface MenuDish {
   allergens: string;
 }
 
+type MenuSortOption =
+  | 'name-ascending'
+  | 'name-descending'
+  | 'price-low'
+  | 'price-high';
+
 @Component({
   selector: 'app-menu-management',
   standalone: true,
@@ -62,6 +68,7 @@ export class MenuManagementComponent implements OnInit {
     'Beverages'
   ];
 
+
   dietaryOptions: DietaryTag[] = [
     'GF',
     'DF',
@@ -73,6 +80,10 @@ export class MenuManagementComponent implements OnInit {
   activeCategory = 'All Courses';
 
   searchTerm = '';
+
+
+
+  sortOption: MenuSortOption = 'name-ascending';
 
   activeDietary: DietaryTag[] = [];
 
@@ -284,7 +295,7 @@ export class MenuManagementComponent implements OnInit {
         .trim()
         .toLowerCase();
 
-    return this.dishes.filter(dish => {
+    const filtered = this.dishes.filter(dish => {
 
       const matchesCategory =
         this.activeCategory === 'All Courses' ||
@@ -292,20 +303,13 @@ export class MenuManagementComponent implements OnInit {
 
       const matchesSearch =
         !term ||
-        dish.name
-          .toLowerCase()
-          .includes(term) ||
-        dish.description
-          .toLowerCase()
-          .includes(term) ||
-        dish.id
-          .toLowerCase()
-          .includes(term);
+        dish.name.toLowerCase().includes(term) ||
+        dish.description.toLowerCase().includes(term) ||
+        dish.id.toLowerCase().includes(term);
 
       const matchesDietary =
         this.activeDietary.every(
-          tag =>
-            dish.dietary.includes(tag)
+          tag => dish.dietary.includes(tag)
         );
 
       const matchesSignature =
@@ -323,6 +327,28 @@ export class MenuManagementComponent implements OnInit {
         matchesSignature &&
         matchesUnavailable
       );
+    });
+
+    return filtered.sort((a, b) => {
+
+      switch (this.sortOption) {
+
+        case 'name-ascending':
+          return a.name.localeCompare(b.name);
+
+        case 'name-descending':
+          return b.name.localeCompare(a.name);
+
+        case 'price-low':
+          return a.price - b.price;
+
+        case 'price-high':
+          return b.price - a.price;
+
+        default:
+          return 0;
+      }
+
     });
   }
 

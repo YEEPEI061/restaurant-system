@@ -229,6 +229,37 @@
             </span>
           </button>
 
+          <!-- Sort reservations -->
+          <label class="sort-control">
+
+            <span class="material-symbols-outlined">
+              sort
+            </span>
+
+            <span>Sort by</span>
+
+            <select [(ngModel)]="sortOption" [ngModelOptions]="{ standalone: true }" aria-label="Sort reservations">
+
+              <option value="date-newest">
+                Newest Date
+              </option>
+
+              <option value="date-oldest">
+                Oldest Date
+              </option>
+
+              <option value="id-ascending">
+                Booking ID (A–Z)
+              </option>
+
+              <option value="id-descending">
+                Booking ID (Z–A)
+              </option>
+
+            </select>
+
+          </label>
+
         </div>
 
 

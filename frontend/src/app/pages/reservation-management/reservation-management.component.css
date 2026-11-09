@@ -472,7 +472,7 @@ tr:focus-visible {
 
   color: #747871;
 
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
 
   text-align: center;
@@ -665,7 +665,7 @@ tr:focus-visible {
 .guest-details span {
   color: #747871;
 
-  font-size: 9px;
+  font-size: 11px;
 
   line-height: 1.4;
 }
@@ -707,7 +707,7 @@ tr:focus-visible {
 .reservation-datetime span {
   color: #747871;
 
-  font-size: 9px;
+  font-size: 11px;
 }
 
 
@@ -731,7 +731,7 @@ tr:focus-visible {
 
   font-family: inherit;
 
-  font-size: 9px;
+  font-size: 11px;
 
   outline: none;
 
@@ -779,7 +779,7 @@ tr:focus-visible {
 .package-details span {
   color: #747871;
 
-  font-size: 9px;
+  font-size: 11px;
 }
 
 
@@ -1011,7 +1011,7 @@ tr:focus-visible {
 
   color: #8b9089;
 
-  font-size: 9px;
+  font-size: 11px;
 }
 
 
@@ -1034,7 +1034,7 @@ tr:focus-visible {
 
   color: #747871;
 
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .table-footer strong {
@@ -1106,7 +1106,7 @@ tr:focus-visible {
   background: #fff;
   border: 1px solid #eae7eb;
   border-radius: 5px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.5px;
 }
@@ -1192,16 +1192,6 @@ tr:focus-visible {
   color: #666b64;
   font-size: 12px;
   line-height: 1.5;
-}
-
-.vip-tag {
-  padding: 3px 5px;
-  color: #694116;
-  background: #ffedda;
-  border-radius: 4px;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
 }
 
 .guest-cell .guest-note {
@@ -1546,7 +1536,7 @@ tr:focus-visible {
 
 .field-label {
   color: #747871;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.8px;
 }
@@ -2466,7 +2456,7 @@ tr:focus-visible {
   display: block;
   margin-top: 7px;
   color: #666b64;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -2490,7 +2480,7 @@ tr:focus-visible {
 .floor-table-guest span:not(.floor-table-status) {
   overflow: hidden;
   color: #8a8e87;
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.5;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2601,7 +2591,7 @@ tr:focus-visible {
 
   color: #8c7d70;
 
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 1.6px;
 }
@@ -3091,6 +3081,58 @@ input[type="search"]::-webkit-search-cancel-button {
   display: none;
 }
 
+/* Status filters and sorting */
+.filter-tabs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+}
+
+
+.filter-tabs {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Sort control */
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.sort-control .material-symbols-outlined {
+  font-size: 19px;
+}
+
+.sort-control select {
+  padding: 9px 0px 9px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+}
+
+.sort-control select:focus {
+  border-color: #b89568;
+}
+
 /* =========================================================
   MOBILE TABLE
   ========================================================= */
@@ -3119,6 +3161,14 @@ input[type="search"]::-webkit-search-cancel-button {
 
   .toolbar-actions {
     justify-content: flex-start;
+  }
+
+  .filter-tabs-row {
+    flex-wrap: wrap;
+  }
+
+  .sort-control {
+    margin-left: auto;
   }
 }
 
@@ -3179,7 +3229,7 @@ input[type="search"]::-webkit-search-cancel-button {
   }
 
   .metric-label {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .metric-value {
@@ -3187,7 +3237,7 @@ input[type="search"]::-webkit-search-cancel-button {
   }
 
   .metric-caption {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   .metric-icon {

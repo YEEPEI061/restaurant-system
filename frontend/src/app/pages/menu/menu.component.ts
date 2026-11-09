@@ -139,17 +139,16 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.tastingService.tastingItems$.subscribe(items => {
+      this.tastingList = items;
+    });
+
     this.loadMenuItems();
 
     this.webSocketService.connect();
 
     this.webSocketService.messages$
       .subscribe(message => {
-
-        console.log(
-          'Menu WebSocket message:',
-          message
-        );
 
         switch (message.type) {
 
@@ -286,9 +285,6 @@ export class MenuComponent implements OnInit {
       price: item.price,
       id: item.dishId
     });
-
-    this.tastingList =
-      this.tastingService.getItems();
 
     this.openTastingDrawer();
   }
@@ -429,29 +425,27 @@ export class MenuComponent implements OnInit {
 
     this.closeTastingDrawer();
 
+    const editingReservation =
+      sessionStorage.getItem('editingReservation');
+
+    const destination = editingReservation
+      ? '/reservations?edit=true'
+      : '/reservations';
+
     if (this.authService.isLoggedIn()) {
 
-      const editingReservation =
-        sessionStorage.getItem('editingReservation');
-
-      if (editingReservation) {
-
-        void this.router.navigate(
-          ['/reservations'],
-          {
-            queryParams: { edit: 'true' }
-          }
-        );
-
-      } else {
-
-        void this.router.navigate(['/reservations']);
-
-      }
+      void this.router.navigateByUrl(destination);
 
     } else {
 
-      void this.router.navigate(['/guest-login']);
+      void this.router.navigate(
+        ['/guest-login'],
+        {
+          queryParams: {
+            returnUrl: destination
+          }
+        }
+      );
 
     }
   }

@@ -35,6 +35,12 @@ type ReservationFilter =
   | 'Completed'
   | 'Cancelled';
 
+type ReservationSort =
+  | 'date-newest'
+  | 'date-oldest'
+  | 'id-ascending'
+  | 'id-descending';
+
 type DrawerMode =
   | 'create'
   | 'edit';
@@ -246,6 +252,8 @@ export class ReservationManagementComponent
       'Cancelled'
 
     ];
+
+  sortOption: ReservationSort = 'date-newest';
 
 
   /*
@@ -549,69 +557,78 @@ export class ReservationManagementComponent
    * --------------------------------------------------
    */
 
-  get filteredReservations():
-    Reservation[] {
+  get filteredReservations(): Reservation[] {
 
-    const query =
-      this.searchQuery
-        .trim()
-        .toLowerCase();
+    const query = this.searchQuery
+      .trim()
+      .toLowerCase();
 
-
-    return this.reservations.filter(
+    const filtered = this.reservations.filter(
       reservation => {
 
-        /*
-         * Status filter
-         */
-
+        // Status filter
         if (
           this.activeFilter !== 'All' &&
-          reservation.status !==
-          this.activeFilter
+          reservation.status !== this.activeFilter
         ) {
-
           return false;
-
         }
 
-
-        /*
-         * Search filter
-         */
-
+        // Search filter
         if (!query) {
-
           return true;
-
         }
-
 
         const searchableText = [
-
           reservation.reservationId,
-
           reservation.guestName,
-
           reservation.phone,
-
           reservation.email,
-
           reservation.packageName,
-
           reservation.table
-
         ]
           .filter(Boolean)
           .join(' ')
           .toLowerCase();
 
-
-        return searchableText
-          .includes(query);
+        return searchableText.includes(query);
 
       }
     );
+
+    // Sorting
+    return filtered.sort((a, b) => {
+
+      switch (this.sortOption) {
+
+        case 'date-newest':
+          return new Date(b.date).getTime() -
+            new Date(a.date).getTime();
+
+        case 'date-oldest':
+          return new Date(a.date).getTime() -
+            new Date(b.date).getTime();
+
+        case 'id-ascending':
+          return a.reservationId.localeCompare(
+            b.reservationId,
+            undefined,
+            { numeric: true }
+          );
+
+        case 'id-descending':
+          return b.reservationId.localeCompare(
+            a.reservationId,
+            undefined,
+            { numeric: true }
+          );
+
+        default:
+          return 0;
+
+      }
+
+    });
 
   }
 

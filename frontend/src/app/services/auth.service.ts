@@ -98,7 +98,49 @@ export class AuthService {
   // =========================
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+
+    const token = this.getToken();
+
+    if (!token) {
+      return false;
+    }
+
+    try {
+
+      // Decode JWT payload
+      const payload = token.split('.')[1];
+
+      if (!payload) {
+        this.logout();
+        return false;
+      }
+
+      const decoded = JSON.parse(
+        atob(
+          payload
+            .replace(/-/g, '+')
+            .replace(/_/g, '/')
+        )
+      );
+
+      // Check token expiry
+      if (
+        !decoded.exp ||
+        decoded.exp * 1000 <= Date.now()
+      ) {
+
+        this.logout();
+        return false;
+      }
+
+      return true;
+
+    } catch (error) {
+      // Invalid token format
+      this.logout();
+      return false;
+
+    }
   }
 
   // =========================

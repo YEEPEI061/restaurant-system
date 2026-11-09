@@ -11,6 +11,10 @@ database.createUser({
     {
       role: 'readWrite',
       db: dbName
+    },
+    {
+      role: 'readWrite',
+      db: 'aurelia_test'
     }
   ]
 });

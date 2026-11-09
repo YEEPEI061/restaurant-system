@@ -161,19 +161,47 @@
            CATEGORY FILTERS
            =================================================== -->
 
-      <div class="category-tabs" aria-label="Filter by menu category">
+      <div class="category-tabs-row">
 
-        @for (category of categories; track category) {
+        <div class="category-tabs" aria-label="Filter by menu category">
 
-        <button type="button" [class.active]="activeCategory === category" (click)="selectCategory(category)">
-          {{ category }}
+          @for (category of categories; track category) {
 
-          <span>
-            {{ categoryDishCount(category) }}
+          <button type="button" [class.active]="activeCategory === category" (click)="selectCategory(category)">
+
+            {{ category }}
+
+            <span>
+              {{ categoryDishCount(category) }}
+            </span>
+
+          </button>
+
+          }
+
+        </div>
+
+        <!-- Sort By -->
+
+        <label class="sort-control">
+
+          <span class="material-symbols-outlined">
+            sort
           </span>
-        </button>
 
-        }
+          <span>Sort by</span>
+
+          <select [(ngModel)]="sortOption" [ngModelOptions]="{ standalone: true }" (ngModelChange)="currentPage = 1"
+            aria-label="Sort menu items">
+
+            <option value="name-ascending">Name (A–Z)</option>
+            <option value="name-descending">Name (Z–A)</option>
+            <option value="price-low">Price (Low–High)</option>
+            <option value="price-high">Price (High–Low)</option>
+
+          </select>
+
+        </label>
 
       </div>
 

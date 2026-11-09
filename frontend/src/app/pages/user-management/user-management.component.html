@@ -142,35 +142,66 @@
         </span>
       </div>
 
-      <!-- User type tabs -->
-      <div class="user-tabs" role="tablist" aria-label="User type">
+      <!-- User type tabs + Sort By -->
 
-        <button type="button" class="user-tab" [class.active]="roleFilter === 'all'"
-          (click)="roleFilter = 'all';currentPage = 1">
-          <span class="material-symbols-outlined">group</span>
-          All Users
-          <span>{{ users.length }}</span>
-        </button>
+      <div class="user-tabs-row">
 
-        <button type="button" class="user-tab" [class.active]="roleFilter === 'guest'"
-          (click)="roleFilter = 'guest';currentPage = 1">
-          <span class="material-symbols-outlined">person</span>
-          Guests
-          <span>{{ guestCount }}</span>
-        </button>
+        <div class="user-tabs" role="tablist" aria-label="User type">
 
-        <button type="button" class="user-tab" [class.active]="roleFilter === 'admin'"
-          (click)="roleFilter = 'admin';currentPage = 1">
+          <button type="button" class="user-tab" [class.active]="roleFilter === 'all'"
+            (click)="roleFilter = 'all'; currentPage = 1">
+
+            <span class="material-symbols-outlined">group</span>
+            All Users
+            <span>{{ users.length }}</span>
+
+          </button>
+
+          <button type="button" class="user-tab" [class.active]="roleFilter === 'guest'"
+            (click)="roleFilter = 'guest'; currentPage = 1">
+
+            <span class="material-symbols-outlined">person</span>
+            Guests
+            <span>{{ guestCount }}</span>
+
+          </button>
+
+          <button type="button" class="user-tab" [class.active]="roleFilter === 'admin'"
+            (click)="roleFilter = 'admin'; currentPage = 1">
+
+            <span class="material-symbols-outlined">
+              admin_panel_settings
+            </span>
+
+            Admins
+
+            <span>{{ adminCount }}</span>
+
+          </button>
+
+        </div>
+
+        <!-- Sort By -->
+
+        <label class="sort-control">
+
           <span class="material-symbols-outlined">
-            admin_panel_settings
+            sort
           </span>
 
-          Admins
+          <span>Sort by</span>
 
-          <span>
-            {{ adminCount }}
-          </span>
-        </button>
+          <select [(ngModel)]="sortOption" [ngModelOptions]="{ standalone: true }" (ngModelChange)="currentPage = 1"
+            aria-label="Sort users">
+
+            <option value="name-ascending">Name (A–Z)</option>
+            <option value="name-descending">Name (Z–A)</option>
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+
+          </select>
+
+        </label>
 
       </div>
 
