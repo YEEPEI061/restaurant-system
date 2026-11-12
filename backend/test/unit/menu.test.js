@@ -228,6 +228,10 @@ describe('Menu Controller', function () {
 
         it('should return 500 when creating a menu item fails', async function () {
 
+            sinon.stub(MenuItem, 'findOne').returns({
+                collation: sinon.stub().resolves(null)
+            });
+
             sinon.stub(MenuItem, 'find').resolves([]);
 
             sinon.stub(MenuItem, 'create').rejects(

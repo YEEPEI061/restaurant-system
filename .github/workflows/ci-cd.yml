@@ -1,13 +1,16 @@
-name: Aurelia CI
+name: Aurelia Application CI/CD
 
 on:
   push:
+    branches:
+      - main
+
   pull_request:
 
 jobs:
 
-  backend-tests:
-    name: Backend Tests
+  backend-ci:
+    name: Backend CI
     runs-on: ubuntu-latest
 
     services:
@@ -22,8 +25,7 @@ jobs:
       JWT_SECRET: aurelia_ci_test_secret
 
     steps:
-
-      - name: Checkout repository
+      - name: Checkout source code
         uses: actions/checkout@v6
 
       - name: Setup Node.js
@@ -42,13 +44,12 @@ jobs:
         run: npm test
 
 
-  frontend-build:
-    name: Frontend Build
+  frontend-ci:
+    name: Frontend CI
     runs-on: ubuntu-latest
 
     steps:
-
-      - name: Checkout repository
+      - name: Checkout source code
         uses: actions/checkout@v6
 
       - name: Setup Node.js
@@ -62,23 +63,28 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Build Angular frontend
+      - name: Run Angular tests
+        working-directory: frontend
+        run: npm test -- --watch=false
+
+      - name: Build Angular application
         working-directory: frontend
         run: npm run build
 
+
   deploy:
     name: Deploy Aurelia
+
     needs:
-      - backend-tests
-      - frontend-build
+      - backend-ci
+      - frontend-ci
 
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     runs-on: [self-hosted, windows, x64]
 
     steps:
-
-      - name: Checkout repository
+      - name: Checkout source code
         uses: actions/checkout@v6
 
       - name: Create production environment file

@@ -328,12 +328,11 @@ describe('Reservation Controller', function () {
 
         it('should return 500 when creating a reservation fails', async function () {
 
-            sinon.stub(Reservation, 'findOne')
-                .returns({
-                    sort: sinon.stub().rejects(
-                        new Error('Database error')
-                    )
-                });
+            sinon.stub(Reservation, 'find').returns({
+                sort: sinon.stub().rejects(
+                    new Error('Database error')
+                )
+            });
 
             const req = {
                 user: {
