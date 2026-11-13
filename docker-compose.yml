@@ -24,9 +24,8 @@ services:
     networks:
       - aurelia-network
 
-
   backend:
-    build: ./backend
+    image: ghcr.io/yeepei061/aurelia-backend:${IMAGE_TAG:-latest}
     container_name: restaurant-backend
 
     environment:
@@ -47,9 +46,8 @@ services:
     networks:
       - aurelia-network
 
-
   frontend:
-    build: ./frontend
+    image: ghcr.io/yeepei061/aurelia-frontend:${IMAGE_TAG:-latest}
     container_name: restaurant-frontend
 
     ports:
@@ -63,10 +61,8 @@ services:
     networks:
       - aurelia-network
 
-
 volumes:
   mongodb_data:
-
 
 networks:
   aurelia-network:

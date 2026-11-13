@@ -1,4 +1,8 @@
 node_modules
-.angular
 dist
+.angular
+coverage
+.env
+.env.*
+.git
 npm-debug.log
