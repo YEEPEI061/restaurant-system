@@ -157,7 +157,7 @@ jobs:
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          $GHCR_TOKEN | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          $env:GHCR_TOKEN | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
       - name: Create production environment file
         shell: powershell
