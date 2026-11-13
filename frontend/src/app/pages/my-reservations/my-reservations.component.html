@@ -230,10 +230,6 @@
 
             <img src="/images/aurelia-dining.png" alt="Aurelia restaurant dining room" [class.second-image]="i > 0" />
 
-            <div class="image-label">
-              {{ reservation.seating }}
-            </div>
-
           </div>
 
 
@@ -278,8 +274,6 @@
 
             <p class="reservation-description">
               {{ getDiningDescription(reservation) }}
-              ·
-              {{ reservation.seating }}
             </p>
 
 
@@ -320,23 +314,6 @@
 
                 <small>
                   {{ reservation.time }}
-                </small>
-
-              </div>
-
-
-              <div class="metric">
-
-                <span>
-                  SEATING
-                </span>
-
-                <strong>
-                  {{ reservation.seating }}
-                </strong>
-
-                <small>
-                  Subject to availability
                 </small>
 
               </div>
@@ -706,20 +683,6 @@
 
                 </div>
 
-
-                <div class="payment-row">
-
-                  <span>
-                    Seating
-                  </span>
-
-                  <strong>
-                    {{ reservation.seating }}
-                  </strong>
-
-                </div>
-
-
                 @if (reservation.beveragePairing) {
 
                 <div class="payment-row">
@@ -890,7 +853,7 @@
         <div class="past-table-header">
 
           <span>
-            DATE &amp; SEATING
+            DATE
           </span>
 
           <span>
@@ -964,10 +927,6 @@
               : 'Guests'
               }}
             </strong>
-
-            <span>
-              {{ reservation.seating }}
-            </span>
 
           </div>
 
@@ -1164,8 +1123,6 @@
           </p>
 
           <span>
-            {{ reservation.seating }}
-            ·
             {{ reservation.partySize }}
             {{
             reservation.partySize === 1

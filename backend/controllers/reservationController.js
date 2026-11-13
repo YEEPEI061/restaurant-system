@@ -8,6 +8,324 @@ const {
   createNotification
 } = require('../services/notificationService');
 
+/*
+ * --------------------------------------------------
+ * RESTAURANT TABLE CONFIGURATION
+ * --------------------------------------------------
+ */
+
+const RESTAURANT_TABLES = {
+  T01: 2,
+  T02: 2,
+  T03: 2,
+  T04: 4,
+  T05: 4,
+  T06: 4,
+  T07: 4,
+  T08: 6,
+  T09: 6,
+  T10: 8
+};
+
+const RESTAURANT_CAPACITY = Object.values(
+  RESTAURANT_TABLES
+).reduce((total, capacity) => total + capacity, 0);
+
+
+/*
+ * --------------------------------------------------
+ * TIME HELPERS
+ * --------------------------------------------------
+ */
+
+function timeToMinutes(time) {
+
+  if (
+    typeof time !== 'string' ||
+    !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)
+  ) {
+    return null;
+  }
+
+  const [hours, minutes] = time
+    .split(':')
+    .map(Number);
+
+  return hours * 60 + minutes;
+}
+
+
+/*
+ * --------------------------------------------------
+ * TABLE ASSIGNMENT VALIDATION
+ * --------------------------------------------------
+ */
+
+async function validateTableAssignment({
+  table,
+  date,
+  time,
+  partySize,
+  excludeReservationId
+}) {
+
+  // No assigned table means no table validation is needed.
+  if (!table) {
+    return null;
+  }
+
+  // Check whether the table exists.
+  const capacity = RESTAURANT_TABLES[table];
+
+  if (!capacity) {
+    return {
+      status: 400,
+      message: 'Invalid table selection.'
+    };
+  }
+
+  // Check party size.
+  if (
+    !Number.isInteger(Number(partySize)) ||
+    Number(partySize) < 1 ||
+    Number(partySize) > capacity
+  ) {
+    return {
+      status: 400,
+      message:
+        `${table} can accommodate a maximum of ${capacity} guests.`
+    };
+  }
+
+  // Validate booking time.
+  const requestedStart = timeToMinutes(time);
+
+  if (requestedStart === null) {
+    return {
+      status: 400,
+      message: 'Invalid reservation time.'
+    };
+  }
+
+  const requestedEnd = requestedStart + 60;
+
+  // Find other active reservations for this table and date.
+  const query = {
+    table,
+    date,
+    status: {
+      $nin: ['Cancelled', 'Completed']
+    }
+  };
+
+  // Exclude the current reservation when editing.
+  if (excludeReservationId) {
+    query.reservationId = {
+      $ne: excludeReservationId
+    };
+  }
+
+  const existingReservations =
+    await Reservation.find(query).select(
+      'reservationId time'
+    );
+
+  // Check for overlapping one-hour bookings.
+  for (const existing of existingReservations) {
+
+    const existingStart =
+      timeToMinutes(existing.time);
+
+    // Ignore invalid legacy booking times.
+    if (existingStart === null) {
+      continue;
+    }
+
+    const existingEnd =
+      existingStart + 60;
+
+    const overlaps =
+      requestedStart < existingEnd &&
+      requestedEnd > existingStart;
+
+    if (overlaps) {
+      return {
+        status: 409,
+        message:
+          `${table} is already reserved from ${existing.time} to ${formatEndTime(existing.time)}. Please choose another table or time.`
+      };
+    }
+  }
+
+  return null;
+}
+
+/*
+ * --------------------------------------------------
+ * RESTAURANT CAPACITY VALIDATION
+ * --------------------------------------------------
+ */
+
+async function validateRestaurantCapacity({
+  date,
+  time,
+  partySize,
+  excludeReservationId
+}) {
+
+  const requestedStart = timeToMinutes(time);
+
+  if (requestedStart === null) {
+    return {
+      status: 400,
+      message: 'Invalid reservation time.'
+    };
+  }
+
+  const guests = Number(partySize);
+
+  if (
+    !Number.isInteger(guests) ||
+    guests < 1
+  ) {
+    return {
+      status: 400,
+      message: 'Invalid reservation party size.'
+    };
+  }
+
+  const requestedEnd = requestedStart + 60;
+
+  // Pending reservations also count towards capacity.
+  const query = {
+    date,
+    status: {
+      $nin: ['Cancelled', 'Completed']
+    }
+  };
+
+  // Exclude the current reservation when editing or changing status.
+  if (excludeReservationId) {
+    query.reservationId = {
+      $ne: excludeReservationId
+    };
+  }
+
+  const existingReservations =
+    await Reservation.find(query).select(
+      'reservationId time partySize status'
+    );
+
+  /*
+   * Calculate occupancy throughout the requested
+   * one-hour period.
+   *
+   * Negative changes (departures) are processed
+   * before positive changes (arrivals) at the
+   * same time, allowing back-to-back reservations.
+   */
+
+  const events = [];
+
+  for (const existing of existingReservations) {
+
+    const existingStart =
+      timeToMinutes(existing.time);
+
+    const existingPartySize =
+      Number(existing.partySize);
+
+    if (
+      existingStart === null ||
+      !Number.isInteger(existingPartySize) ||
+      existingPartySize < 1
+    ) {
+      continue;
+    }
+
+    const existingEnd =
+      existingStart + 60;
+
+    const overlaps =
+      existingStart < requestedEnd &&
+      existingEnd > requestedStart;
+
+    if (!overlaps) {
+      continue;
+    }
+
+    events.push({
+      time: Math.max(
+        existingStart,
+        requestedStart
+      ),
+      change: existingPartySize
+    });
+
+    events.push({
+      time: Math.min(
+        existingEnd,
+        requestedEnd
+      ),
+      change: -existingPartySize
+    });
+  }
+
+  // Process departures before arrivals at equal times.
+  events.sort((a, b) => {
+    if (a.time !== b.time) {
+      return a.time - b.time;
+    }
+
+    return a.change - b.change;
+  });
+
+  // The new reservation occupies seats throughout its hour.
+  let currentOccupancy = guests;
+  let maximumOccupancy = guests;
+
+  for (const event of events) {
+
+    currentOccupancy += event.change;
+
+    maximumOccupancy = Math.max(
+      maximumOccupancy,
+      currentOccupancy
+    );
+  }
+
+  if (maximumOccupancy > RESTAURANT_CAPACITY) {
+
+    return {
+      status: 409,
+      message:
+        'Sorry, this time slot has insufficient capacity for your party. Please select another time or date.'
+    };
+  }
+
+  return null;
+}
+
+/*
+ * --------------------------------------------------
+ * FORMAT RESERVATION END TIME
+ * --------------------------------------------------
+ */
+
+function formatEndTime(time) {
+
+  const totalMinutes =
+    timeToMinutes(time) + 60;
+
+  const hours =
+    Math.floor(totalMinutes / 60) % 24;
+
+  const minutes =
+    totalMinutes % 60;
+
+  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
+
 async function getReservations(req, res) {
   try {
     const reservations = await Reservation.find()
@@ -156,7 +474,6 @@ async function createReservation(req, res) {
       time,
       partySize,
       servicePeriod,
-      seating,
       diningOption,
       tastingMenu,
 
@@ -168,13 +485,31 @@ async function createReservation(req, res) {
 
       beveragePairing,
       packageName,
-      table,
       specialRequests
     } = req.body;
 
 
-    const reservationId = await generateNextReservationId();
+    // =========================
+    // CHECK RESTAURANT CAPACITY
+    // =========================
 
+    const capacityValidation =
+      await validateRestaurantCapacity({
+        date,
+        time,
+        partySize
+      });
+
+    if (capacityValidation) {
+      return res.status(
+        capacityValidation.status
+      ).json({
+        message: capacityValidation.message
+      });
+    }
+
+    const reservationId =
+      await generateNextReservationId();
 
     // =========================
     // CREATE RESERVATION
@@ -202,8 +537,6 @@ async function createReservation(req, res) {
 
         servicePeriod,
 
-        seating,
-
         diningOption,
 
         tastingMenu,
@@ -221,7 +554,7 @@ async function createReservation(req, res) {
 
         packageName,
 
-        table,
+        table: '',
 
         specialRequests,
 
@@ -292,7 +625,6 @@ function getReservationChanges(previous, updated) {
     time: 'Reservation time',
     partySize: 'Party size',
     servicePeriod: 'Service period',
-    seating: 'Seating',
     diningOption: 'Dining option',
     tastingMenu: 'Tasting menu',
     selectedDishes: 'Dining selections',
@@ -462,36 +794,25 @@ async function updateReservation(req, res) {
     const allowedFields = [
 
       'guestName',
-
       'email',
-
       'phone',
-
       'date',
-
       'time',
-
       'partySize',
-
       'servicePeriod',
-
-      'seating',
-
       'diningOption',
-
       'tastingMenu',
-
       'selectedDishes',
-
       'beveragePairing',
-
       'packageName',
-
-      'table',
-
       'specialRequests'
 
     ];
+
+    // Only admins can assign or change tables.
+    if (req.user.role === 'admin') {
+      allowedFields.push('table');
+    }
 
     // =========================
     // CHECK TABLE ASSIGNMENT
@@ -524,6 +845,77 @@ async function updateReservation(req, res) {
 
       }
     );
+
+
+    // =========================
+    // VALIDATE TABLE ASSIGNMENT
+    // =========================
+
+    const tableValidation =
+      await validateTableAssignment({
+
+        table: reservation.table,
+
+        date: reservation.date,
+
+        time: reservation.time,
+
+        partySize: reservation.partySize,
+
+        excludeReservationId:
+          reservation.reservationId
+
+      });
+
+    if (tableValidation) {
+
+      return res.status(
+        tableValidation.status
+      ).json({
+
+        message: tableValidation.message
+
+      });
+
+    }
+
+    // =========================
+    // VALIDATE RESTAURANT CAPACITY
+    // =========================
+
+    if (
+      !['Cancelled', 'Completed'].includes(
+        reservation.status
+      )
+    ) {
+
+      const capacityValidation =
+        await validateRestaurantCapacity({
+
+          date: reservation.date,
+
+          time: reservation.time,
+
+          partySize: reservation.partySize,
+
+          excludeReservationId:
+            reservation.reservationId
+
+        });
+
+      if (capacityValidation) {
+
+        return res.status(
+          capacityValidation.status
+        ).json({
+
+          message: capacityValidation.message
+
+        });
+
+      }
+
+    }
 
 
     // =========================
@@ -729,14 +1121,105 @@ async function updateReservationStatus(
             'Only pending or confirmed reservations can be modified'
         });
       }
+
+      // Guests can only cancel reservations.
+      if (status !== 'Cancelled') {
+        return res.status(403).json({
+          message:
+            'Guests are only allowed to cancel reservations.'
+        });
+      }
     }
+
+    // =========================
+    // VALIDATE RESTAURANT CAPACITY
+    // =========================
+
+    if (
+      req.user.role === 'admin' &&
+      ['Pending', 'Confirmed', 'Seated'].includes(status)
+    ) {
+
+      const capacityValidation =
+        await validateRestaurantCapacity({
+
+          date: reservation.date,
+
+          time: reservation.time,
+
+          partySize: reservation.partySize,
+
+          excludeReservationId:
+            reservation.reservationId
+
+        });
+
+      if (capacityValidation) {
+
+        return res.status(
+          capacityValidation.status
+        ).json({
+
+          message: capacityValidation.message
+
+        });
+
+      }
+
+    }
+
+    // =========================
+    // VALIDATE TABLE BEFORE CONFIRMATION
+    // =========================
+
+    if (
+      req.user.role === 'admin' &&
+      (status === 'Confirmed' || status === 'Seated')
+    ) {
+
+      if (!reservation.table) {
+        return res.status(400).json({
+          message:
+            'Please assign a table before confirming or seating this reservation.'
+        });
+      }
+
+      const tableValidation =
+        await validateTableAssignment({
+
+          table: reservation.table,
+
+          date: reservation.date,
+
+          time: reservation.time,
+
+          partySize: reservation.partySize,
+
+          excludeReservationId:
+            reservation.reservationId
+
+        });
+
+      if (tableValidation) {
+
+        return res.status(
+          tableValidation.status
+        ).json({
+
+          message: tableValidation.message
+
+        });
+
+      }
+
+    }
+
 
     // =========================
     // UPDATE STATUS
     // =========================
 
-    reservation.status =
-      status;
+    reservation.status = status;
 
     await reservation.save();
 

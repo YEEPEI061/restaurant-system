@@ -63,7 +63,7 @@
               <span class="service-copy">
                 <strong>Dinner Service</strong>
                 <span>Tuesday – Sunday</span>
-                <span class="service-hours">17:30 – 23:00</span>
+                <span class="service-hours">17:30 – 22:00</span>
               </span>
 
               <span class="material-symbols-outlined selection-icon">
@@ -407,43 +407,12 @@
           }
         </section>
 
-        <!-- 05 Seating -->
+
+        <!-- 05 Time -->
         <section class="booking-card">
           <div class="section-heading">
             <div>
-              <span class="step-label">05 / SEATING ATMOSPHERE</span>
-              <h2>Choose your seating</h2>
-            </div>
-            <span class="optional-label">Subject to availability</span>
-          </div>
-
-          <div class="seating-options">
-            @for (option of seatingOptions; track option.name) {
-            <button type="button" class="seating-option" [class.selected]="selectedSeating === option.name"
-              [attr.aria-pressed]="selectedSeating === option.name" (click)="selectSeating(option.name)">
-              <span class="seating-topline">
-                <span class="material-symbols-outlined">
-                  {{ option.icon }}
-                </span>
-                <span class="seating-badge">{{ option.label }}</span>
-              </span>
-
-              <strong>{{ option.name }}</strong>
-              <span class="seating-description">{{ option.description }}</span>
-
-              <span class="seating-choice">
-                {{ selectedSeating === option.name ? 'Selected' : 'Choose seating' }}
-              </span>
-            </button>
-            }
-          </div>
-        </section>
-
-        <!-- 06 Time -->
-        <section class="booking-card">
-          <div class="section-heading">
-            <div>
-              <span class="step-label">06 / AVAILABLE TIMES</span>
+              <span class="step-label">05 / AVAILABLE TIMES</span>
               <h2>Select your arrival time</h2>
             </div>
             <span class="optional-label">Local restaurant time</span>
@@ -501,11 +470,6 @@
             </div>
 
             <div class="summary-detail">
-              <span>SEATING</span>
-              <strong>{{ selectedSeating }}</strong>
-            </div>
-
-            <div class="summary-detail full-width">
               <span>SERVICE</span>
               <strong>
                 {{ selectedPeriod === 'dinner' ? 'Dinner Service' : 'Weekend Brunch' }}
@@ -812,7 +776,7 @@ ERROR MESSAGE
 
 @if (errorMessage) {
 
-<div class="message-modal-backdrop error-backdrop" role="alert">
+<div class="message-modal-backdrop error-backdrop" role="presentation" (click)="onErrorBackdropClick($event)">
 
   <div class="message-card error-card">
 

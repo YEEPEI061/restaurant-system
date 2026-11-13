@@ -46,7 +46,6 @@ interface ReservationDetails {
   date?: string;
   time?: string;
   partySize?: number;
-  seating?: string;
   diningOption?: 'tasting' | 'alacarte' | 'table';
   tastingMenu?: string;
   packageName?: string;
@@ -88,9 +87,6 @@ export class ReservationsComponent implements OnInit {
 
   largePartySize = 7;
 
-  selectedSeating =
-    'Main Dining Room';
-
   selectedTime = '';
 
   selectedDiningOption =
@@ -126,30 +122,6 @@ export class ReservationsComponent implements OnInit {
     CalendarDay[] = [];
 
   readonly beveragePairingPrice = 56;
-
-  readonly seatingOptions = [
-    {
-      name: 'Main Dining Room',
-      label: 'CLASSIC',
-      description:
-        'An intimate setting with warm oak tables and soft ambient lighting.',
-      icon: 'chair'
-    },
-    {
-      name: "Chef's Counter",
-      label: 'INTERACTIVE',
-      description:
-        'Enjoy a closer view of our chefs preparing seasonal dishes.',
-      icon: 'local_fire_department'
-    },
-    {
-      name: 'Garden Solarium',
-      label: 'SERENE',
-      description:
-        'A calm dining space inspired by greenery and natural light.',
-      icon: 'potted_plant'
-    }
-  ];
 
   readonly tastingMenus = [
     {
@@ -203,7 +175,7 @@ export class ReservationsComponent implements OnInit {
     },
     {
       time: '21:15',
-      label: 'Late seating',
+      label: 'Available',
       disabled: false
     },
     {
@@ -820,16 +792,6 @@ export class ReservationsComponent implements OnInit {
     this.errorMessage = '';
   }
 
-  selectSeating(
-    seating: string
-  ): void {
-
-    this.selectedSeating =
-      seating;
-
-    this.errorMessage = '';
-  }
-
   selectDiningOption(
     option: string
   ): void {
@@ -968,16 +930,6 @@ export class ReservationsComponent implements OnInit {
         partySize || 2;
 
     }
-
-
-    // =========================
-    // SEATING
-    // =========================
-
-    this.selectedSeating =
-      reservation.seating ||
-      'Main Dining Room';
-
 
     // =========================
     // DINING OPTION
@@ -1181,13 +1133,6 @@ export class ReservationsComponent implements OnInit {
           }
 
           /*
-           * Seating
-           */
-          this.selectedSeating =
-            reservation.seating ||
-            'Main Dining Room';
-
-          /*
            * Dining option
            */
           this.selectedDiningOption =
@@ -1287,7 +1232,6 @@ export class ReservationsComponent implements OnInit {
         time: this.selectedTime,
         partySize: this.guestCount,
         servicePeriod: this.selectedPeriod,
-        seating: this.selectedSeating,
         diningOption: this.selectedDiningOption,
         tastingMenu: this.selectedTastingMenu,
         selectedDishes: this.tastingList,
@@ -1471,9 +1415,6 @@ export class ReservationsComponent implements OnInit {
       servicePeriod:
         this.selectedPeriod,
 
-      seating:
-        this.selectedSeating,
-
       diningOption:
         this.selectedDiningOption as
         'tasting' |
@@ -1639,6 +1580,21 @@ export class ReservationsComponent implements OnInit {
           return;
         }
 
+        // =========================
+        // RESERVATION CAPACITY ERROR
+        // =========================
+
+        if (error.status === 409) {
+
+          this.errorTitle =
+            'Time Slot Unavailable';
+
+          this.errorMessage =
+            error?.error?.message ||
+            'This time slot does not have enough capacity. Please select another time or date.';
+
+          return;
+        }
 
         // =========================
         // VALIDATION ERROR
@@ -1766,6 +1722,10 @@ export class ReservationsComponent implements OnInit {
 
   }
 
-
+  onErrorBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.clearError();
+    }
+  }
 
 }

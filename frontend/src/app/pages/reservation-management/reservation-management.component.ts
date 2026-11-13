@@ -1,6 +1,7 @@
 import {
   Component,
-  OnInit, HostListener
+  OnInit, HostListener,
+  OnDestroy
 } from '@angular/core';
 
 import {
@@ -21,6 +22,7 @@ import {
 import {
   WebSocketService
 } from '../../services/websocket.service';
+import { interval, Subscription } from 'rxjs';
 
 
 import { HeaderComponent } from '../../components/header/header.component';
@@ -48,6 +50,7 @@ type DrawerMode =
 interface RestaurantTable {
   id: string;
   label: string;
+  capacity: number;
 }
 
 
@@ -63,7 +66,6 @@ interface ReservationForm {
   date: string;
   time: string;
 
-  seating: string;
   packageName: string;
   table: string;
 
@@ -82,7 +84,6 @@ interface ReservationRequest {
   date: string;
   time: string;
   partySize: number;
-  seating: string;
   servicePeriod: 'dinner' | 'brunch';
   diningOption: 'tasting' | 'alacarte' | 'table';
   tastingMenu: string;
@@ -113,7 +114,7 @@ interface ReservationRequest {
     './reservation-management.component.css'
 })
 export class ReservationManagementComponent
-  implements OnInit {
+  implements OnInit, OnDestroy {
 
   /*
    * --------------------------------------------------
@@ -177,59 +178,44 @@ export class ReservationManagementComponent
    */
 
   tables: RestaurantTable[] = [
-
-    {
-      id: 'T01',
-      label: 'Table 01'
-    },
-
-    {
-      id: 'T02',
-      label: 'Table 02'
-    },
-
-    {
-      id: 'T03',
-      label: 'Table 03'
-    },
-
-    {
-      id: 'T04',
-      label: 'Table 04'
-    },
-
-    {
-      id: 'T05',
-      label: 'Table 05'
-    },
-
-    {
-      id: 'T06',
-      label: 'Table 06'
-    },
-
-    {
-      id: 'T07',
-      label: 'Table 07'
-    },
-
-    {
-      id: 'T08',
-      label: 'Table 08'
-    },
-
-    {
-      id: 'T09',
-      label: 'Table 09'
-    },
-
-    {
-      id: 'T10',
-      label: 'Table 10'
-    }
-
+    { id: 'T01', label: 'Table 01', capacity: 2 },
+    { id: 'T02', label: 'Table 02', capacity: 2 },
+    { id: 'T03', label: 'Table 03', capacity: 2 },
+    { id: 'T04', label: 'Table 04', capacity: 4 },
+    { id: 'T05', label: 'Table 05', capacity: 4 },
+    { id: 'T06', label: 'Table 06', capacity: 4 },
+    { id: 'T07', label: 'Table 07', capacity: 4 },
+    { id: 'T08', label: 'Table 08', capacity: 6 },
+    { id: 'T09', label: 'Table 09', capacity: 6 },
+    { id: 'T10', label: 'Table 10', capacity: 8 }
   ];
 
+  private reservationCompletionSubscription?: Subscription;
+
+  /*
+ * --------------------------------------------------
+ * TABLE CAPACITY VALIDATION
+ * --------------------------------------------------
+ */
+
+  getTableCapacity(tableId: string): number {
+    return this.tables.find(
+      table => table.id === tableId
+    )?.capacity ?? 0;
+  }
+
+  isTableCapacitySuitable(
+    tableId: string,
+    partySize: number
+  ): boolean {
+    const capacity = this.getTableCapacity(tableId);
+
+    return (
+      capacity > 0 &&
+      partySize > 0 &&
+      partySize <= capacity
+    );
+  }
 
   /*
    * --------------------------------------------------
@@ -352,6 +338,17 @@ export class ReservationManagementComponent
 
       });
 
+    this.completePastReservations();
+
+    this.reservationCompletionSubscription = interval(10000)
+      .subscribe(() => {
+        this.completePastReservations();
+      });
+
+  }
+
+  ngOnDestroy(): void {
+    this.reservationCompletionSubscription?.unsubscribe();
   }
 
 
@@ -433,8 +430,6 @@ export class ReservationManagementComponent
 
       time: '18:00',
 
-      seating: 'Main Dining Room',
-
       packageName:
         'Seven Course Odyssey',
 
@@ -507,8 +502,6 @@ export class ReservationManagementComponent
 
       time:
         reservation.time || '18:00',
-
-      seating: reservation.seating || 'Main Dining Room',
 
       packageName:
         reservation.packageName ||
@@ -794,29 +787,54 @@ export class ReservationManagementComponent
 
   }
 
-
   /*
    * --------------------------------------------------
    * TABLE ASSIGNMENT
    * --------------------------------------------------
    */
 
-  /*
-  * --------------------------------------------------
-  * TABLE ASSIGNMENT
-  * --------------------------------------------------
-  */
-
   assignTable(
     reservation: Reservation,
     tableId: string
   ): void {
 
+    const previousTable = reservation.table || '';
+    const previousStatus = reservation.status;
+
     /*
-     * Check table availability first.
+     * Restore the original selection when validation fails.
+     */
+    const restoreTable = (): void => {
+      reservation.table = previousTable;
+    };
+
+    /*
+     * Check table capacity.
      */
     if (
       tableId &&
+      !this.isTableCapacitySuitable(
+        tableId,
+        reservation.partySize
+      )
+    ) {
+
+      restoreTable();
+
+      this.showError(
+        'Insufficient Table Capacity',
+        `${tableId} can only accommodate ${this.getTableCapacity(tableId)} guests. This reservation requires ${reservation.partySize} seats.`
+      );
+
+      return;
+    }
+
+    /*
+     * Check table availability.
+     */
+    if (
+      tableId &&
+      tableId !== previousTable &&
       this.isTableOccupied(
         tableId,
         reservation.date,
@@ -824,6 +842,8 @@ export class ReservationManagementComponent
         reservation.reservationId
       )
     ) {
+
+      restoreTable();
 
       this.showError(
         'Table Unavailable',
@@ -833,16 +853,8 @@ export class ReservationManagementComponent
       return;
     }
 
-
-    const previousTable =
-      reservation.table || '';
-
-    const previousStatus =
-      reservation.status;
-
-
     /*
-     * First update the table assignment.
+     * Update table assignment.
      */
     this.reservationService
       .updateReservation(
@@ -856,8 +868,8 @@ export class ReservationManagementComponent
         next: (tableResponse) => {
 
           /*
-           * If a Pending reservation receives
-           * a table, confirm it automatically.
+           * Pending reservation:
+           * Assign table, then confirm.
            */
           if (
             previousStatus === 'Pending' &&
@@ -876,7 +888,6 @@ export class ReservationManagementComponent
                   const updated =
                     statusResponse.reservation;
 
-
                   const index =
                     this.reservations.findIndex(
                       item =>
@@ -884,14 +895,9 @@ export class ReservationManagementComponent
                         reservation.reservationId
                     );
 
-
                   if (index !== -1) {
-
-                    this.reservations[index] =
-                      updated;
-
+                    this.reservations[index] = updated;
                   }
-
 
                   this.showSuccess(
                     'Table Assigned',
@@ -907,10 +913,8 @@ export class ReservationManagementComponent
                     error
                   );
 
-
                   /*
-                   * Try to restore the previous
-                   * table assignment if confirmation fails.
+                   * Restore previous table assignment.
                    */
                   this.reservationService
                     .updateReservation(
@@ -931,6 +935,7 @@ export class ReservationManagementComponent
 
                     });
 
+                  restoreTable();
 
                   this.showError(
                     'Unable to Confirm Reservation',
@@ -942,19 +947,15 @@ export class ReservationManagementComponent
 
               });
 
-
             return;
           }
 
-
           /*
-           * For reservations that were already
-           * Confirmed, Seated, etc., only update
-           * the table.
+           * Other reservation statuses:
+           * Update table only.
            */
           const updated =
             tableResponse.reservation;
-
 
           const index =
             this.reservations.findIndex(
@@ -963,14 +964,9 @@ export class ReservationManagementComponent
                 reservation.reservationId
             );
 
-
           if (index !== -1) {
-
-            this.reservations[index] =
-              updated;
-
+            this.reservations[index] = updated;
           }
-
 
           this.showSuccess(
             tableId
@@ -990,6 +986,7 @@ export class ReservationManagementComponent
             error
           );
 
+          restoreTable();
 
           this.showError(
             'Unable to Assign Table',
@@ -1002,6 +999,7 @@ export class ReservationManagementComponent
       });
 
   }
+
 
   getGroupedReservationDishes(reservation: Reservation): {
     name: string;
@@ -1583,23 +1581,40 @@ export class ReservationManagementComponent
     }
 
     /*
-    * Table availability validation
+    * Table capacity validation
     */
 
     if (
       this.form.table &&
-      !this.isTableAvailable(
-        this.form.table
+      !this.isTableCapacitySuitable(
+        this.form.table,
+        Number(this.form.partySize)
       )
     ) {
 
       this.showError(
-        'Table Unavailable',
-        `${this.form.table} is already occupied at ${this.form.time} on ${this.form.date}.`
+        'Insufficient Table Capacity',
+        `${this.form.table} can only accommodate ${this.getTableCapacity(this.form.table)} guests. Please select a suitable table.`
       );
 
       return;
+    }
 
+    /*
+     * Table availability validation
+     */
+
+    if (
+      this.form.table &&
+      !this.isTableAvailable(this.form.table)
+    ) {
+
+      this.showError(
+        'Table Unavailable',
+        `${this.form.table} is already reserved during this booking period.`
+      );
+
+      return;
     }
 
 
@@ -1631,9 +1646,6 @@ export class ReservationManagementComponent
 
         partySize:
           Number(this.form.partySize),
-
-        seating:
-          'Main Dining Room',
 
         servicePeriod:
           'dinner',
@@ -1978,9 +1990,9 @@ export class ReservationManagementComponent
 
 
   /*
-    * Check whether a table is occupied
-    * at a specific date and time.
-    */
+  * Check whether a table has an overlapping
+  * reservation on a specific date.
+  */
   isTableOccupied(
     tableId: string,
     date: string,
@@ -1988,59 +2000,37 @@ export class ReservationManagementComponent
     excludeReservationId?: string
   ): boolean {
 
-    const requestedTime =
+    const requestedStart =
       this.timeToMinutes(time);
 
-    return this.reservations.some(
-      reservation => {
+    const requestedEnd =
+      requestedStart + 60;
 
-        if (
-          reservation.reservationId ===
-          excludeReservationId
-        ) {
-          return false;
-        }
+    return this.reservations.some(reservation => {
 
-        if (
-          reservation.table !== tableId
-        ) {
-          return false;
-        }
-
-        if (
-          reservation.date !== date
-        ) {
-          return false;
-        }
-
-        if (
-          reservation.status === 'Cancelled' ||
-          reservation.status === 'Completed'
-        ) {
-          return false;
-        }
-
-        const reservationTime =
-          this.timeToMinutes(
-            reservation.time
-          );
-
-        /*
-          * Table is occupied for one hour
-          * from the reservation time.
-          *
-          * Example:
-          * 18:30 → occupied until 19:30
-          */
-
-        return (
-          requestedTime >= reservationTime &&
-          requestedTime < reservationTime + 60
-        );
-
+      if (
+        reservation.reservationId === excludeReservationId ||
+        reservation.table !== tableId ||
+        reservation.date !== date ||
+        reservation.status === 'Cancelled' ||
+        reservation.status === 'Completed'
+      ) {
+        return false;
       }
-    );
 
+      const existingStart =
+        this.timeToMinutes(reservation.time);
+
+      const existingEnd =
+        existingStart + 60;
+
+      // Check whether the two booking periods overlap.
+      return (
+        requestedStart < existingEnd &&
+        requestedEnd > existingStart
+      );
+
+    });
   }
 
 
@@ -2244,6 +2234,12 @@ export class ReservationManagementComponent
 
   }
 
+  onErrorBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.clearError();
+    }
+  }
+
 
   private formatDateForInput(
     value: string
@@ -2425,20 +2421,45 @@ export class ReservationManagementComponent
 
   }
 
+
   private completePastReservations(): void {
 
-    const today =
-      this.toDateInputValue(new Date());
+    const now = new Date();
 
-    const pastReservations =
-      this.reservations.filter(
-        reservation =>
-          reservation.date < today &&
-          reservation.status !== 'Completed' &&
-          reservation.status !== 'Cancelled'
-      );
+    const currentDate = this.toDateInputValue(now);
 
-    for (const reservation of pastReservations) {
+    const currentMinutes =
+      now.getHours() * 60 + now.getMinutes();
+
+    const seatedReservations =
+      this.reservations.filter(reservation => {
+
+        if (reservation.status !== 'Seated') {
+          return false;
+        }
+
+        // Only process today's and past reservations.
+        if (reservation.date > currentDate) {
+          return false;
+        }
+
+        // Reservations from previous dates are overdue.
+        if (reservation.date < currentDate) {
+          return true;
+        }
+
+        // Calculate the scheduled end time (1 hour).
+        const [hours, minutes] =
+          reservation.time.split(':').map(Number);
+
+        const reservationEndMinutes =
+          hours * 60 + minutes + 60;
+
+        return currentMinutes >= reservationEndMinutes;
+
+      });
+
+    for (const reservation of seatedReservations) {
 
       this.reservationService
         .updateReservationStatus(
@@ -2457,10 +2478,8 @@ export class ReservationManagementComponent
               );
 
             if (index !== -1) {
-
               this.reservations[index] =
                 response.reservation;
-
             }
 
           },
@@ -2468,7 +2487,7 @@ export class ReservationManagementComponent
           error: (error) => {
 
             console.error(
-              `Failed to complete past reservation ${reservation.reservationId}:`,
+              `Failed to complete reservation ${reservation.reservationId}:`,
               error
             );
 

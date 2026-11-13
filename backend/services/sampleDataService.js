@@ -108,8 +108,6 @@ async function initialiseSampleData() {
 
         servicePeriod: reservation.servicePeriod,
 
-        seating: reservation.seating,
-
         diningOption: reservation.diningOption,
 
         selectedDishes: reservation.selectedDishes,

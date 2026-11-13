@@ -326,9 +326,18 @@ describe('Reservation Controller', function () {
 
     describe('createReservation', function () {
 
+
         it('should return 500 when creating a reservation fails', async function () {
 
-            sinon.stub(Reservation, 'find').returns({
+            const findStub = sinon.stub(Reservation, 'find');
+
+            // First call: restaurant capacity validation
+            findStub.onCall(0).returns({
+                select: sinon.stub().resolves([])
+            });
+
+            // Second call: reservation ID generation
+            findStub.onCall(1).returns({
                 sort: sinon.stub().rejects(
                     new Error('Database error')
                 )
@@ -341,7 +350,14 @@ describe('Reservation Controller', function () {
 
                 body: {
                     guestName: 'Sofia Chen',
-                    email: 'sofia@example.com'
+                    email: 'sofia@example.com',
+                    phone: '0123456789',
+                    date: '2026-11-01',
+                    time: '19:00',
+                    partySize: 2,
+                    servicePeriod: 'dinner',
+                    diningOption: 'alacarte',
+                    selectedDishes: []
                 }
             };
 
@@ -365,10 +381,9 @@ describe('Reservation Controller', function () {
             expect(statusCode).to.equal(500);
 
             expect(responseBody.message)
-                .to.equal(
-                    'Failed to create reservation'
-                );
+                .to.equal('Failed to create reservation');
         });
+
 
         it('should create a reservation using a mock object', async function () {
 
@@ -383,8 +398,16 @@ describe('Reservation Controller', function () {
                 status: 'Pending'
             };
 
-            // Mock existing reservations for ID generation
-            sinon.stub(Reservation, 'find').resolves([
+
+            const findStub = sinon.stub(Reservation, 'find');
+
+            // First call: restaurant capacity validation
+            findStub.onCall(0).returns({
+                select: sinon.stub().resolves([])
+            });
+
+            // Second call: reservation ID generation
+            findStub.onCall(1).resolves([
                 latestReservation
             ]);
 
@@ -414,7 +437,6 @@ describe('Reservation Controller', function () {
                     time: '19:00',
                     partySize: 2,
                     servicePeriod: 'Dinner',
-                    seating: 'Indoor',
                     diningOption: 'alacarte',
                     selectedDishes: []
                 }
@@ -463,6 +485,8 @@ describe('Reservation Controller', function () {
                 guest: 'guest123',
                 guestName: 'Old Name',
                 partySize: 2,
+                date: '2026-11-01',
+                time: '19:00',
                 status: 'Pending',
                 table: null,
 
@@ -482,6 +506,13 @@ describe('Reservation Controller', function () {
 
             sinon.stub(Reservation, 'findOne')
                 .resolves(reservation);
+
+
+            sinon.stub(Reservation, 'find')
+                .returns({
+                    select: sinon.stub().resolves([])
+                });
+
 
             const req = {
                 params: {
@@ -765,6 +796,10 @@ describe('Reservation Controller', function () {
                 reservationId: 'R-001',
                 guest: 'guest123',
                 status: 'Pending',
+                table: 'T04',
+                date: '2026-12-25',
+                time: '20:00',
+                partySize: 4,
                 save: sinon.stub().resolves()
             };
 
@@ -800,6 +835,12 @@ describe('Reservation Controller', function () {
                     return this;
                 }
             };
+
+            const findStub = sinon.stub(Reservation, 'find');
+
+            findStub.returns({
+                select: sinon.stub().resolves([])
+            });
 
             await updateReservationStatus(req, res);
 

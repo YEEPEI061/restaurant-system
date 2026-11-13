@@ -48,7 +48,6 @@ export interface Reservation {
   time: string;
   partySize: number;
 
-  seating: string;
   servicePeriod: ServicePeriod;
   diningOption: DiningOption;
 
@@ -82,7 +81,6 @@ export interface CreateReservationRequest {
   time: string;
   partySize: number;
 
-  seating: string;
   servicePeriod: ServicePeriod;
   diningOption: DiningOption;
 
@@ -111,7 +109,6 @@ export interface UpdateReservationRequest {
   time?: string;
   partySize?: number;
 
-  seating?: string;
   servicePeriod?: ServicePeriod;
   diningOption?: DiningOption;
 

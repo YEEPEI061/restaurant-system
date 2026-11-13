@@ -1259,4 +1259,10 @@ export class MenuManagementComponent implements OnInit {
 
     return dietaryNames[tag] || tag;
   }
+
+  onErrorBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.clearError();
+    }
+  }
 }

@@ -15,8 +15,6 @@ const reservationData = [
 
     servicePeriod: "dinner",
 
-    seating: "Main Dining Room",
-
     diningOption: "alacarte",
 
     selectedDishes: [
@@ -35,7 +33,7 @@ const reservationData = [
     tastingMenu: "",
     beveragePairing: false,
     packageName: "",
-    table: "",
+    table: "T04",
     specialRequests: "",
 
     status: "Pending"
@@ -56,8 +54,6 @@ const reservationData = [
     partySize: 2,
 
     servicePeriod: "dinner",
-
-    seating: "Main Dining Room",
 
     diningOption: "alacarte",
 
@@ -82,7 +78,7 @@ const reservationData = [
     tastingMenu: "",
     beveragePairing: false,
     packageName: "",
-    table: "",
+    table: "T01",
     specialRequests: "",
 
     status: "Completed"

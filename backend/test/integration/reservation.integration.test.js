@@ -73,7 +73,6 @@ describe('Reservation Integration Tests', function () {
                 time: '19:00',
                 partySize: 2,
                 servicePeriod: 'dinner',
-                seating: 'Main Dining Room',
                 diningOption: 'alacarte',
                 tastingMenu: '',
                 selectedDishes: [
@@ -164,7 +163,6 @@ describe('Reservation Integration Tests', function () {
                 time: '19:00',
                 partySize: 2,
                 servicePeriod: 'dinner',
-                seating: 'Main Dining Room',
                 diningOption: 'alacarte',
                 tastingMenu: '',
                 selectedDishes: [],
@@ -237,7 +235,6 @@ describe('Reservation Integration Tests', function () {
                 time: '19:30',
                 partySize: 2,
                 servicePeriod: 'dinner',
-                seating: 'Main Dining Room',
                 diningOption: 'alacarte',
                 tastingMenu: '',
                 selectedDishes: [],
@@ -308,7 +305,6 @@ describe('Reservation Integration Tests', function () {
                 time: '20:00',
                 partySize: 4,
                 servicePeriod: 'dinner',
-                seating: 'Garden Solarium',
                 diningOption: 'tasting',
                 tastingMenu: 'Aurelia Seasonal Tasting',
                 selectedDishes: [],
@@ -391,7 +387,6 @@ describe('Reservation Integration Tests', function () {
                 time: '19:00',
                 partySize: 2,
                 servicePeriod: 'dinner',
-                seating: 'Main Dining Room',
                 diningOption: 'alacarte',
                 tastingMenu: '',
                 selectedDishes: [],
@@ -433,7 +428,6 @@ describe('Reservation Integration Tests', function () {
                 time: '20:00',
                 partySize: 4,
                 servicePeriod: 'dinner',
-                seating: 'Garden Solarium',
                 diningOption: 'tasting',
                 tastingMenu: 'Aurelia Seasonal Tasting',
                 selectedDishes: [],
@@ -564,7 +558,6 @@ describe('Reservation Integration Tests', function () {
                 time: '19:00',
                 partySize: 2,
                 servicePeriod: 'dinner',
-                seating: 'Main Dining Room',
                 diningOption: 'alacarte',
                 tastingMenu: '',
                 selectedDishes: [],
@@ -655,7 +648,6 @@ describe('Reservation Integration Tests', function () {
                 time: '19:00',
                 partySize: 2,
                 servicePeriod: 'dinner',
-                seating: 'Main Dining Room',
                 diningOption: 'alacarte',
                 tastingMenu: '',
                 selectedDishes: [],
@@ -753,7 +745,6 @@ describe('Reservation Integration Tests', function () {
                 time: '19:00',
                 partySize: 2,
                 servicePeriod: 'dinner',
-                seating: 'Main Dining Room',
                 diningOption: 'alacarte',
                 tastingMenu: '',
                 selectedDishes: [],
@@ -829,7 +820,6 @@ describe('Reservation Integration Tests', function () {
                 time: '20:00',
                 partySize: 4,
                 servicePeriod: 'dinner',
-                seating: 'Garden Solarium',
                 diningOption: 'alacarte',
                 tastingMenu: '',
                 selectedDishes: [],
@@ -872,6 +862,17 @@ describe('Reservation Integration Tests', function () {
 
         const adminToken = adminLoginResponse.body.token;
 
+        // Assign a table before confirming the reservation
+        const assignTableResponse = await request(app)
+            .put(`/api/reservations/${reservationId}`)
+            .set('Authorization', `Bearer ${adminToken}`)
+            .send({
+                table: 'T04'
+            });
+
+        expect(assignTableResponse.status).to.equal(200);
+
+        // Confirm the reservation
         const response = await request(app)
             .patch(`/api/reservations/${reservationId}/status`)
             .set('Authorization', `Bearer ${adminToken}`)
@@ -884,13 +885,12 @@ describe('Reservation Integration Tests', function () {
         expect(response.body.reservation.status)
             .to.equal('Confirmed');
 
-        const reservation =
-            await Reservation.findOne({
-                reservationId
-            });
+        const reservation = await Reservation.findOne({
+            reservationId
+        });
 
-        expect(reservation.status)
-            .to.equal('Confirmed');
+        expect(reservation.status).to.equal('Confirmed');
+        expect(reservation.table).to.equal('T04');
     });
 
     it('should allow an admin to delete a reservation', async function () {
@@ -927,7 +927,6 @@ describe('Reservation Integration Tests', function () {
                 time: '19:00',
                 partySize: 2,
                 servicePeriod: 'dinner',
-                seating: 'Main Dining Room',
                 diningOption: 'alacarte',
                 tastingMenu: '',
                 selectedDishes: [],

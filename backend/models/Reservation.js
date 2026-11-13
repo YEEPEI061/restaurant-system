@@ -60,15 +60,6 @@ const reservationSchema = new mongoose.Schema(
       required: true
     },
 
-    seating: {
-      type: String,
-      enum: [
-        'Main Dining Room',
-        "Chef's Counter",
-        'Garden Solarium'
-      ],
-      required: true
-    },
 
     diningOption: {
       type: String,

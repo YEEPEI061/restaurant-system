@@ -995,4 +995,10 @@ export class UserManagementComponent implements OnInit {
     }
 
   }
+
+  onErrorBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.clearError();
+    }
+  }
 }

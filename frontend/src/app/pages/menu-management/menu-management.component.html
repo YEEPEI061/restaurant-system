@@ -1185,7 +1185,7 @@
 
 @if (errorMessage) {
 
-<div class="message-modal-backdrop error-backdrop" role="alert">
+<div class="message-modal-backdrop error-backdrop" role="presentation" (click)="onErrorBackdropClick($event)">
 
   <div class="message-card error-card">
 

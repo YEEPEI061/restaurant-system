@@ -77,7 +77,6 @@ describe('ReservationsComponent', () => {
             date: '2026-11-14',
             time: '18:00',
             partySize: 2,
-            seating: 'Main Dining Room',
             servicePeriod: 'dinner',
             diningOption: 'tasting',
             tastingMenu: 'Seven Course Odyssey',

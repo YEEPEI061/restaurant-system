@@ -369,4 +369,10 @@ export class RegisterComponent {
     }
 
   }
+
+  onErrorBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.clearError();
+    }
+  }
 }

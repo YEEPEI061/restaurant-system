@@ -333,10 +333,6 @@
                 </th>
 
                 <th>
-                  Seating
-                </th>
-
-                <th>
                   Dining Package
                 </th>
 
@@ -437,36 +433,39 @@
 
 
                 <!-- Table -->
+                <!-- Table -->
                 <td (click)="$event.stopPropagation()">
-
                   <select class="table-select" [ngModel]="reservation.table" [ngModelOptions]="{ standalone: true }"
-                    [attr.aria-label]="
-                        'Assign table for ' +
-                        reservation.reservationId
-                      " (ngModelChange)="
-                        assignTable(reservation, $event)
-                      ">
+                    [disabled]="
+                    reservation.status === 'Completed' ||
+                    reservation.status === 'Cancelled'
+                  " [attr.aria-label]="'Assign table for ' + reservation.reservationId"
+                    (ngModelChange)="assignTable(reservation, $event)">
 
-                    <option value="">
-                      Unassigned
-                    </option>
+                    <option value="">Unassigned</option>
 
-                    @for (
-                    table of tables;
-                    track table.id
-                    ) {
+                    @for (table of tables; track table.id) {
 
                     <option [value]="table.id" [disabled]="
-                            isTableOccupied(
-                              table.id,
-                              reservation.date,
-                              reservation.time,
-                              reservation.reservationId
-                            )
-                          ">
+          !isTableCapacitySuitable(table.id, reservation.partySize) ||
+          (
+            table.id !== reservation.table &&
+            isTableOccupied(
+              table.id,
+              reservation.date,
+              reservation.time,
+              reservation.reservationId
+            )
+          )
+        ">
+
                       {{ table.id }}
 
-                      @if (
+                      @if (!isTableCapacitySuitable(table.id, reservation.partySize)) {
+                      — Insufficient capacity
+                      }
+                      @else if (
+                      table.id !== reservation.table &&
                       isTableOccupied(
                       table.id,
                       reservation.date,
@@ -480,17 +479,10 @@
                     </option>
 
                     }
+
                   </select>
 
                 </td>
-
-                <!-- Seating -->
-                <td>
-                  <div class="reservation-seating">
-                    {{ reservation.seating || 'Not specified' }}
-                  </div>
-                </td>
-
 
                 <!-- Dining package -->
                 <td>
@@ -1425,6 +1417,10 @@
             {{ table.id }} · {{ table.label }}
           </strong>
 
+          <span class="floor-table-capacity">
+            {{ table.capacity }} seats
+          </span>
+
           <span class="material-symbols-outlined">
             table_restaurant
           </span>
@@ -1606,7 +1602,7 @@ ERROR MESSAGE
 
 @if (errorMessage) {
 
-<div class="message-modal-backdrop error-backdrop" role="alert">
+<div class="message-modal-backdrop error-backdrop" role="presentation" (click)="onErrorBackdropClick($event)">
 
   <div class="message-card error-card">
 

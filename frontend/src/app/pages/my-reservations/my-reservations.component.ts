@@ -245,7 +245,6 @@ export class MyReservationsComponent implements OnInit {
             reservation.reservationId,
             reservation.date,
             reservation.time,
-            reservation.seating,
             reservation.tastingMenu,
             reservation.packageName,
             reservation.status
@@ -579,6 +578,12 @@ export class MyReservationsComponent implements OnInit {
     this.selectedReservation = null;
 
     this.clearError();
+  }
+
+  onErrorBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.clearError();
+    }
   }
 
   onCancelBackdropClick(event: MouseEvent): void {

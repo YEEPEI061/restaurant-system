@@ -62,14 +62,6 @@ const createReservationValidator = [
     .isIn(servicePeriods)
     .withMessage('Invalid service period'),
 
-  body('seating')
-    .isIn([
-      'Main Dining Room',
-      "Chef's Counter",
-      'Garden Solarium'
-    ])
-    .withMessage('Invalid seating option'),
-
   body('diningOption')
     .isIn(diningOptions)
     .withMessage('Invalid dining option'),
@@ -180,15 +172,6 @@ const updateReservationValidator = [
     .optional()
     .isIn(servicePeriods)
     .withMessage('Invalid service period'),
-
-  body('seating')
-    .optional()
-    .isIn([
-      'Main Dining Room',
-      "Chef's Counter",
-      'Garden Solarium'
-    ])
-    .withMessage('Invalid seating option'),
 
   body('diningOption')
     .optional()
