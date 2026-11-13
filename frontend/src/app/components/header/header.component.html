@@ -308,10 +308,11 @@ SIGN OUT CONFIRMATION
 
 @if (logoutConfirmOpen) {
 
-<div class="message-modal-backdrop" (click)="cancelLogout()">
+<div class="message-modal-backdrop" role="button" tabindex="0" aria-label="Close logout confirmation"
+  (click)="cancelLogout()" (keydown.enter)="cancelLogout()" (keydown.space)="cancelLogout()">
 
   <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="logout-title"
-    (click)="$event.stopPropagation()">
+    (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
 
     <div class="message-icon logout-message-icon">
 

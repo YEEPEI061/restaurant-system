@@ -474,9 +474,9 @@
   <!-- ALLERGEN MODAL -->
   @if (isDietaryModalOpen && selectedDish) {
 
-  <div class="modal-backdrop" (click)="closeDietaryModal()">
-
-    <div class="dietary-modal" (click)="$event.stopPropagation()">
+  <div class="modal-backdrop" role="presentation" (click)="onDietaryBackdropClick($event)"
+    (keydown.escape)="closeDietaryModal()" tabindex="0">
+    <div class="dietary-modal">
 
       <div class="modal-header">
 
@@ -552,7 +552,8 @@
   <!-- TASTING DRAWER -->
   @if (isTastingDrawerOpen) {
 
-  <div class="drawer-backdrop" (click)="closeTastingDrawer()"></div>
+  <div class="drawer-backdrop" role="presentation" (click)="onTastingDrawerBackdropClick($event)"
+    (keydown.escape)="closeTastingDrawer()" tabindex="0"></div>
 
   <aside class="tasting-drawer">
 
@@ -649,14 +650,16 @@
         Your selection will be synchronized with
         our restaurant team upon table confirmation.
       </p>
-
-      <a (click)="proceedToReservation()">
-        Proceed to Reserve Table
+      
+      <button type="button" class="reserve-link" (click)="proceedToReservation()">
+        <span>
+          Reserve Your Table
+        </span>
 
         <span class="material-symbols-outlined">
           arrow_forward
         </span>
-      </a>
+      </button>
 
     </div>
 
@@ -672,11 +675,9 @@ TASTING LIST DELETE CONFIRMATION
 
 @if (tastingDeleteConfirmOpen) {
 
-<div class="message-modal-backdrop" (click)="cancelTastingDelete()">
-
-  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="tasting-delete-title"
-    (click)="$event.stopPropagation()">
-
+<div class="message-modal-backdrop" role="presentation" (click)="onTastingDeleteBackdropClick($event)"
+  (keydown.escape)="cancelTastingDelete()" tabindex="0">
+  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="tasting-delete-title">
     <div class="message-icon delete-message-icon">
       <span class="material-symbols-outlined">
         delete

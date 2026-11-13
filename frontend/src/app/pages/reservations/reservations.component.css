@@ -1512,6 +1512,10 @@ button {
   letter-spacing: 0.3px;
   color: #6f5b45;
   text-decoration: none;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
 }
 
 .add-dishes-link:hover {

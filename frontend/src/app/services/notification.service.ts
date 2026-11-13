@@ -34,6 +34,10 @@ export interface NotificationResponse {
     unreadCount: number;
 }
 
+export interface NotificationActionResponse {
+    message: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -94,9 +98,11 @@ export class NotificationService {
     // MARK AS READ
     // =========================
 
-    markAsRead(notificationId: string): Observable<any> {
+    markAsRead(
+        notificationId: string
+    ): Observable<NotificationActionResponse> {
 
-        return this.http.patch(
+        return this.http.patch<NotificationActionResponse>(
             `${this.api.baseUrl}${this.endpoint}/${notificationId}/read`,
             {}
         ).pipe(
@@ -123,9 +129,9 @@ export class NotificationService {
     // MARK ALL AS READ
     // =========================
 
-    markAllAsRead(): Observable<any> {
+    markAllAsRead(): Observable<NotificationActionResponse> {
 
-        return this.http.patch(
+        return this.http.patch<NotificationActionResponse>(
             `${this.api.baseUrl}${this.endpoint}/read-all`,
             {}
         ).pipe(

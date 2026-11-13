@@ -10,8 +10,6 @@ import {
 } from '../services/auth.service';
 
 export const adminGuard: CanActivateFn = (
-  route,
-  state
 ) => {
 
   const authService =

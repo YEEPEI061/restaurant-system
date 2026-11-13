@@ -503,13 +503,13 @@
 
 @if (drawerOpen) {
 
-<div class="drawer-backdrop" (click)="closeDrawer()">
-
+<div class="drawer-backdrop" role="presentation" (click)="onUserDrawerBackdropClick($event)"
+  (keydown.escape)="closeDrawer()" tabindex="0">
   <aside class="user-drawer" role="dialog" aria-modal="true" [attr.aria-label]="
-        isCreating
-          ? 'Create user account'
-          : 'Edit user account'
-      " (click)="$event.stopPropagation()">
+      isCreating
+        ? 'Create user account'
+        : 'Edit user account'
+    ">
 
     <!-- Drawer header -->
     <div class="drawer-header">
@@ -933,10 +933,9 @@
 
 @if (deleteConfirmOpen) {
 
-<div class="message-modal-backdrop" (click)="cancelDelete()">
-
-  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="delete-title"
-    (click)="$event.stopPropagation()">
+<div class="message-modal-backdrop" role="presentation" (click)="onDeleteBackdropClick($event)"
+  (keydown.escape)="cancelDelete()" tabindex="0">
+  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="delete-title">
 
     <div class="message-icon delete-message-icon">
 

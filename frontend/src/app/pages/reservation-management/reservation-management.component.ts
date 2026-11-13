@@ -14,7 +14,6 @@ import {
 import {
   ReservationService,
   Reservation,
-  UpdateReservationRequest,
   ReservationStatus,
   SelectedDish
 } from '../../services/reservation.service';
@@ -76,6 +75,25 @@ interface ReservationForm {
   specialRequests: string;
 }
 
+interface ReservationRequest {
+  guestName: string;
+  phone: string;
+  email: string;
+  date: string;
+  time: string;
+  partySize: number;
+  seating: string;
+  servicePeriod: 'dinner' | 'brunch';
+  diningOption: 'tasting' | 'alacarte' | 'table';
+  tastingMenu: string;
+  selectedDishes: SelectedDish[];
+  beveragePairing: boolean;
+  packageName: string;
+  table: string;
+  status?: ReservationStatus;
+  dietaryNotes?: string;
+  specialRequests: string;
+}
 
 @Component({
   selector: 'app-reservation-management',
@@ -508,9 +526,7 @@ export class ReservationManagementComponent
         reservation.status ||
         'Pending',
 
-      dietaryNotes:
-        (reservation as any).dietaryNotes ||
-        '',
+      dietaryNotes: '',
 
       specialRequests:
         reservation.specialRequests ||
@@ -1222,6 +1238,7 @@ export class ReservationManagementComponent
 
   }
 
+
   /*
   * --------------------------------------------------
   * DELETE RESERVATION
@@ -1299,6 +1316,30 @@ export class ReservationManagementComponent
 
       });
 
+  }
+
+  onDrawerOverlayClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeDrawer();
+    }
+  }
+
+  onFloorOverlayClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeFloorMatrix();
+    }
+  }
+
+  onCancelConfirmationBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeCancelConfirmation();
+    }
+  }
+
+  onDeleteConfirmationBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeDeleteConfirmation();
+    }
   }
 
   /*
@@ -1571,8 +1612,7 @@ export class ReservationManagementComponent
       'create'
     ) {
 
-      const request:
-        any = {
+      const request: ReservationRequest = {
 
         guestName:
           this.form.guestName.trim(),
@@ -1678,8 +1718,7 @@ export class ReservationManagementComponent
      * UPDATE
      */
 
-    const update:
-      any = {
+    const update: Partial<ReservationRequest> = {
 
       guestName:
         this.form.guestName.trim(),
@@ -2320,12 +2359,12 @@ export class ReservationManagementComponent
   }
 
 
-  get groupedSelectedDishes(): Array<{
+  get groupedSelectedDishes(): {
     id: string;
     name: string;
     price: number;
     quantity: number;
-  }> {
+  }[] {
 
     const grouped =
       new Map<

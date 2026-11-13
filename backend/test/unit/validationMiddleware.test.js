@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
 
 const validateRequest = require('../../middleware/validationMiddleware');
 

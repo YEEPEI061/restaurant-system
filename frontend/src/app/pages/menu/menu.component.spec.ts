@@ -5,8 +5,12 @@ import { of, Subject } from 'rxjs';
 
 import { MenuComponent } from './menu.component';
 
-import { MenuService } from '../../services/menu.service';
-import { TastingService } from '../../services/tasting.service';
+import {
+    MenuService,
+    MenuItem,
+    MenuItemsResponse
+} from '../../services/menu.service';
+import { TastingItem, TastingService } from '../../services/tasting.service';
 import { AuthService } from '../../services/auth.service';
 import { WebSocketService } from '../../services/websocket.service';
 
@@ -17,9 +21,9 @@ describe('MenuComponent', () => {
     let authService: jasmine.SpyObj<AuthService>;
     let webSocketService: jasmine.SpyObj<WebSocketService>;
 
-    const tastingItemsSubject = new Subject<any[]>();
+    const tastingItemsSubject = new Subject<TastingItem[]>();
 
-    const mockMenuItems: any[] = [
+    const mockMenuItems: MenuItem[] = [
         {
             _id: '1',
             dishId: 'D001',
@@ -91,11 +95,16 @@ describe('MenuComponent', () => {
         webSocketService = jasmine.createSpyObj(
             'WebSocketService',
             ['connect'],
-            { messages$: new Subject<any>() }
+            { messages$: new Subject<unknown>() }
         );
 
+        const mockMenuItemsResponse: MenuItemsResponse = {
+            count: mockMenuItems.length,
+            menuItems: mockMenuItems
+        };
+
         menuService.getMenuItems.and.returnValue(
-            of({ menuItems: mockMenuItems } as any)
+            of(mockMenuItemsResponse)
         );
 
         tastingService.getItems.and.returnValue([]);

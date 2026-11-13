@@ -1,3 +1,4 @@
+
 name: Aurelia Application CI/CD
 
 on:
@@ -43,6 +44,10 @@ jobs:
         working-directory: backend
         run: npm test
 
+      - name: Run backend lint
+        working-directory: backend
+        run: npm run lint
+
 
   frontend-ci:
     name: Frontend CI
@@ -66,6 +71,10 @@ jobs:
       - name: Run Angular tests
         working-directory: frontend
         run: npm test -- --watch=false
+
+      - name: Run frontend lint
+        working-directory: frontend
+        run: npm run lint
 
       - name: Build Angular application
         working-directory: frontend

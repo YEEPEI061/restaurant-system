@@ -7,7 +7,8 @@
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0",
     "build": "ng build",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint"
   },
   "dependencies": {
     "@angular/animations": "^18.2.0",
@@ -27,12 +28,15 @@
     "@angular/cli": "^18.2.0",
     "@angular/compiler-cli": "^18.2.0",
     "@types/jasmine": "^5.1.4",
+    "angular-eslint": "18.4.3",
+    "eslint": "^9.15.0",
     "jasmine-core": "^4.6.1",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",
     "karma-coverage": "^2.2.1",
     "karma-jasmine": "^5.1.0",
     "karma-jasmine-html-reporter": "^2.3.0",
-    "typescript": "~5.5.0"
+    "typescript": "~5.5.0",
+    "typescript-eslint": "8.16.0"
   }
 }

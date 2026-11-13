@@ -1,15 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../services/auth.service';
 import { provideHttpClient } from '@angular/common/http';
+import { SignupResponse } from '../../models/auth.model';
 
 describe('RegisterComponent', () => {
 
     let authService: jasmine.SpyObj<AuthService>;
-    let router: Router;
 
     beforeEach(async () => {
 
@@ -21,8 +21,20 @@ describe('RegisterComponent', () => {
         authService.getUser.and.returnValue(null);
         authService.isLoggedIn.and.returnValue(false);
 
+        const mockSignupResponse: SignupResponse = {
+            message: 'Account created successfully',
+            user: {
+                id: 'guest-001',
+                firstName: 'Amelia',
+                lastName: 'Laurent',
+                email: 'amelia@example.com',
+                phone: '+60123456789',
+                role: 'guest'
+            }
+        };
+
         authService.guestSignup.and.returnValue(
-            of({ message: 'Account created successfully' } as any)
+            of(mockSignupResponse)
         );
 
         await TestBed.configureTestingModule({
@@ -36,8 +48,6 @@ describe('RegisterComponent', () => {
                 provideRouter([])
             ]
         }).compileComponents();
-
-        router = TestBed.inject(Router);
 
     });
 

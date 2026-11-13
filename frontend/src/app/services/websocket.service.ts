@@ -14,7 +14,7 @@ import {
 export interface WebSocketMessage {
     type: string;
     message?: string;
-    data?: any;
+    data?: unknown;
 }
 
 @Injectable({

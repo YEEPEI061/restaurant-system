@@ -25,6 +25,7 @@ import {
 import {
   NotificationService
 } from '../../services/notification.service';
+import { AuthUser } from '../../models/auth.model';
 
 
 @Component({
@@ -225,8 +226,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
 
-  getGuestUser(): any | null {
-
+  getGuestUser(): AuthUser | null {
     if (!this.isGuestLoggedIn()) {
       return null;
     }
@@ -265,8 +265,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
 
-  getAdminUser(): any | null {
 
+
+  getAdminUser(): AuthUser | null {
     if (!this.isAdminLoggedIn()) {
       return null;
     }

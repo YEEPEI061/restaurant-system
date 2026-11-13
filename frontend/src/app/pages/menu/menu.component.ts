@@ -78,7 +78,7 @@ export class MenuComponent implements OnInit {
   tastingList: TastingItem[] = [];
 
   tastingDeleteConfirmOpen = false;
-  tastingItemToDelete: any = null;
+  tastingItemToDelete: TastingItem | null = null;
   successMessage = '';
   successTitle = '';
   successTimeout?: ReturnType<typeof setTimeout>;
@@ -343,7 +343,7 @@ export class MenuComponent implements OnInit {
     this.isTastingDrawerOpen = false;
   }
 
-  openTastingDeleteConfirm(item: any): void {
+  openTastingDeleteConfirm(item: TastingItem): void {
     this.tastingItemToDelete = item;
     this.tastingDeleteConfirmOpen = true;
   }
@@ -366,6 +366,24 @@ export class MenuComponent implements OnInit {
       'Dish Removed',
       `${dishName} has been removed from your tasting list.`
     );
+  }
+
+  onDietaryBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeDietaryModal();
+    }
+  }
+
+  onTastingDrawerBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeTastingDrawer();
+    }
+  }
+
+  onTastingDeleteBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.cancelTastingDelete();
+    }
   }
 
   showSuccess(
@@ -450,7 +468,7 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  get groupedTastingList(): Array<TastingItem & { quantity: number }> {
+  get groupedTastingList(): (TastingItem & { quantity: number })[] {
 
     const grouped =
       new Map<string, TastingItem & { quantity: number }>();

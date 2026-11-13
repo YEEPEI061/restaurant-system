@@ -795,10 +795,9 @@
 
 @if (drawerOpen) {
 
-<div class="drawer-overlay" (click)="closeDrawer()" (keydown.escape)="closeDrawer()">
-
-  <aside class="reservation-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title"
-    (click)="$event.stopPropagation()">
+<div class="drawer-overlay" role="presentation" (click)="onDrawerOverlayClick($event)" (keydown.escape)="closeDrawer()"
+  tabindex="0">
+  <aside class="reservation-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
 
 
     <!-- Drawer header -->
@@ -1340,10 +1339,9 @@
 
 @if (floorMatrixOpen) {
 
-<div class="floor-overlay" (click)="closeFloorMatrix()" (keydown.escape)="closeFloorMatrix()">
-
-  <section class="floor-matrix-modal" role="dialog" aria-modal="true" aria-labelledby="floor-matrix-title"
-    (click)="$event.stopPropagation()">
+<div class="floor-overlay" role="presentation" (click)="onFloorOverlayClick($event)"
+  (keydown.escape)="closeFloorMatrix()" tabindex="0">
+  <section class="floor-matrix-modal" role="dialog" aria-modal="true" aria-labelledby="floor-matrix-title">
 
     <!-- Header -->
     <div class="floor-matrix-header">
@@ -1500,10 +1498,9 @@ CANCEL RESERVATION CONFIRMATION
 
 @if (cancelConfirmOpen) {
 
-<div class="message-modal-backdrop" (click)="closeCancelConfirmation()">
-
-  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="cancel-title"
-    (click)="$event.stopPropagation()">
+<div class="message-modal-backdrop" role="presentation" (click)="onCancelConfirmationBackdropClick($event)"
+  (keydown.escape)="closeCancelConfirmation()" tabindex="0">
+  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="cancel-title">
 
     <div class="message-icon delete-message-icon">
 
@@ -1653,10 +1650,9 @@ DELETE CONFIRMATION
 
 @if (deleteConfirmOpen) {
 
-<div class="message-modal-backdrop" (click)="closeDeleteConfirmation()">
-
-  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="delete-title"
-    (click)="$event.stopPropagation()">
+<div class="message-modal-backdrop" role="presentation" (click)="onDeleteConfirmationBackdropClick($event)"
+  (keydown.escape)="closeDeleteConfirmation()" tabindex="0">
+  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="delete-title">
 
     <div class="message-icon delete-message-icon">
 

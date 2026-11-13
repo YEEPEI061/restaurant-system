@@ -4,7 +4,11 @@ import { provideRouter } from '@angular/router';
 import { of, Subject } from 'rxjs';
 
 import { ReservationManagementComponent } from './reservation-management.component';
-import { ReservationService } from '../../services/reservation.service';
+import {
+    ReservationService,
+    Reservation,
+    ReservationsResponse
+} from '../../services/reservation.service';
 import { WebSocketService } from '../../services/websocket.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -21,65 +25,89 @@ describe('ReservationManagementComponent', () => {
     const today =
         `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
-    const mockReservations: any[] = [
+    const mockReservations: Reservation[] = [
         {
+            _id: 'mongo-001',
             reservationId: 'R-001',
+            guest: 'guest-001',
             guestName: 'Alex Tan',
             phone: '0123456789',
             email: 'alex@example.com',
             date: today,
             time: '18:00',
             partySize: 2,
+            servicePeriod: 'dinner',
             status: 'Confirmed',
             table: 'T01',
             seating: 'Main Dining Room',
+            diningOption: 'tasting',
+            tastingMenu: 'Seven Course Odyssey',
             packageName: 'Seven Course Odyssey',
             selectedDishes: [],
+            beveragePairing: false,
             specialRequests: ''
         },
         {
+            _id: 'mongo-002',
             reservationId: 'R-002',
+            guest: 'guest-002',
             guestName: 'Sarah Lee',
             phone: '0123456788',
             email: 'sarah@example.com',
             date: today,
             time: '19:00',
             partySize: 3,
+            servicePeriod: 'dinner',
             status: 'Pending',
             table: '',
             seating: 'Garden Solarium',
+            diningOption: 'alacarte',
+            tastingMenu: '',
             packageName: 'À La Carte',
             selectedDishes: [],
+            beveragePairing: false,
             specialRequests: ''
         },
         {
+            _id: 'mongo-003',
             reservationId: 'R-003',
+            guest: 'guest-003',
             guestName: 'David Lim',
             phone: '0123456787',
             email: 'david@example.com',
             date: today,
             time: '20:00',
             partySize: 2,
+            servicePeriod: 'dinner',
             status: 'Seated',
             table: 'T03',
             seating: 'Main Dining Room',
+            diningOption: 'table',
+            tastingMenu: '',
             packageName: 'Table Only',
             selectedDishes: [],
+            beveragePairing: false,
             specialRequests: ''
         },
         {
+            _id: 'mongo-004',
             reservationId: 'R-004',
+            guest: 'guest-004',
             guestName: 'Emily Wong',
             phone: '0123456786',
             email: 'emily@example.com',
             date: today,
             time: '20:30',
             partySize: 4,
+            servicePeriod: 'dinner',
             status: 'Cancelled',
             table: '',
             seating: 'Main Dining Room',
+            diningOption: 'tasting',
+            tastingMenu: 'Five Course Prelude',
             packageName: 'Five Course Prelude',
             selectedDishes: [],
+            beveragePairing: false,
             specialRequests: ''
         }
     ];
@@ -97,7 +125,7 @@ describe('ReservationManagementComponent', () => {
         webSocketService = jasmine.createSpyObj(
             'WebSocketService',
             ['connect'],
-            { messages$: new Subject<any>() }
+            { messages$: new Subject<unknown>() }
         );
 
         authService = jasmine.createSpyObj(
@@ -108,13 +136,16 @@ describe('ReservationManagementComponent', () => {
         authService.getUser.and.returnValue(null);
         authService.isLoggedIn.and.returnValue(false);
 
+        const mockReservationsResponse: ReservationsResponse = {
+            count: mockReservations.length,
+            reservations: mockReservations.map(reservation => ({
+                ...reservation,
+                selectedDishes: [...reservation.selectedDishes]
+            }))
+        };
+
         reservationService.getReservations.and.returnValue(
-            of({
-                reservations: mockReservations.map(reservation => ({
-                    ...reservation,
-                    selectedDishes: [...reservation.selectedDishes]
-                }))
-            } as any)
+            of(mockReservationsResponse)
         );
 
         await TestBed.configureTestingModule({
@@ -169,13 +200,16 @@ describe('ReservationManagementComponent', () => {
     it('should assign a table and update the reservation', () => {
         const reservation = component.reservations[0]; // R-001, Confirmed
 
+        const updatedReservation: Reservation = {
+            ...reservation,
+            table: 'T02'
+        };
+
         reservationService.updateReservation.and.returnValue(
             of({
-                reservation: {
-                    ...reservation,
-                    table: 'T02'
-                }
-            } as any)
+                message: 'Reservation updated successfully',
+                reservation: updatedReservation
+            })
         );
 
         component.assignTable(reservation, 'T02');
@@ -191,13 +225,16 @@ describe('ReservationManagementComponent', () => {
     it('should cancel a reservation after confirmation', () => {
         const reservation = component.reservations[0];
 
-        const cancelledReservation = {
+        const cancelledReservation: Reservation = {
             ...reservation,
             status: 'Cancelled'
         };
 
         reservationService.updateReservationStatus.and.returnValue(
-            of({ reservation: cancelledReservation } as any)
+            of({
+                message: 'Reservation status updated successfully',
+                reservation: cancelledReservation
+            })
         );
 
         // Request cancellation first

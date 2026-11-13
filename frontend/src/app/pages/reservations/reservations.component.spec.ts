@@ -4,7 +4,11 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { ReservationsComponent } from './reservations.component';
-import { ReservationService } from '../../services/reservation.service';
+import {
+    ReservationService,
+    SelectedDish,
+    Reservation
+} from '../../services/reservation.service';
 import { TastingService } from '../../services/tasting.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -17,7 +21,7 @@ describe('ReservationsComponent', () => {
     let tastingService: jasmine.SpyObj<TastingService>;
     let authService: jasmine.SpyObj<AuthService>;
 
-    const mockDishes = [
+    const mockDishes: SelectedDish[] = [
         {
             id: 'D001',
             name: 'French Onion Soup',
@@ -28,7 +32,7 @@ describe('ReservationsComponent', () => {
             name: 'Grilled Salmon',
             price: 65
         }
-    ] as any[];
+    ];
 
     beforeEach(async () => {
 
@@ -63,13 +67,33 @@ describe('ReservationsComponent', () => {
         authService.getUser.and.returnValue(null);
         authService.isLoggedIn.and.returnValue(false);
 
+        const mockCreatedReservation: Reservation = {
+            _id: 'mongo-001',
+            reservationId: 'R-001',
+            guest: 'guest-001',
+            guestName: 'Alex Tan',
+            email: 'alex@example.com',
+            phone: '0123456789',
+            date: '2026-11-14',
+            time: '18:00',
+            partySize: 2,
+            seating: 'Main Dining Room',
+            servicePeriod: 'dinner',
+            diningOption: 'tasting',
+            tastingMenu: 'Seven Course Odyssey',
+            selectedDishes: [],
+            beveragePairing: false,
+            packageName: 'Seven Course Odyssey',
+            table: null,
+            specialRequests: '',
+            status: 'Confirmed'
+        };
+
         reservationService.createReservation.and.returnValue(
             of({
                 message: 'Reservation created successfully',
-                reservation: {
-                    reservationId: 'R-001'
-                }
-            } as any)
+                reservation: mockCreatedReservation
+            })
         );
 
         await TestBed.configureTestingModule({

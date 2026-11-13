@@ -35,6 +35,16 @@ interface UserMember {
   password?: string;
 }
 
+interface UpdateUserRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  role: UserRole;
+  active: boolean;
+  password?: string;
+}
+
 
 @Component({
   selector: 'app-user-management',
@@ -567,7 +577,7 @@ export class UserManagementComponent implements OnInit {
     // UPDATE USER
     // =========================
 
-    const updateData: any = {
+    const updateData: UpdateUserRequest = {
       firstName,
       lastName,
       email,
@@ -748,6 +758,18 @@ export class UserManagementComponent implements OnInit {
 
     this.userToDelete =
       null;
+  }
+
+  onUserDrawerBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeDrawer();
+    }
+  }
+
+  onDeleteBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.cancelDelete();
+    }
   }
 
   // =========================

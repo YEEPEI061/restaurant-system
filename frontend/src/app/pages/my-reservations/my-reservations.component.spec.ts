@@ -1,27 +1,40 @@
+
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 
 import { MyReservationsComponent } from './my-reservations.component';
-import { ReservationService } from '../../services/reservation.service';
+import {
+    ReservationService,
+    Reservation,
+    ReservationsResponse
+} from '../../services/reservation.service';
 import { WebSocketService } from '../../services/websocket.service';
-import { provideHttpClient } from '@angular/common/http';
 
 describe('MyReservationsComponent', () => {
 
     let reservationService: jasmine.SpyObj<ReservationService>;
     let webSocketService: jasmine.SpyObj<WebSocketService>;
 
-    const mockReservations: any[] = [
+    const mockReservations: Reservation[] = [
         {
             _id: '1',
             reservationId: 'R-001',
+            guest: 'guest-001',
+            guestName: 'Test Guest',
+            email: 'guest@example.com',
+            phone: '0123456789',
             date: '2026-12-20',
             time: '19:00',
             partySize: 2,
             servicePeriod: 'dinner',
             seating: 'Main Dining Room',
             diningOption: 'table',
+            tastingMenu: '',
+            packageName: '',
+            table: null,
+            specialRequests: '',
             status: 'Confirmed',
             selectedDishes: [],
             beveragePairing: false
@@ -29,6 +42,10 @@ describe('MyReservationsComponent', () => {
         {
             _id: '2',
             reservationId: 'R-002',
+            guest: 'guest-002',
+            guestName: 'Test Guest',
+            email: 'guest@example.com',
+            phone: '0123456789',
             date: '2026-10-10',
             time: '18:00',
             partySize: 4,
@@ -36,6 +53,9 @@ describe('MyReservationsComponent', () => {
             seating: 'Garden Solarium',
             diningOption: 'tasting',
             tastingMenu: 'Seven-Course Tasting Menu',
+            packageName: '',
+            table: null,
+            specialRequests: '',
             status: 'Completed',
             selectedDishes: [],
             beveragePairing: false
@@ -43,12 +63,20 @@ describe('MyReservationsComponent', () => {
         {
             _id: '3',
             reservationId: 'R-003',
+            guest: 'guest-003',
+            guestName: 'Test Guest',
+            email: 'guest@example.com',
+            phone: '0123456789',
             date: '2026-11-15',
             time: '19:30',
             partySize: 2,
             servicePeriod: 'dinner',
             seating: 'Chef’s Counter',
             diningOption: 'alacarte',
+            tastingMenu: '',
+            packageName: '',
+            table: null,
+            specialRequests: '',
             status: 'Cancelled',
             selectedDishes: [],
             beveragePairing: false
@@ -80,11 +108,13 @@ describe('MyReservationsComponent', () => {
             writable: true
         });
 
+        const mockReservationsResponse: ReservationsResponse = {
+            reservations: mockReservations,
+            count: mockReservations.length
+        };
+
         reservationService.getMyReservations.and.returnValue(
-            of({
-                reservations: mockReservations,
-                count: mockReservations.length
-            })
+            of(mockReservationsResponse)
         );
 
         reservationService.updateReservationStatus.and.returnValue(
@@ -92,8 +122,8 @@ describe('MyReservationsComponent', () => {
                 message: 'Reservation cancelled successfully',
                 reservation: {
                     ...mockReservations[0],
-                    status: 'Cancelled'
-                } as any
+                    status: 'Cancelled' as const
+                }
             })
         );
 

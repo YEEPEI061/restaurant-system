@@ -19,7 +19,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError(error => {
       if (error.status === 401 && token) {
-        let user: any = null;
+        let user: { role?: 'admin' | 'guest' } | null = null;
 
         try {
           user = JSON.parse(

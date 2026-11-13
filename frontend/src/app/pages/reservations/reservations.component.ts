@@ -15,7 +15,8 @@ import { FooterComponent } from '../../components/footer/footer.component';
 
 import {
   ReservationService,
-  CreateReservationRequest
+  CreateReservationRequest,
+  SelectedDish
 } from '../../services/reservation.service';
 
 import {
@@ -33,6 +34,24 @@ interface TimeSlot {
   time: string;
   label: string;
   disabled: boolean;
+}
+
+interface ReservationDetails {
+  reservationId?: string;
+  guestName?: string;
+  email?: string;
+  phone?: string;
+  specialRequests?: string;
+  servicePeriod?: 'dinner' | 'brunch';
+  date?: string;
+  time?: string;
+  partySize?: number;
+  seating?: string;
+  diningOption?: 'tasting' | 'alacarte' | 'table';
+  tastingMenu?: string;
+  packageName?: string;
+  selectedDishes?: SelectedDish[];
+  beveragePairing?: boolean;
 }
 
 @Component({
@@ -270,7 +289,7 @@ export class ReservationsComponent implements OnInit {
       if (savedReservation) {
 
         const reservation =
-          JSON.parse(savedReservation);
+          JSON.parse(savedReservation) as ReservationDetails;
 
         // Get the latest dishes selected from the menu
         const updatedDishes =
@@ -732,7 +751,7 @@ export class ReservationsComponent implements OnInit {
       )
     ) {
 
-      let date =
+      const date =
         new Date(
           this.selectedDate
         );
@@ -849,7 +868,7 @@ export class ReservationsComponent implements OnInit {
   }
 
   private loadReservationForEditing(
-    reservation: any
+    reservation: ReservationDetails
   ): void {
 
     // =========================
@@ -997,7 +1016,7 @@ export class ReservationsComponent implements OnInit {
 
       this.tastingList =
         (reservation.selectedDishes || [])
-          .map((dish: any) => ({
+          .map(dish => ({
             id: dish.id,
             name: dish.name,
             price: Number(dish.price)
@@ -1202,15 +1221,10 @@ export class ReservationsComponent implements OnInit {
               (
                 reservation.selectedDishes ||
                 []
-              ).map((dish: any) => ({
-
+              ).map(dish => ({
                 id: dish.id,
-
                 name: dish.name,
-
-                price:
-                  Number(dish.price)
-
+                price: Number(dish.price)
               }));
 
           } else {
@@ -1699,7 +1713,7 @@ export class ReservationsComponent implements OnInit {
 
   }
 
-  get groupedTastingList(): Array<TastingItem & { quantity: number }> {
+  get groupedTastingList(): (TastingItem & { quantity: number })[] {
 
     const grouped =
       new Map<string, TastingItem & { quantity: number }>();

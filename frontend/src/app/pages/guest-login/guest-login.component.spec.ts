@@ -5,6 +5,7 @@ import { GuestLoginComponent } from './guest-login.component';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AuthResponse } from '../../models/auth.model';
 
 describe('GuestLoginComponent', () => {
 
@@ -77,9 +78,23 @@ describe('GuestLoginComponent', () => {
 
     it('should trim and convert the email to lowercase', () => {
 
-        authService.guestLogin.and.returnValue(of({} as any));
+        authService.guestLogin.and.returnValue(of({
+            message: 'Login successful.',
+            token: 'test-token',
+            user: {
+                id: 'guest-001',
+                firstName: 'John',
+                lastName: 'Smith',
+                email: 'guest@aurelia.com',
+                phone: '',
+                role: 'guest'
+            }
+        } satisfies AuthResponse));
 
-        notificationService.loadNotifications.and.returnValue(of([] as any));
+        notificationService.loadNotifications.and.returnValue(of({
+            notifications: [],
+            unreadCount: 0
+        }));
 
         component.email = '  GUEST@AURELIA.COM  ';
         component.password = 'password123';
@@ -135,9 +150,23 @@ describe('GuestLoginComponent', () => {
 
     it('should load notifications and redirect after successful login', fakeAsync(() => {
 
-        authService.guestLogin.and.returnValue(of({} as any));
+        authService.guestLogin.and.returnValue(of({
+            message: 'Login successful.',
+            token: 'test-token',
+            user: {
+                id: 'guest-001',
+                firstName: 'John',
+                lastName: 'Smith',
+                email: 'guest@aurelia.com',
+                phone: '',
+                role: 'guest'
+            }
+        } satisfies AuthResponse));
 
-        notificationService.loadNotifications.and.returnValue(of([] as any));
+        notificationService.loadNotifications.and.returnValue(of({
+            notifications: [],
+            unreadCount: 0
+        }));
 
         component.email = 'guest@aurelia.com';
         component.password = 'password123';

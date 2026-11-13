@@ -6,7 +6,10 @@ import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 
-import { MenuService } from '../../services/menu.service';
+import {
+  MenuItem,
+  MenuService
+} from '../../services/menu.service';
 
 import {
   Reservation,
@@ -38,7 +41,7 @@ export class AdminDashboardComponent implements OnInit {
   // =========================
 
   reservations: Reservation[] = [];
-  menuItems: any[] = [];
+  menuItems: MenuItem[] = [];
 
   isLoading = true;
   loadError = '';

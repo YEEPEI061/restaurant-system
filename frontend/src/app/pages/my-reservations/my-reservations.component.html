@@ -1225,10 +1225,9 @@ CANCEL RESERVATION CONFIRMATION
 
 @if (showCancelModal && selectedReservation) {
 
-<div class="message-modal-backdrop" (click)="closeCancelModal()">
-
-  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="cancel-title"
-    (click)="$event.stopPropagation()">
+<div class="message-modal-backdrop" role="presentation" (click)="onCancelBackdropClick($event)"
+  (keydown.escape)="closeCancelModal()" tabindex="0">
+  <div class="message-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="cancel-title">
 
     <!-- Icon -->
     <div class="message-icon cancel-message-icon">

@@ -5,6 +5,7 @@ import { AdminLoginComponent } from './admin-login.component';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { Router } from '@angular/router';
+import { AuthResponse } from '../../models/auth.model';
 
 describe('AdminLoginComponent', () => {
 
@@ -66,10 +67,22 @@ describe('AdminLoginComponent', () => {
     it('should trim and convert the staff identifier to lowercase', () => {
 
         authService.adminLogin.and.returnValue(of({
-            user: {}
-        } as any));
+            message: 'Login successful.',
+            token: 'test-token',
+            user: {
+                id: 'admin-001',
+                firstName: 'Admin',
+                lastName: 'User',
+                email: 'staff@aurelia.com',
+                phone: '',
+                role: 'admin'
+            }
+        } satisfies AuthResponse));
 
-        notificationService.loadNotifications.and.returnValue(of([] as any));
+        notificationService.loadNotifications.and.returnValue(of({
+            notifications: [],
+            unreadCount: 0
+        }));
 
         component.staffIdentifier = '  STAFF@AURELIA.COM  ';
         component.password = 'password123';
@@ -126,10 +139,22 @@ describe('AdminLoginComponent', () => {
     it('should load notifications and redirect to admin dashboard', fakeAsync(() => {
 
         authService.adminLogin.and.returnValue(of({
-            user: {}
-        } as any));
+            message: 'Login successful.',
+            token: 'test-token',
+            user: {
+                id: 'admin-001',
+                firstName: 'Admin',
+                lastName: 'User',
+                email: 'staff@aurelia.com',
+                phone: '',
+                role: 'admin'
+            }
+        } satisfies AuthResponse));
 
-        notificationService.loadNotifications.and.returnValue(of([] as any));
+        notificationService.loadNotifications.and.returnValue(of({
+            notifications: [],
+            unreadCount: 0
+        }));
 
         component.staffIdentifier = 'staff@aurelia.com';
         component.password = 'password123';

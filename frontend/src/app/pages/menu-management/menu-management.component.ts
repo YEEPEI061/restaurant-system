@@ -523,6 +523,7 @@ export class MenuManagementComponent implements OnInit {
     this.currentPage = 1;
   }
 
+
   // =========================
   // OPEN ADD DRAWER
   // =========================
@@ -571,6 +572,18 @@ export class MenuManagementComponent implements OnInit {
     this.showDishDrawer = false;
 
     this.editingDishId = null;
+  }
+
+  onDrawerOverlayClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeDrawer();
+    }
+  }
+
+  onDeleteBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.cancelDelete();
+    }
   }
 
   // =========================

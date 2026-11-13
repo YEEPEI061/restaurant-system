@@ -1,13 +1,14 @@
-
-/// <reference types="jasmine" />
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { of, Subject } from 'rxjs';
 
 import { UserManagementComponent } from './user-management.component';
-import { UserService } from '../../services/user.service';
+import {
+    UserService,
+    User,
+    UsersResponse
+} from '../../services/user.service';
 import { WebSocketService } from '../../services/websocket.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -20,7 +21,7 @@ describe('UserManagementComponent', () => {
     let webSocketService: jasmine.SpyObj<WebSocketService>;
     let authService: jasmine.SpyObj<AuthService>;
 
-    const mockUsers: any[] = [
+    const mockUsers: User[] = [
         {
             _id: 'U001',
             firstName: 'Alex',
@@ -76,7 +77,7 @@ describe('UserManagementComponent', () => {
             'WebSocketService',
             ['connect'],
             {
-                messages$: new Subject<any>()
+                messages$: new Subject<unknown>()
             }
         );
 
@@ -88,31 +89,36 @@ describe('UserManagementComponent', () => {
         authService.getUser.and.returnValue(null);
         authService.isLoggedIn.and.returnValue(false);
 
+        const mockUsersResponse: UsersResponse = {
+            count: mockUsers.length,
+            users: mockUsers.map(user => ({ ...user }))
+        };
+
         userService.getUsers.and.returnValue(
-            of({
-                users: mockUsers.map(user => ({ ...user }))
-            } as any)
+            of(mockUsersResponse)
         );
+
+        const createdUser: User = {
+            _id: 'U005',
+            firstName: 'Michael',
+            lastName: 'Chen',
+            email: 'michael@example.com',
+            phone: '0123456785',
+            role: 'guest',
+            active: true
+        };
 
         userService.createUser.and.returnValue(
             of({
                 message: 'User created successfully',
-                user: {
-                    _id: 'U005',
-                    firstName: 'Michael',
-                    lastName: 'Chen',
-                    email: 'michael@example.com',
-                    phone: '0123456785',
-                    role: 'guest',
-                    active: true
-                }
-            } as any)
+                user: createdUser
+            })
         );
 
         userService.deleteUser.and.returnValue(
             of({
                 message: 'User deleted successfully'
-            } as any)
+            })
         );
 
         await TestBed.configureTestingModule({

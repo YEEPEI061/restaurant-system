@@ -581,6 +581,12 @@ export class MyReservationsComponent implements OnInit {
     this.clearError();
   }
 
+  onCancelBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeCancelModal();
+    }
+  }
+
   confirmCancellation(): void {
 
     if (
@@ -650,12 +656,12 @@ export class MyReservationsComponent implements OnInit {
 
   getGroupedSelectedDishes(
     reservation: Reservation
-  ): Array<{
+  ): {
     id: string;
     name: string;
     price: number;
     quantity: number;
-  }> {
+  }[] {
 
     const grouped = new Map<
       string,
@@ -833,4 +839,6 @@ export class MyReservationsComponent implements OnInit {
     }
 
   }
+
+
 }

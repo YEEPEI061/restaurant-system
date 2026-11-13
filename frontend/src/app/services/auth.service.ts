@@ -4,6 +4,14 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { ApiService } from './api.service';
+import {
+  LoginCredentials,
+  GuestSignupData,
+  AuthUser,
+  AuthResponse,
+  SignupResponse,
+  CurrentUserResponse
+} from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +29,8 @@ export class AuthService {
   // GUEST SIGNUP
   // =========================
 
-  guestSignup(data: any): Observable<any> {
-    return this.http.post(
+  guestSignup(data: GuestSignupData): Observable<SignupResponse> {
+    return this.http.post<SignupResponse>(
       `${this.api.baseUrl}${this.endpoint}/guest/signup`,
       data
     );
@@ -32,9 +40,9 @@ export class AuthService {
   // GUEST LOGIN
   // =========================
 
-  guestLogin(data: any): Observable<any> {
+  guestLogin(data: LoginCredentials): Observable<AuthResponse> {
     return this.http
-      .post<any>(
+      .post<AuthResponse>(
         `${this.api.baseUrl}${this.endpoint}/guest/login`,
         data
       )
@@ -49,9 +57,9 @@ export class AuthService {
   // ADMIN LOGIN
   // =========================
 
-  adminLogin(data: any): Observable<any> {
+  adminLogin(data: LoginCredentials): Observable<AuthResponse> {
     return this.http
-      .post<any>(
+      .post<AuthResponse>(
         `${this.api.baseUrl}${this.endpoint}/admin/login`,
         data
       )
@@ -66,8 +74,8 @@ export class AuthService {
   // CURRENT USER
   // =========================
 
-  getCurrentUser(): Observable<any> {
-    return this.http.get(
+  getCurrentUser(): Observable<CurrentUserResponse> {
+    return this.http.get<CurrentUserResponse>(
       `${this.api.baseUrl}${this.endpoint}/me`
     );
   }
@@ -84,12 +92,12 @@ export class AuthService {
   // USER
   // =========================
 
-  getUser(): any | null {
+  getUser(): AuthUser | null {
     const user =
       localStorage.getItem('aurelia_user');
 
     return user
-      ? JSON.parse(user)
+      ? JSON.parse(user) as AuthUser
       : null;
   }
 
@@ -135,7 +143,7 @@ export class AuthService {
 
       return true;
 
-    } catch (error) {
+    } catch {
       // Invalid token format
       this.logout();
       return false;
@@ -156,18 +164,12 @@ export class AuthService {
   // STORE AUTHENTICATION
   // =========================
 
-  private storeAuthentication(
-    response: any
-  ): void {
-
-    if (response?.token) {
-      localStorage.setItem(
-        'aurelia_token',
-        response.token
-      );
+  private storeAuthentication(response: AuthResponse): void {
+    if (response.token) {
+      localStorage.setItem('aurelia_token', response.token);
     }
 
-    if (response?.user) {
+    if (response.user) {
       localStorage.setItem(
         'aurelia_user',
         JSON.stringify(response.user)

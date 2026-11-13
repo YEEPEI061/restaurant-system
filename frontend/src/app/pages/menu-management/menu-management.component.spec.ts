@@ -4,7 +4,11 @@ import { of } from 'rxjs';
 
 import { MenuManagementComponent } from './menu-management.component';
 
-import { MenuService } from '../../services/menu.service';
+import {
+    MenuService,
+    MenuItem,
+    MenuItemsResponse
+} from '../../services/menu.service';
 import { WebSocketService } from '../../services/websocket.service';
 import { AuthService } from '../../services/auth.service';
 import { provideHttpClient } from '@angular/common/http';
@@ -15,8 +19,9 @@ describe('MenuManagementComponent', () => {
     let webSocketService: jasmine.SpyObj<WebSocketService>;
     let authService: jasmine.SpyObj<AuthService>;
 
-    const mockMenuItems: any[] = [
+    const mockMenuItems: MenuItem[] = [
         {
+            _id: 'mongo-001',
             dishId: 'D-001',
             name: 'French Onion Soup',
             description: 'Classic French onion soup',
@@ -31,6 +36,7 @@ describe('MenuManagementComponent', () => {
             allergens: ''
         },
         {
+            _id: 'mongo-002',
             dishId: 'D-002',
             name: 'Grilled Salmon',
             description: 'Fresh salmon with herbs',
@@ -45,6 +51,7 @@ describe('MenuManagementComponent', () => {
             allergens: ''
         },
         {
+            _id: 'mongo-003',
             dishId: 'D-003',
             name: 'Chocolate Tart',
             description: 'Dark chocolate dessert',
@@ -90,12 +97,17 @@ describe('MenuManagementComponent', () => {
         authService.getUser.and.returnValue(null);
         authService.isLoggedIn.and.returnValue(false);
 
+        const mockMenuItemsResponse: MenuItemsResponse = {
+            count: mockMenuItems.length,
+            menuItems: mockMenuItems
+        };
+
         menuService.getMenuItems.and.returnValue(
-            of({ menuItems: mockMenuItems } as any)
+            of(mockMenuItemsResponse)
         );
 
         menuService.deleteMenuItem.and.returnValue(
-            of({ message: 'Menu item deleted successfully' } as any)
+            of({ message: 'Menu item deleted successfully' })
         );
 
         await TestBed.configureTestingModule({
