@@ -25,6 +25,8 @@ services:
       - aurelia-network
 
   backend:
+    build:
+      context: ./backend
     image: ghcr.io/yeepei061/aurelia-backend:${IMAGE_TAG:-latest}
     container_name: restaurant-backend
 
@@ -42,6 +44,8 @@ services:
       - mongodb
 
     restart: unless-stopped
+
+    stop_grace_period: 60s
 
     networks:
       - aurelia-network

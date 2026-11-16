@@ -144,6 +144,13 @@ describe('ReservationManagementComponent', () => {
             of(mockReservationsResponse)
         );
 
+        reservationService.updateReservationStatus.and.returnValue(
+            of({
+                message: 'Reservation status updated successfully',
+                reservation: mockReservations[2]
+            })
+        );
+
         await TestBed.configureTestingModule({
             imports: [ReservationManagementComponent],
             providers: [
@@ -232,6 +239,8 @@ describe('ReservationManagementComponent', () => {
                 reservation: cancelledReservation
             })
         );
+
+        reservationService.updateReservationStatus.calls.reset();
 
         // Request cancellation first
         component.updateStatus(reservation, 'Cancelled');

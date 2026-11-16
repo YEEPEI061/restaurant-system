@@ -42,22 +42,54 @@ function broadcast(data) {
         return;
     }
 
-    const message =
-        JSON.stringify(data);
+    const message = JSON.stringify(data);
 
     webSocketServer.clients.forEach((client) => {
 
-        if (
-            client.readyState ===
-            WebSocket.OPEN
-        ) {
+        if (client.readyState === WebSocket.OPEN) {
             client.send(message);
         }
 
     });
 }
 
+function closeWebSocket() {
+
+    return new Promise((resolve, reject) => {
+
+        if (!webSocketServer) {
+            resolve();
+            return;
+        }
+
+        const server = webSocketServer;
+
+        server.clients.forEach((client) => {
+
+            if (client.readyState === WebSocket.OPEN) {
+                client.close(1001, 'Server shutting down');
+            }
+
+        });
+
+        server.close((error) => {
+
+            if (error) {
+                reject(error);
+                return;
+            }
+
+            webSocketServer = null;
+
+            console.log('WebSocket server closed.');
+
+            resolve();
+        });
+    });
+}
+
 module.exports = {
     initializeWebSocket,
-    broadcast
+    broadcast,
+    closeWebSocket
 };
