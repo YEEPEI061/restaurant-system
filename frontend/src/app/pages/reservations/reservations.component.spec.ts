@@ -25,12 +25,14 @@ describe('ReservationsComponent', () => {
         {
             id: 'D001',
             name: 'French Onion Soup',
-            price: 28
+            price: 28,
+            quantity: 1
         },
         {
             id: 'D002',
             name: 'Grilled Salmon',
-            price: 65
+            price: 65,
+            quantity: 1
         }
     ];
 
@@ -79,10 +81,14 @@ describe('ReservationsComponent', () => {
             partySize: 2,
             servicePeriod: 'dinner',
             diningOption: 'tasting',
-            tastingMenu: 'Seven Course Odyssey',
+            tastingMenus: [
+                {
+                    name: 'Seven Course Odyssey',
+                    quantity: 4,
+                    price: 175
+                }
+            ],
             selectedDishes: [],
-            beveragePairing: false,
-            packageName: 'Seven Course Odyssey',
             table: null,
             specialRequests: '',
             status: 'Confirmed'
@@ -165,29 +171,69 @@ describe('ReservationsComponent', () => {
 
     });
 
-
     it('should calculate the dining subtotal correctly', () => {
 
-        // Default tasting menu: RM175 × 2 guests
+        // No dining selections initially
+        expect(component.diningSubtotal).toBe(0);
+
+        // Two Seven Course Odyssey selections
+        component.selectedTastingMenus = [
+            {
+                name: 'Seven Course Odyssey',
+                quantity: 2,
+                price: 175
+            }
+        ];
+
         expect(component.diningSubtotal).toBe(350);
 
-        // Add beverage pairing: RM56 × 2 guests
-        component.includeBeveragePairing = true;
+        // Multiple tasting menus
+        component.selectedTastingMenus = [
+            {
+                name: 'Seven Course Odyssey',
+                quantity: 1,
+                price: 175
+            },
+            {
+                name: 'Five Course Prelude',
+                quantity: 1,
+                price: 125
+            }
+        ];
 
-        expect(component.diningSubtotal).toBe(462);
+        expect(component.diningSubtotal).toBe(300);
 
-        // À la carte: calculate based on selected dishes
-        component.selectDiningOption('alacarte');
-
-        component.includeBeveragePairing = false;
+        // Hand-picked dishes
+        component.selectedTastingMenus = [];
         component.tastingList = mockDishes;
 
         expect(component.diningSubtotal).toBe(93);
 
+        // Combined tasting menu and hand-picked dishes
+        component.selectedTastingMenus = [
+            {
+                name: 'Seven Course Odyssey',
+                quantity: 1,
+                price: 175
+            }
+        ];
+
+        expect(component.diningSubtotal).toBe(268);
+
     });
 
-
     it('should reject incomplete details and submit a valid reservation', () => {
+
+        // Select a dining option first
+        component.showTastingMenus = true;
+
+        component.selectedTastingMenus = [
+            {
+                name: 'Seven Course Odyssey',
+                quantity: 1,
+                price: 175
+            }
+        ];
 
         // Incomplete contact details
         component.confirmReservation();
@@ -198,7 +244,6 @@ describe('ReservationsComponent', () => {
 
         expect(reservationService.createReservation)
             .not.toHaveBeenCalled();
-
 
         // Complete contact details
         component.guestName = 'Alex Tan';

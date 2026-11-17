@@ -112,9 +112,7 @@ async function initialiseSampleData() {
 
         selectedDishes: reservation.selectedDishes,
 
-        tastingMenu: reservation.tastingMenu,
-        beveragePairing: reservation.beveragePairing,
-        packageName: reservation.packageName,
+        tastingMenus: reservation.tastingMenus,
 
         table: reservation.table,
 

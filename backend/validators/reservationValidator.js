@@ -66,44 +66,32 @@ const createReservationValidator = [
     .isIn(diningOptions)
     .withMessage('Invalid dining option'),
 
-    body('selectedDishes')
+  body('selectedDishes')
     .optional()
     .isArray()
     .withMessage('Selected dishes must be an array'),
-  
+
   body('selectedDishes.*.id')
     .if(body('selectedDishes').exists())
     .trim()
     .notEmpty()
     .withMessage('Selected dish ID is required'),
-  
+
   body('selectedDishes.*.name')
     .if(body('selectedDishes').exists())
     .trim()
     .notEmpty()
     .withMessage('Selected dish name is required'),
-  
+
   body('selectedDishes.*.price')
     .if(body('selectedDishes').exists())
     .isFloat({ min: 0 })
     .withMessage('Selected dish price must be a valid non-negative number'),
 
-  body('tastingMenu')
+  body('tastingMenus')
     .optional()
-    .trim()
-    .isLength({ max: 200 })
-    .withMessage('Tasting menu name cannot exceed 200 characters'),
-
-  body('beveragePairing')
-    .optional()
-    .isBoolean()
-    .withMessage('Beverage pairing must be true or false'),
-
-  body('packageName')
-    .optional()
-    .trim()
-    .isLength({ max: 200 })
-    .withMessage('Package name cannot exceed 200 characters'),
+    .isArray()
+    .withMessage('Tasting menus must be an array'),
 
   body('table')
     .optional()
@@ -178,22 +166,10 @@ const updateReservationValidator = [
     .isIn(diningOptions)
     .withMessage('Invalid dining option'),
 
-  body('tastingMenu')
+body('tastingMenus')
     .optional()
-    .trim()
-    .isLength({ max: 200 })
-    .withMessage('Tasting menu name cannot exceed 200 characters'),
-
-  body('beveragePairing')
-    .optional()
-    .isBoolean()
-    .withMessage('Beverage pairing must be true or false'),
-
-  body('packageName')
-    .optional()
-    .trim()
-    .isLength({ max: 200 })
-    .withMessage('Package name cannot exceed 200 characters'),
+    .isArray()
+    .withMessage('Tasting menus must be an array'),
 
   body('table')
     .optional()

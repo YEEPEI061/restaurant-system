@@ -8,7 +8,7 @@ const reservationData = [
     email: "sofiachen@gmail.com",
     phone: "0125678901",
 
-    date: "2026-10-25",
+    date: "2026-12-02",
     time: "17:30",
 
     partySize: 3,
@@ -21,18 +21,17 @@ const reservationData = [
       {
         id: "M-013",
         name: "Hinoki Forest Cooler",
-        price: 16
+        price: 16,
+        quantity: 1
       },
       {
         id: "M-014",
         name: "Smoked Birch Potato Mousseline",
-        price: 20
+        price: 20,
+        quantity: 1
       }
     ],
 
-    tastingMenu: "",
-    beveragePairing: false,
-    packageName: "",
     table: "T04",
     specialRequests: "",
 
@@ -48,10 +47,10 @@ const reservationData = [
     email: "sofiachen@gmail.com",
     phone: "0125678901",
 
-    date: "2026-10-22",
+    date: "2026-12-02",
     time: "17:30",
 
-    partySize: 2,
+    partySize: 4,
 
     servicePeriod: "dinner",
 
@@ -59,26 +58,28 @@ const reservationData = [
 
     selectedDishes: [
       {
-        id: "tasting-5-course",
-        name: "5-Course Prelude Tasting Menu",
-        price: 125
-      },
-      {
         id: "M-010",
         name: "Hardanger Fjord Trout",
-        price: 26
+        price: 26,
+        quantity: 1
       },
       {
         id: "M-009",
         name: "Koji Fermented Maitake",
-        price: 24
+        price: 24,
+        quantity: 1
       }
     ],
 
-    tastingMenu: "",
-    beveragePairing: false,
-    packageName: "",
-    table: "T01",
+    tastingMenus: [
+      {
+        name: "Five Course Prelude",
+        quantity: 1,
+        price: 125
+      }
+    ],
+
+    table: "T06",
     specialRequests: "",
 
     status: "Completed"

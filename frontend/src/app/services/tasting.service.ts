@@ -5,6 +5,7 @@ export interface TastingItem {
   name: string;
   price: number;
   id: string;
+  quantity: number;
 }
 
 @Injectable({
@@ -26,14 +27,37 @@ export class TastingService {
     this.tastingItemsSubject.next([...items]);
   }
 
-  addItem(item: TastingItem): void {
-    const currentItems =
-      this.tastingItemsSubject.value;
+  addItem(item: Omit<TastingItem, 'quantity'>): void {
 
-    this.tastingItemsSubject.next([
-      ...currentItems,
-      item
-    ]);
+    const currentItems = this.tastingItemsSubject.value;
+
+    const existing = currentItems.find(
+      current => current.id === item.id
+    );
+
+    let updatedItems: TastingItem[];
+
+    if (existing) {
+
+      updatedItems = currentItems.map(current =>
+        current.id === item.id
+          ? { ...current, quantity: current.quantity + 1 }
+          : current
+      );
+
+    } else {
+
+      updatedItems = [
+        ...currentItems,
+        {
+          ...item,
+          quantity: 1
+        }
+      ];
+
+    }
+
+    this.tastingItemsSubject.next(updatedItems);
   }
 
   removeItem(id: string): void {
@@ -51,7 +75,8 @@ export class TastingService {
 
   getTotal(): number {
     return this.tastingItemsSubject.value.reduce(
-      (total, item) => total + item.price,
+      (total, item) =>
+        total + item.price * item.quantity,
       0
     );
   }

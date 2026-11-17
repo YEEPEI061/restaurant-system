@@ -16,7 +16,8 @@ import { FooterComponent } from '../../components/footer/footer.component';
 import {
   ReservationService,
   CreateReservationRequest,
-  SelectedDish
+  SelectedDish,
+  TastingMenuSelection
 } from '../../services/reservation.service';
 
 import {
@@ -46,11 +47,18 @@ interface ReservationDetails {
   date?: string;
   time?: string;
   partySize?: number;
+
+  tastingMenus?: TastingMenuSelection[];
+  showTastingMenus?: boolean;
+  showHandPickDishes?: boolean;
+  orderAtTable?: boolean;
+
+  alacarteGuests?: number;
+  orderAtTableGuests?: number;
+
   diningOption?: 'tasting' | 'alacarte' | 'table';
-  tastingMenu?: string;
-  packageName?: string;
+
   selectedDishes?: SelectedDish[];
-  beveragePairing?: boolean;
 }
 
 @Component({
@@ -70,14 +78,16 @@ export class ReservationsComponent implements OnInit {
 
   today = this.startOfDay(new Date());
 
+  minReservationDate: Date = this.getMinimumReservationDate();
+
   displayedMonth = new Date(
-    this.today.getFullYear(),
-    this.today.getMonth(),
+    this.minReservationDate.getFullYear(),
+    this.minReservationDate.getMonth(),
     1
   );
 
   selectedDate =
-    this.findNextAvailableDate(this.today);
+    this.findNextAvailableDate(this.minReservationDate);
 
   selectedPeriod:
     'dinner' | 'brunch' = 'dinner';
@@ -89,17 +99,20 @@ export class ReservationsComponent implements OnInit {
 
   selectedTime = '';
 
-  selectedDiningOption =
-    'tasting';
+  // =========================
+  // DINING SELECTIONS
+  // =========================
 
-  selectedTastingMenu =
-    'Seven Course Odyssey';
+  showTastingMenus = false;
+  showHandPickDishes = false;
+  orderAtTable = false;
 
-  tastingList:
-    TastingItem[] = [];
+  selectedTastingMenus: TastingMenuSelection[] = [];
 
-  includeBeveragePairing =
-    false;
+  alacarteGuests = 0;
+  orderAtTableGuests = 0;
+
+  tastingList: TastingItem[] = [];
 
   guestName = '';
   guestEmail = '';
@@ -120,8 +133,6 @@ export class ReservationsComponent implements OnInit {
 
   calendarDays:
     CalendarDay[] = [];
-
-  readonly beveragePairingPrice = 56;
 
   readonly tastingMenus = [
     {
@@ -248,38 +259,23 @@ export class ReservationsComponent implements OnInit {
       this.tastingService.getItems();
 
     /*
-     * RETURN FROM MENU WHILE EDITING
-     */
-    const isReturningFromMenu =
-      this.route.snapshot.queryParamMap.get('edit') === 'true';
+    * RETURN FROM MENU
+    */
+    const savedDraft = sessionStorage.getItem('reservationDraft');
 
-    if (isReturningFromMenu) {
+    if (savedDraft) {
+      const reservation = JSON.parse(savedDraft) as ReservationDetails;
+      const updatedDishes = this.tastingService.getItems();
 
-      const savedReservation =
-        sessionStorage.getItem('editingReservation');
+      this.loadReservationForEditing(reservation);
 
-      if (savedReservation) {
-
-        const reservation =
-          JSON.parse(savedReservation) as ReservationDetails;
-
-        // Get the latest dishes selected from the menu
-        const updatedDishes =
-          this.tastingService.getItems();
-
-        // Restore the original reservation details
-        this.loadReservationForEditing(reservation);
-
-        // Use the latest menu selection
-        if (reservation.diningOption === 'alacarte') {
-
-          this.tastingList = updatedDishes;
-
-        }
-
-        return;
+      if (updatedDishes.length > 0) {
+        this.tastingList = updatedDishes;
       }
 
+      this.tastingService.setItems(this.tastingList);
+
+      return;
     }
 
     /*
@@ -315,12 +311,30 @@ export class ReservationsComponent implements OnInit {
     /*
      * NORMAL NEW RESERVATION
      */
-    if (this.tastingList.length > 0) {
-
-      this.selectedDiningOption = 'alacarte';
-
+    if (
+      this.tastingList.length > 0 &&
+      this.selectedTastingMenus.length === 0 &&
+      this.orderAtTableGuests === 0
+    ) {
+      this.alacarteGuests = this.guestCount;
     }
 
+  }
+
+  private getMinimumReservationDate(): Date {
+    const now = new Date();
+
+    const lastReservationTime = new Date(now);
+    lastReservationTime.setHours(21, 15, 0, 0);
+
+    // After 9:15 PM, same-day reservations are no longer allowed.
+    if (now >= lastReservationTime) {
+      now.setDate(now.getDate() + 1);
+    }
+
+    now.setHours(0, 0, 0, 0);
+
+    return now;
   }
 
   private formatDateForApi(
@@ -417,13 +431,123 @@ export class ReservationsComponent implements OnInit {
       : this.brunchTimes;
   }
 
-  get selectedMenu() {
+  // =========================
+  // DINING OPTION TOGGLES
+  // =========================
 
-    return this.tastingMenus.find(
-      menu =>
-        menu.name ===
-        this.selectedTastingMenu
-    ) ?? this.tastingMenus[0];
+  toggleTastingMenus(): void {
+    this.showTastingMenus = !this.showTastingMenus;
+
+    if (this.showTastingMenus) {
+      // Tasting menus can be combined with hand-picked dishes.
+      this.orderAtTable = false;
+    } else {
+      this.selectedTastingMenus = [];
+    }
+  }
+
+  toggleHandPickDishes(): void {
+    this.showHandPickDishes = !this.showHandPickDishes;
+
+    if (this.showHandPickDishes) {
+      // Hand-picked dishes can be combined with tasting menus.
+      this.orderAtTable = false;
+    } else {
+      // Clear selected dishes through TastingService.
+      this.tastingService.clearItems();
+      this.tastingList = [];
+    }
+  }
+
+  toggleOrderAtTable(): void {
+    this.orderAtTable = !this.orderAtTable;
+
+    if (this.orderAtTable) {
+      // Order at Table is mutually exclusive with the other options.
+      this.showTastingMenus = false;
+      this.showHandPickDishes = false;
+
+      this.selectedTastingMenus = [];
+
+      this.tastingService.clearItems();
+      this.tastingList = [];
+
+      this.alacarteGuests = 0;
+      this.orderAtTableGuests = 0;
+    }
+  }
+
+  // =========================
+  // TASTING MENU QUANTITIES
+  // =========================
+
+  getTastingMenuQuantity(menuName: string): number {
+    return this.selectedTastingMenus.find(
+      menu => menu.name === menuName
+    )?.quantity ?? 0;
+  }
+
+  updateTastingMenuQuantity(
+    menuName: string,
+    quantity: number
+  ): void {
+
+    const menu = this.tastingMenus.find(
+      item => item.name === menuName
+    );
+
+    if (!menu) {
+      return;
+    }
+
+    const existing = this.selectedTastingMenus.find(
+      item => item.name === menuName
+    );
+
+    if (quantity <= 0) {
+
+      this.selectedTastingMenus =
+        this.selectedTastingMenus.filter(
+          item => item.name !== menuName
+        );
+
+    } else if (existing) {
+
+      this.selectedTastingMenus =
+        this.selectedTastingMenus.map(item =>
+          item.name === menuName
+            ? { ...item, quantity }
+            : item
+        );
+
+    } else {
+
+      this.selectedTastingMenus = [
+        ...this.selectedTastingMenus,
+        {
+          name: menu.name,
+          quantity,
+          price: menu.price
+        }
+      ];
+
+    }
+
+    this.errorMessage = '';
+
+    const savedDraft = sessionStorage.getItem('reservationDraft');
+
+    if (savedDraft) {
+      const reservation = JSON.parse(savedDraft);
+
+      reservation.tastingMenus = this.selectedTastingMenus;
+      reservation.showTastingMenus = this.showTastingMenus;
+
+      sessionStorage.setItem(
+        'reservationDraft',
+        JSON.stringify(reservation)
+      );
+    }
   }
 
   get guestCount(): number {
@@ -434,64 +558,25 @@ export class ReservationsComponent implements OnInit {
   }
 
   get diningSubtotal(): number {
-    let subtotal = 0;
 
-    /*
-     * Tasting menu
-     * Price is charged per guest.
-     */
-    if (this.selectedDiningOption === 'tasting') {
+    // Tasting menu subtotal
+    const tastingSubtotal =
+      this.selectedTastingMenus.reduce(
+        (total, menu) =>
+          total + menu.price * menu.quantity,
+        0
+      );
 
-      subtotal +=
-        this.selectedMenu.price *
-        this.guestCount;
-    }
+    // À la carte subtotal
+    const alacarteSubtotal =
+      this.tastingList.reduce(
+        (total, item) =>
+          total + item.price * item.quantity,
+        0
+      );
 
-    /*
-     * À la carte
-     * Price is based on the number of dishes selected.
-     * It is NOT multiplied by guest count.
-     */
-    if (this.selectedDiningOption === 'alacarte') {
-
-      subtotal +=
-        this.tastingList.reduce(
-          (total, item) =>
-            total + item.price,
-          0
-        );
-    }
-
-    /*
-     * Beverage pairing
-     * Price is charged per guest.
-     */
-    if (this.includeBeveragePairing) {
-
-      subtotal +=
-        this.beveragePairingPrice *
-        this.guestCount;
-    }
-
-    return subtotal;
-  }
-
-
-  get diningOptionLabel(): string {
-
-    switch (
-    this.selectedDiningOption
-    ) {
-
-      case 'tasting':
-        return 'Set Tasting Menu';
-
-      case 'alacarte':
-        return 'Hand-Pick Dishes';
-
-      default:
-        return 'Order at Table';
-    }
+    return tastingSubtotal +
+      alacarteSubtotal;
   }
 
   private rebuildCalendar(): void {
@@ -561,8 +646,8 @@ export class ReservationsComponent implements OnInit {
           day
         );
 
-      const isPast =
-        date < this.today;
+      const isBeforeMinimumDate =
+        date < this.minReservationDate;
 
       const isMonday =
         date.getDay() === 1;
@@ -570,7 +655,7 @@ export class ReservationsComponent implements OnInit {
       cells.push({
         date,
         disabled:
-          isPast ||
+          isBeforeMinimumDate ||
           isMonday,
         isCurrentMonth: true
       });
@@ -677,29 +762,24 @@ export class ReservationsComponent implements OnInit {
     );
   }
 
-  selectDate(
-    day: CalendarDay
-  ): void {
+  selectDate(day: CalendarDay): void {
 
     if (
       day.disabled ||
-      !day.isCurrentMonth
+      !day.isCurrentMonth ||
+      day.date < this.minReservationDate
     ) {
       return;
     }
 
     if (
-      this.selectedPeriod ===
-      'brunch'
-      &&
+      this.selectedPeriod === 'brunch' &&
       !this.isWeekend(day.date)
     ) {
-
       return;
     }
 
-    this.selectedDate =
-      new Date(day.date);
+    this.selectedDate = new Date(day.date);
 
     this.selectedTime = '';
 
@@ -792,43 +872,6 @@ export class ReservationsComponent implements OnInit {
     this.errorMessage = '';
   }
 
-  selectDiningOption(
-    option: string
-  ): void {
-
-    const previousOption =
-      this.selectedDiningOption;
-
-    this.selectedDiningOption = option;
-
-    // Clear dishes when switching to a different dining option
-    if (
-      previousOption !== option &&
-      (previousOption === 'alacarte' || option === 'alacarte')
-    ) {
-
-      this.tastingList = [];
-
-      this.tastingService.clearItems();
-
-    }
-
-    this.errorMessage = '';
-  }
-
-  selectMenu(
-    menu: string
-  ): void {
-
-    this.selectedTastingMenu =
-      menu;
-
-    this.selectedDiningOption =
-      'tasting';
-
-    this.errorMessage = '';
-  }
-
   private loadReservationForEditing(
     reservation: ReservationDetails
   ): void {
@@ -837,7 +880,8 @@ export class ReservationsComponent implements OnInit {
     // ENABLE EDIT MODE
     // =========================
 
-    this.isEditMode = true;
+    this.isEditMode =
+      !!reservation.reservationId;
 
     // this.editingReservationId =
     //   reservation._id ||
@@ -879,21 +923,32 @@ export class ReservationsComponent implements OnInit {
     // DATE
     // =========================
 
+    // =========================
+    // DATE
+    // =========================
+
     if (reservation.date) {
 
-      const date =
-        new Date(
-          reservation.date + 'T00:00:00'
-        );
+      const date = new Date(
+        reservation.date + 'T00:00:00'
+      );
 
-      this.selectedDate = date;
+      if (!this.isEditMode && date < this.minReservationDate) {
 
-      this.displayedMonth =
-        new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          1
-        );
+        this.selectedDate =
+          this.findNextAvailableDate(this.minReservationDate);
+
+      } else {
+
+        this.selectedDate = date;
+
+      }
+
+      this.displayedMonth = new Date(
+        this.selectedDate.getFullYear(),
+        this.selectedDate.getMonth(),
+        1
+      );
 
       this.rebuildCalendar();
     }
@@ -932,58 +987,66 @@ export class ReservationsComponent implements OnInit {
     }
 
     // =========================
-    // DINING OPTION
+    // DINING SELECTIONS
     // =========================
 
-    this.selectedDiningOption =
-      reservation.diningOption ||
-      'tasting';
+    if (reservation.tastingMenus?.length) {
 
+      this.selectedTastingMenus =
+        reservation.tastingMenus.map(menu => ({
+          ...menu
+        }));
 
-    // =========================
-    // TASTING MENU
-    // =========================
+      this.alacarteGuests =
+        reservation.alacarteGuests ?? 0;
 
-    if (
-      this.selectedDiningOption ===
-      'tasting'
-    ) {
+      this.orderAtTableGuests =
+        reservation.orderAtTableGuests ?? 0;
 
-      this.selectedTastingMenu =
-        reservation.tastingMenu ||
-        reservation.packageName ||
-        'Seven Course Odyssey';
+    } else {
+
+      this.selectedTastingMenus = [];
+
+      this.alacarteGuests = 0;
+
+      this.orderAtTableGuests = 0;
+
+      this.selectedTastingMenus =
+        (reservation.tastingMenus ?? []).map(menu => ({
+          ...menu
+        }));
+
+      this.alacarteGuests =
+        reservation.alacarteGuests ?? 0;
+
+      this.orderAtTableGuests =
+        reservation.orderAtTableGuests ?? 0;
 
     }
 
+    // Restore selected dishes
+    this.tastingList =
+      (reservation.selectedDishes || []).map(dish => ({
+        id: dish.id,
+        name: dish.name,
+        price: Number(dish.price),
+        quantity: dish.quantity ?? 1
+      }));
 
-    // =========================
-    // À LA CARTE DISHES
-    // =========================
+    this.tastingService.setItems(this.tastingList);
 
-    if (
-      this.selectedDiningOption ===
-      'alacarte'
-    ) {
+    // Restore dining option card selections
+    this.showTastingMenus =
+      reservation.showTastingMenus ??
+      this.selectedTastingMenus.length > 0;
 
-      this.tastingList =
-        (reservation.selectedDishes || [])
-          .map(dish => ({
-            id: dish.id,
-            name: dish.name,
-            price: Number(dish.price)
-          }));
+    this.showHandPickDishes =
+      reservation.showHandPickDishes ??
+      this.tastingList.length > 0;
 
-    }
-
-
-    // =========================
-    // BEVERAGE PAIRING
-    // =========================
-
-    this.includeBeveragePairing =
-      reservation.beveragePairing === true;
-
+    this.orderAtTable =
+      reservation.orderAtTable ??
+      (reservation.orderAtTableGuests ?? 0) > 0;
 
     // =========================
     // RESTORE ORIGINAL TIME
@@ -1025,176 +1088,122 @@ export class ReservationsComponent implements OnInit {
 
         next: (response) => {
 
-          const reservation =
-            response.reservation;
+          const reservation = response.reservation;
 
-          /*
-           * IMPORTANT:
-           * Re-booking creates a NEW reservation.
-           * Therefore, keep edit mode disabled.
-           */
+          // Re-booking creates a new reservation
           this.isEditMode = false;
           this.editingReservationId = '';
 
-          /*
-           * Guest information
-           */
-          this.guestName =
-            reservation.guestName || '';
+          // Guest information
+          this.guestName = reservation.guestName || '';
+          this.guestEmail = reservation.email || '';
+          this.guestPhone = reservation.phone || '';
+          this.specialNotes = reservation.specialRequests || '';
 
-          this.guestEmail =
-            reservation.email || '';
-
-          this.guestPhone =
-            reservation.phone || '';
-
-          /*
-           * Special requests
-           */
-          this.specialNotes =
-            reservation.specialRequests || '';
-
-          /*
-           * Service period
-           */
+          // Service period
           this.selectedPeriod =
             reservation.servicePeriod === 'brunch'
               ? 'brunch'
               : 'dinner';
 
-          /*
-           * Date
-           *
-           * For re-booking, we should NOT automatically
-           * use the old date because that date may already
-           * have passed.
-           *
-           * Instead, start from the next available date.
-           */
+          // Start from the next available date
           this.selectedDate =
-            this.findNextAvailableDate(
-              this.today
-            );
+            this.findNextAvailableDate(this.today);
 
-          this.displayedMonth =
-            new Date(
-              this.selectedDate.getFullYear(),
-              this.selectedDate.getMonth(),
-              1
-            );
+          this.displayedMonth = new Date(
+            this.selectedDate.getFullYear(),
+            this.selectedDate.getMonth(),
+            1
+          );
 
           this.rebuildCalendar();
 
-          /*
-           * Time
-           *
-           * Try to keep the old time if it is still available.
-           * Otherwise select the first available time.
-           */
-          const matchingTime =
-            this.currentTimes.find(
-              slot =>
-                slot.time === reservation.time &&
-                !slot.disabled
-            );
+          // Restore time if available
+          const matchingTime = this.currentTimes.find(
+            slot =>
+              slot.time === reservation.time &&
+              !slot.disabled
+          );
 
           if (matchingTime) {
-
-            this.selectedTime =
-              reservation.time;
-
+            this.selectedTime = reservation.time;
           } else {
-
             this.selectFirstAvailableTime();
-
           }
 
-          /*
-           * Party size
-           */
-          const partySize =
-            Number(reservation.partySize);
+          // Restore party size
+          const partySize = Number(reservation.partySize);
 
-          if (
-            Number.isInteger(partySize) &&
-            partySize >= 7
-          ) {
-
+          if (Number.isInteger(partySize) && partySize >= 7) {
             this.partySize = '7+';
-
-            this.largePartySize =
-              partySize;
-
+            this.largePartySize = partySize;
           } else {
-
-            this.partySize =
-              partySize || 2;
-
+            this.partySize = partySize || 2;
           }
 
-          /*
-           * Dining option
-           */
-          this.selectedDiningOption =
-            reservation.diningOption ||
-            'tasting';
+          if (reservation.tastingMenus?.length) {
 
-          /*
-           * Tasting menu
-           */
-          if (
-            this.selectedDiningOption ===
-            'tasting'
-          ) {
-
-            this.selectedTastingMenu =
-              reservation.tastingMenu ||
-              reservation.packageName ||
-              'Seven Course Odyssey';
-
-          }
-
-          /*
-           * À LA CARTE dishes
-           */
-          if (
-            this.selectedDiningOption ===
-            'alacarte'
-          ) {
-
-            this.tastingList =
-              (
-                reservation.selectedDishes ||
-                []
-              ).map(dish => ({
-                id: dish.id,
-                name: dish.name,
-                price: Number(dish.price)
+            this.selectedTastingMenus =
+              reservation.tastingMenus.map(menu => ({
+                name: menu.name,
+                quantity: Number(menu.quantity),
+                price: Number(menu.price)
               }));
 
+            this.alacarteGuests =
+              Number(reservation.alacarteGuests || 0);
+
+            this.orderAtTableGuests =
+              Number(reservation.orderAtTableGuests || 0);
+
           } else {
 
-            /*
-             * Prevent dishes from a previous
-             * TastingService session from appearing
-             * when re-booking another dining option.
-             */
-            this.tastingList = [];
+            this.selectedTastingMenus = [];
+            this.alacarteGuests = 0;
+            this.orderAtTableGuests = 0;
 
+            this.selectedTastingMenus =
+              (reservation.tastingMenus ?? []).map(menu => ({
+                name: menu.name,
+                quantity: Number(menu.quantity),
+                price: Number(menu.price)
+              }));
+
+            this.alacarteGuests =
+              Number(reservation.alacarteGuests || 0);
+
+            this.orderAtTableGuests =
+              Number(reservation.orderAtTableGuests || 0);
           }
 
-          /*
-           * Beverage pairing
-           */
-          this.includeBeveragePairing =
-            reservation.beveragePairing === true;
+          // Restore à la carte dishes and quantities
+          this.tastingList = (
+            reservation.selectedDishes || []
+          ).map(dish => ({
+            id: dish.id,
+            name: dish.name,
+            price: Number(dish.price),
+            quantity: dish.quantity ?? 1
+          }));
 
-          /*
-           * Clear old messages
-           */
+          this.tastingService.setItems(this.tastingList);
+
+          // Restore dining option card selections
+          this.showTastingMenus =
+            reservation.showTastingMenus ??
+            this.selectedTastingMenus.length > 0;
+
+          this.showHandPickDishes =
+            reservation.showHandPickDishes ??
+            this.tastingList.length > 0;
+
+          this.orderAtTable =
+            reservation.orderAtTable ??
+            (reservation.orderAtTableGuests ?? 0) > 0;
+
+          // Clear messages
           this.errorMessage = '';
           this.errorTitle = '';
-
           this.successMessage = '';
           this.successTitle = '';
 
@@ -1207,8 +1216,7 @@ export class ReservationsComponent implements OnInit {
             error
           );
 
-          this.errorTitle =
-            'Unable to Re-book';
+          this.errorTitle = 'Unable to Re-book';
 
           this.errorMessage =
             error?.error?.message ||
@@ -1219,33 +1227,52 @@ export class ReservationsComponent implements OnInit {
       });
   }
 
+
   goToMenuForEditing(): void {
 
+    const savedDraft = sessionStorage.getItem('reservationDraft');
+
+    const previousDraft = savedDraft
+      ? JSON.parse(savedDraft)
+      : {};
+
+    const reservationDraft = {
+      ...previousDraft,
+
+      reservationId: this.editingReservationId,
+      guestName: this.guestName,
+      email: this.guestEmail,
+      phone: this.guestPhone,
+      date: this.formatDateForApi(this.selectedDate),
+      time: this.selectedTime,
+      partySize: this.guestCount,
+      servicePeriod: this.selectedPeriod,
+
+      // Preserve current set menu selections
+      tastingMenus: this.selectedTastingMenus,
+      showTastingMenus: this.showTastingMenus,
+      showHandPickDishes: this.showHandPickDishes,
+      orderAtTable: this.orderAtTable,
+
+      // Preserve selected dishes
+      selectedDishes: this.tastingList,
+
+      specialRequests: this.specialNotes
+    };
+
+    sessionStorage.setItem(
+      'reservationDraft',
+      JSON.stringify(reservationDraft)
+    );
+
     if (this.isEditMode) {
-
-      const editingReservation = {
-        reservationId: this.editingReservationId,
-        guestName: this.guestName,
-        email: this.guestEmail,
-        phone: this.guestPhone,
-        date: this.formatDateForApi(this.selectedDate),
-        time: this.selectedTime,
-        partySize: this.guestCount,
-        servicePeriod: this.selectedPeriod,
-        diningOption: this.selectedDiningOption,
-        tastingMenu: this.selectedTastingMenu,
-        selectedDishes: this.tastingList,
-        beveragePairing: this.includeBeveragePairing,
-        specialRequests: this.specialNotes
-      };
-
       sessionStorage.setItem(
         'editingReservation',
-        JSON.stringify(editingReservation)
+        JSON.stringify(reservationDraft)
       );
-
-      this.tastingService.setItems(this.tastingList);
     }
+
+    this.tastingService.setItems(this.tastingList);
 
     void this.router.navigate(['/menu']);
   }
@@ -1259,6 +1286,16 @@ export class ReservationsComponent implements OnInit {
     this.errorTitle = '';
     this.errorMessage = '';
 
+    if (
+      !this.showTastingMenus &&
+      !this.showHandPickDishes &&
+      !this.orderAtTable
+    ) {
+      this.errorTitle =
+        'Dining Option Required';
+      this.errorMessage = 'Please select at least one dining option before proceeding.';
+      return;
+    }
 
     // =========================
     // VALIDATE CONTACT DETAILS
@@ -1279,6 +1316,14 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
+    if (
+      this.showHandPickDishes &&
+      this.tastingList.length === 0
+    ) {
+      this.errorTitle = 'Dishes Required';
+      this.errorMessage = 'Please select at least one dish for your hand-picked dining experience.';
+      return;
+    }
 
     // =========================
     // VALIDATE DATE AND TIME
@@ -1287,7 +1332,7 @@ export class ReservationsComponent implements OnInit {
     if (
       !this.selectedDate ||
       !this.selectedTime ||
-      this.selectedDate < this.today
+      this.selectedDate < this.minReservationDate
     ) {
 
       this.errorTitle =
@@ -1345,43 +1390,23 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
+    // VALIDATE TASTING MENU QUANTITIES
 
-    // =========================
-    // VALIDATE HAND-PICKED DISHES
-    // =========================
+    const tastingGuestCount =
+      this.selectedTastingMenus.reduce(
+        (total, menu) => total + menu.quantity,
+        0
+      );
 
-    if (
-      this.selectedDiningOption === 'alacarte'
-      && this.tastingList.length === 0
-    ) {
+    if (tastingGuestCount > this.guestCount) {
 
-      this.errorTitle =
-        'No Dishes Selected';
+      this.errorTitle = 'Invalid Tasting Menu Selection';
 
       this.errorMessage =
-        'Please select at least one dish before making a reservation.';
+        'The total number of tasting menus cannot exceed your party size.';
 
       return;
     }
-
-
-    // =========================
-    // PREPARE SELECTED DISHES
-    // =========================
-
-    const selectedDishes =
-      this.selectedDiningOption === 'alacarte'
-
-        ? this.tastingList.map(
-          item => ({
-            id: item.id,
-            name: item.name,
-            price: item.price
-          })
-        )
-
-        : [];
-
 
     // =========================
     // PREPARE RESERVATION DATA
@@ -1412,49 +1437,29 @@ export class ReservationsComponent implements OnInit {
       partySize:
         this.guestCount,
 
-      servicePeriod:
-        this.selectedPeriod,
+      servicePeriod: this.selectedPeriod,
+
+      tastingMenus: this.selectedTastingMenus,
+
+      alacarteGuests: this.alacarteGuests,
+      orderAtTableGuests: this.orderAtTableGuests,
+
+      selectedDishes: this.tastingList.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })),
 
       diningOption:
-        this.selectedDiningOption as
-        'tasting' |
-        'alacarte' |
-        'table',
+        this.selectedTastingMenus.length > 0
+          ? 'tasting'
+          : this.tastingList.length > 0
+            ? 'alacarte'
+            : 'table',
 
-      tastingMenu:
-        this.selectedDiningOption === 'tasting'
-          ? this.selectedTastingMenu
-          : '',
-
-      // =========================
-      // SEND SELECTED DISHES
-      // =========================
-
-      selectedDishes:
-        selectedDishes,
-
-      beveragePairing:
-        this.includeBeveragePairing,
-
-      packageName:
-        this.selectedDiningOption === 'tasting'
-          ? this.selectedTastingMenu
-          : '',
-
-      specialRequests:
-        this.specialNotes.trim()
+      specialRequests: this.specialNotes.trim()
     };
-
-
-    // =========================
-    // DEBUG
-    // =========================
-
-    console.log(
-      'Reservation data:',
-      reservationData
-    );
-
 
     // =========================
     // SUBMIT TO BACKEND
@@ -1493,11 +1498,12 @@ export class ReservationsComponent implements OnInit {
 
         // Clear selected dishes only after the reservation has been saved successfully.
         this.tastingService.clearItems();
-
         this.tastingList = [];
 
-        sessionStorage.removeItem('editingReservation');
+        this.selectedTastingMenus = [];
 
+        sessionStorage.removeItem('editingReservation');
+        sessionStorage.removeItem('reservationDraft');
 
         // =========================
         // EDIT SUCCESS
@@ -1669,32 +1675,8 @@ export class ReservationsComponent implements OnInit {
 
   }
 
-  get groupedTastingList(): (TastingItem & { quantity: number })[] {
-
-    const grouped =
-      new Map<string, TastingItem & { quantity: number }>();
-
-    for (const item of this.tastingList) {
-
-      const existing =
-        grouped.get(item.id);
-
-      if (existing) {
-
-        existing.quantity += 1;
-
-      } else {
-
-        grouped.set(item.id, {
-          ...item,
-          quantity: 1
-        });
-
-      }
-
-    }
-
-    return Array.from(grouped.values());
+  get groupedTastingList(): TastingItem[] {
+    return this.tastingList;
   }
 
   clearError(): void {
@@ -1726,6 +1708,13 @@ export class ReservationsComponent implements OnInit {
     if (event.target === event.currentTarget) {
       this.clearError();
     }
+  }
+
+  get selectedDishCount(): number {
+    return this.tastingList.reduce(
+      (total, item) => total + item.quantity,
+      0
+    );
   }
 
 }

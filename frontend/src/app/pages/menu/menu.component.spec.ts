@@ -200,7 +200,8 @@ describe('MenuComponent', () => {
         component.tastingItemToDelete = {
             id: 'D001',
             name: 'French Onion Soup',
-            price: 35
+            price: 35,
+            quantity: 1
         };
 
         component.tastingDeleteConfirmOpen = true;

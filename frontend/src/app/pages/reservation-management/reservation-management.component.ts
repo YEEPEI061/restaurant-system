@@ -66,10 +66,17 @@ interface ReservationForm {
   date: string;
   time: string;
 
-  packageName: string;
   table: string;
 
+  diningOption: 'tasting' | 'alacarte' | 'table';
+
   selectedDishes: SelectedDish[];
+
+  tastingMenus: {
+    name: string;
+    quantity: number;
+    price: number;
+  }[];
 
   status: ReservationStatus;
 
@@ -85,11 +92,19 @@ interface ReservationRequest {
   time: string;
   partySize: number;
   servicePeriod: 'dinner' | 'brunch';
+
+  alacarteGuests: number;
+  orderAtTableGuests: number;
+
   diningOption: 'tasting' | 'alacarte' | 'table';
-  tastingMenu: string;
   selectedDishes: SelectedDish[];
-  beveragePairing: boolean;
-  packageName: string;
+
+  tastingMenus: {
+    name: string;
+    quantity: number;
+    price: number;
+  }[];
+
   table: string;
   status?: ReservationStatus;
   dietaryNotes?: string;
@@ -216,25 +231,6 @@ export class ReservationManagementComponent
       partySize <= capacity
     );
   }
-
-  /*
-   * --------------------------------------------------
-   * DINING PACKAGES
-   * --------------------------------------------------
-   */
-
-  packages: string[] = [
-
-    'Seven Course Odyssey',
-
-    'Five Course Prelude',
-
-    'À La Carte',
-
-    'Table Only'
-
-  ];
-
 
   /*
    * --------------------------------------------------
@@ -415,34 +411,23 @@ export class ReservationManagementComponent
       this.toDateInputValue(today);
 
     return {
-
       reservationId: '',
-
       guestName: '',
-
       phone: '',
-
       email: '',
-
       partySize: 2,
-
       date,
-
       time: '18:00',
-
-      packageName:
-        'Seven Course Odyssey',
-
       table: '',
 
+      diningOption: 'tasting',
+
       selectedDishes: [],
+      tastingMenus: [],
 
       status: 'Pending',
-
       dietaryNotes: '',
-
       specialRequests: ''
-
     };
 
   }
@@ -503,14 +488,14 @@ export class ReservationManagementComponent
       time:
         reservation.time || '18:00',
 
-      packageName:
-        reservation.packageName ||
-        this.getPackageName(
-          reservation
-        ),
-
       selectedDishes:
         reservation.selectedDishes || [],
+
+      diningOption: reservation.diningOption || 'table',
+
+
+      tastingMenus:
+        reservation.tastingMenus || [],
 
       table:
         reservation.table || '',
@@ -593,7 +578,6 @@ export class ReservationManagementComponent
           reservation.guestName,
           reservation.phone,
           reservation.email,
-          reservation.packageName,
           reservation.table
         ]
           .filter(Boolean)
@@ -1010,7 +994,7 @@ export class ReservationManagementComponent
     for (const dish of reservation.selectedDishes || []) {
       grouped.set(
         dish.name,
-        (grouped.get(dish.name) || 0) + 1
+        (grouped.get(dish.name) || 0) + (dish.quantity ?? 1)
       );
     }
 
@@ -1622,151 +1606,95 @@ export class ReservationManagementComponent
      * CREATE
      */
 
-    if (
-      this.drawerMode ===
-      'create'
-    ) {
+    if (this.drawerMode === 'create') {
+
+      const diningOption = this.form.diningOption;
 
       const request: ReservationRequest = {
+        guestName: this.form.guestName.trim(),
+        phone: this.form.phone.trim(),
+        email: this.form.email.trim(),
+        date: this.form.date,
+        time: this.form.time,
+        partySize: Number(this.form.partySize),
 
-        guestName:
-          this.form.guestName.trim(),
+        servicePeriod: 'dinner',
 
-        phone:
-          this.form.phone.trim(),
+        tastingMenus: this.form.tastingMenus.map(menu => ({
+          ...menu
+        })),
 
-        email:
-          this.form.email.trim(),
+        alacarteGuests:
+          diningOption === 'alacarte'
+            ? Number(this.form.partySize)
+            : 0,
 
-        date:
-          this.form.date,
+        orderAtTableGuests:
+          diningOption === 'table'
+            ? Number(this.form.partySize)
+            : 0,
 
-        time:
-          this.form.time,
+        diningOption,
 
-        partySize:
-          Number(this.form.partySize),
+        selectedDishes: this.form.selectedDishes,
 
-        servicePeriod:
-          'dinner',
+        table: this.form.table,
 
-        diningOption:
-          this.getDiningOption(
-            this.form.packageName
-          ),
+        dietaryNotes: this.form.dietaryNotes.trim(),
 
-        tastingMenu:
-          this.form.packageName,
-
-        selectedDishes:
-          [],
-
-        beveragePairing:
-          false,
-
-        packageName:
-          this.form.packageName,
-
-        table:
-          this.form.table,
-
-        dietaryNotes:
-          this.form.dietaryNotes.trim(),
-
-        specialRequests:
-          this.form.specialRequests.trim()
-
+        specialRequests: this.form.specialRequests.trim()
       };
-
 
       this.reservationService
         .createReservation(request)
         .subscribe({
-
           next: (response) => {
-
             this.reservations = [
-
               response.reservation,
-
               ...this.reservations
-
             ];
 
-
             this.closeDrawer();
-
 
             this.showSuccess(
               'Reservation Created',
               `Reservation ${response.reservation.reservationId} has been created successfully.`
             );
-
           },
 
           error: (error) => {
-
-            console.error(
-              'Create reservation failed:',
-              error
-            );
+            console.error('Create reservation failed:', error);
 
             this.showError(
               'Unable to Create Reservation',
               error?.error?.message ||
               'Unable to create reservation.'
             );
-
           }
-
         });
 
       return;
-
     }
-
-
     /*
      * UPDATE
      */
 
     const update: Partial<ReservationRequest> = {
+      guestName: this.form.guestName.trim(),
+      phone: this.form.phone.trim(),
+      email: this.form.email.trim(),
+      date: this.form.date,
+      time: this.form.time,
+      partySize: Number(this.form.partySize),
 
-      guestName:
-        this.form.guestName.trim(),
+      tastingMenus: this.form.tastingMenus,
+      selectedDishes: this.form.selectedDishes,
 
-      phone:
-        this.form.phone.trim(),
-
-      email:
-        this.form.email.trim(),
-
-      date:
-        this.form.date,
-
-      time:
-        this.form.time,
-
-      partySize:
-        Number(this.form.partySize),
-
-      packageName:
-        this.form.packageName,
-
-      table:
-        this.form.table,
-
-      status:
-        this.form.status,
-
-      dietaryNotes:
-        this.form.dietaryNotes.trim(),
-
-      specialRequests:
-        this.form.specialRequests.trim()
-
+      table: this.form.table,
+      status: this.form.status,
+      dietaryNotes: this.form.dietaryNotes,
+      specialRequests: this.form.specialRequests
     };
-
 
     this.reservationService
       .updateReservation(
@@ -1863,20 +1791,21 @@ export class ReservationManagementComponent
 
   get estimatedTotal(): number {
 
-    if (this.form.packageName === 'À La Carte') {
-
-      return this.groupedSelectedDishes.reduce(
+    const tastingMenuTotal =
+      this.form.tastingMenus.reduce(
+        (total, menu) =>
+          total + (menu.price * menu.quantity),
+        0
+      );
+  
+    const dishTotal =
+      this.groupedSelectedDishes.reduce(
         (total, dish) =>
           total + (dish.price * dish.quantity),
         0
       );
-
-    }
-
-    return (
-      this.packagePrice(this.form.packageName) *
-      this.form.partySize
-    );
+  
+    return tastingMenuTotal + dishTotal;
   }
 
 
@@ -1898,67 +1827,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * PACKAGE NAME FALLBACK
-   * --------------------------------------------------
-   */
-
-  private getPackageName(
-    reservation: Reservation
-  ): string {
-
-    if (
-      reservation.packageName
-    ) {
-
-      return reservation.packageName;
-
-    }
-
-
-    if (
-      reservation.tastingMenu
-    ) {
-
-      return reservation.tastingMenu;
-
-    }
-
-
-    return 'À La Carte';
-
-  }
-
   hasSelectedDishes(reservation: Reservation): boolean {
     return (reservation.selectedDishes?.length ?? 0) > 0;
   }
-
-  /*
-   * --------------------------------------------------
-   * DINING OPTION
-   * --------------------------------------------------
-   */
-
-  private getDiningOption(
-    packageName: string
-  ): 'tasting' | 'alacarte' | 'table' {
-
-    switch (packageName) {
-
-      case 'À La Carte':
-        return 'alacarte';
-
-      case 'Table Only':
-        return 'table';
-
-      default:
-        return 'tasting';
-
-    }
-
-  }
-
 
   /*
   * --------------------------------------------------
@@ -2372,27 +2243,19 @@ export class ReservationManagementComponent
           quantity: number;
         }
       >();
-
     for (const dish of this.form.selectedDishes) {
-
-      const existing =
-        grouped.get(dish.id);
+      const existing = grouped.get(dish.id);
 
       if (existing) {
-
-        existing.quantity += 1;
-
+        existing.quantity += dish.quantity ?? 1;
       } else {
-
         grouped.set(dish.id, {
           id: dish.id,
           name: dish.name,
           price: dish.price,
-          quantity: 1
+          quantity: dish.quantity ?? 1
         });
-
       }
-
     }
 
     return Array.from(grouped.values());
@@ -2499,5 +2362,18 @@ export class ReservationManagementComponent
 
   }
 
+  getDishSummary(reservation: Reservation): string[] {
+    const dishes = this.getGroupedReservationDishes(reservation);
+
+    const firstTwo = dishes
+      .slice(0, 2)
+      .map(dish => dish.name);
+
+    if (dishes.length > 2) {
+      firstTwo[1] += ` +${dishes.length - 2} more`;
+    }
+
+    return firstTwo;
+  }
 
 }

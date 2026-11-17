@@ -30,13 +30,11 @@ describe('MyReservationsComponent', () => {
             partySize: 2,
             servicePeriod: 'dinner',
             diningOption: 'table',
-            tastingMenu: '',
-            packageName: '',
+            tastingMenus: [],
             table: null,
             specialRequests: '',
             status: 'Confirmed',
             selectedDishes: [],
-            beveragePairing: false
         },
         {
             _id: '2',
@@ -50,13 +48,17 @@ describe('MyReservationsComponent', () => {
             partySize: 4,
             servicePeriod: 'dinner',
             diningOption: 'tasting',
-            tastingMenu: 'Seven-Course Tasting Menu',
-            packageName: '',
+            tastingMenus: [
+                {
+                    name: 'Seven Course Odyssey',
+                    quantity: 2,
+                    price: 175
+                }
+            ],
             table: null,
             specialRequests: '',
             status: 'Completed',
             selectedDishes: [],
-            beveragePairing: false
         },
         {
             _id: '3',
@@ -70,13 +72,11 @@ describe('MyReservationsComponent', () => {
             partySize: 2,
             servicePeriod: 'dinner',
             diningOption: 'alacarte',
-            tastingMenu: '',
-            packageName: '',
+            tastingMenus: [],
             table: null,
             specialRequests: '',
             status: 'Cancelled',
             selectedDishes: [],
-            beveragePairing: false
         }
     ];
 

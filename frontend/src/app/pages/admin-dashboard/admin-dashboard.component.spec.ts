@@ -38,10 +38,14 @@ describe('AdminDashboardComponent', () => {
             partySize: 2,
             servicePeriod: 'dinner',
             diningOption: 'tasting',
-            tastingMenu: 'Classic Tasting Menu',
+            tastingMenus: [
+                {
+                    name: 'Seven Course Odyssey',
+                    quantity: 2,
+                    price: 175
+                }
+            ],
             selectedDishes: [],
-            beveragePairing: false,
-            packageName: 'Classic',
             table: 'T01',
             specialRequests: '',
             status: 'Confirmed'
@@ -58,10 +62,8 @@ describe('AdminDashboardComponent', () => {
             partySize: 4,
             servicePeriod: 'dinner',
             diningOption: 'alacarte',
-            tastingMenu: '',
+            tastingMenus: [],
             selectedDishes: [],
-            beveragePairing: false,
-            packageName: '',
             table: '',
             specialRequests: 'Vegetarian preference',
             status: 'Pending'
@@ -78,10 +80,8 @@ describe('AdminDashboardComponent', () => {
             partySize: 3,
             servicePeriod: 'dinner',
             diningOption: 'table',
-            tastingMenu: '',
+            tastingMenus: [],
             selectedDishes: [],
-            beveragePairing: false,
-            packageName: '',
             table: 'T03',
             specialRequests: '',
             status: 'Seated'
@@ -98,10 +98,14 @@ describe('AdminDashboardComponent', () => {
             partySize: 2,
             servicePeriod: 'dinner',
             diningOption: 'tasting',
-            tastingMenu: 'Classic Tasting Menu',
+            tastingMenus: [
+                {
+                    name: 'Seven Course Odyssey',
+                    quantity: 2,
+                    price: 175
+                }
+            ],
             selectedDishes: [],
-            beveragePairing: false,
-            packageName: 'Classic',
             table: 'T04',
             specialRequests: '',
             status: 'Confirmed'

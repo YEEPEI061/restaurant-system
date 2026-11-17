@@ -74,7 +74,7 @@ describe('Reservation Integration Tests', function () {
                 partySize: 2,
                 servicePeriod: 'dinner',
                 diningOption: 'alacarte',
-                tastingMenu: '',
+                tastingMenus: [],
                 selectedDishes: [
                     {
                         id: 'M-001',
@@ -82,8 +82,6 @@ describe('Reservation Integration Tests', function () {
                         price: 28
                     }
                 ],
-                beveragePairing: false,
-                packageName: '',
                 table: '',
                 specialRequests: 'Window seat if available.'
             });
@@ -164,10 +162,8 @@ describe('Reservation Integration Tests', function () {
                 partySize: 2,
                 servicePeriod: 'dinner',
                 diningOption: 'alacarte',
-                tastingMenu: '',
+                tastingMenus: [],
                 selectedDishes: [],
-                beveragePairing: false,
-                packageName: '',
                 table: '',
                 specialRequests: ''
             });
@@ -236,10 +232,8 @@ describe('Reservation Integration Tests', function () {
                 partySize: 2,
                 servicePeriod: 'dinner',
                 diningOption: 'alacarte',
-                tastingMenu: '',
+                tastingMenus: [],
                 selectedDishes: [],
-                beveragePairing: false,
-                packageName: '',
                 table: '',
                 specialRequests: ''
             });
@@ -306,10 +300,14 @@ describe('Reservation Integration Tests', function () {
                 partySize: 4,
                 servicePeriod: 'dinner',
                 diningOption: 'tasting',
-                tastingMenu: 'Aurelia Seasonal Tasting',
+                tastingMenus: [
+                    {
+                        name: 'Seven Course Odyssey',
+                        quantity: 4,
+                        price: 175
+                    }
+                ],
                 selectedDishes: [],
-                beveragePairing: true,
-                packageName: '',
                 table: '',
                 specialRequests: ''
             });
@@ -388,10 +386,8 @@ describe('Reservation Integration Tests', function () {
                 partySize: 2,
                 servicePeriod: 'dinner',
                 diningOption: 'alacarte',
-                tastingMenu: '',
+                tastingMenus: [],
                 selectedDishes: [],
-                beveragePairing: false,
-                packageName: '',
                 table: '',
                 specialRequests: ''
             });
@@ -429,10 +425,14 @@ describe('Reservation Integration Tests', function () {
                 partySize: 4,
                 servicePeriod: 'dinner',
                 diningOption: 'tasting',
-                tastingMenu: 'Aurelia Seasonal Tasting',
+                tastingMenus: [
+                    {
+                        name: 'Seven Course Odyssey',
+                        quantity: 4,
+                        price: 175
+                    }
+                ],
                 selectedDishes: [],
-                beveragePairing: true,
-                packageName: '',
                 table: '',
                 specialRequests: ''
             });
@@ -559,10 +559,8 @@ describe('Reservation Integration Tests', function () {
                 partySize: 2,
                 servicePeriod: 'dinner',
                 diningOption: 'alacarte',
-                tastingMenu: '',
+                tastingMenus: [],
                 selectedDishes: [],
-                beveragePairing: false,
-                packageName: '',
                 table: '',
                 specialRequests: ''
             });
@@ -649,10 +647,8 @@ describe('Reservation Integration Tests', function () {
                 partySize: 2,
                 servicePeriod: 'dinner',
                 diningOption: 'alacarte',
-                tastingMenu: '',
+                tastingMenus: [],
                 selectedDishes: [],
-                beveragePairing: false,
-                packageName: '',
                 table: '',
                 specialRequests: ''
             });
@@ -746,10 +742,8 @@ describe('Reservation Integration Tests', function () {
                 partySize: 2,
                 servicePeriod: 'dinner',
                 diningOption: 'alacarte',
-                tastingMenu: '',
+                tastingMenus: [],
                 selectedDishes: [],
-                beveragePairing: false,
-                packageName: '',
                 table: '',
                 specialRequests: ''
             });
@@ -821,10 +815,8 @@ describe('Reservation Integration Tests', function () {
                 partySize: 4,
                 servicePeriod: 'dinner',
                 diningOption: 'alacarte',
-                tastingMenu: '',
+                tastingMenus: [],
                 selectedDishes: [],
-                beveragePairing: false,
-                packageName: '',
                 table: '',
                 specialRequests: ''
             });
@@ -928,10 +920,8 @@ describe('Reservation Integration Tests', function () {
                 partySize: 2,
                 servicePeriod: 'dinner',
                 diningOption: 'alacarte',
-                tastingMenu: '',
+                tastingMenus: [],
                 selectedDishes: [],
-                beveragePairing: false,
-                packageName: '',
                 table: '',
                 specialRequests: ''
             });

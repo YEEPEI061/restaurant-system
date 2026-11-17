@@ -461,6 +461,12 @@ button {
   line-height: 1.7;
 }
 
+.dining-note {
+  color: #747871;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
 .party-options {
   display: flex;
   flex-wrap: wrap;
@@ -1838,6 +1844,113 @@ button {
   outline: 2px solid rgba(53, 79, 59, 0.3);
   outline-offset: 2px;
 }
+
+
+.guest-allocation,
+.dining-group-heading,
+.menu-bottomline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.guest-allocation {
+  padding: 16px;
+  margin: 20px 0;
+  border: 1px solid #e5e0d8;
+  border-radius: 10px;
+}
+
+.guest-allocation>div,
+.dining-group-heading>div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.guest-allocation span,
+.dining-group-heading span {
+  font-size: 13px;
+  color: #777;
+}
+
+.allocation-count {
+  font-weight: 600;
+  color: #a66b36;
+}
+
+.allocation-count.allocation-complete {
+  color: #367653;
+}
+
+.allocation-count.allocation-over {
+  color: #b43c36;
+}
+
+.dining-selection-group {
+  margin-top: 24px;
+}
+
+.dining-group-heading {
+  margin-bottom: 14px;
+}
+
+.guest-quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.guest-quantity-control label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.guest-quantity-control input {
+  width: 72px;
+  padding: 9px;
+  border: 1px solid #ded8cf;
+  border-radius: 7px;
+  font: inherit;
+}
+
+.tasting-menu {
+  width: 100%;
+  text-align: left;
+}
+
+.tasting-menu.selected {
+  border-color: #a88b65;
+}
+
+.menu-bottomline {
+  margin-top: 16px;
+}
+
+.beverage-pairing-option {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #e8e2da;
+}
+
+.beverage-pairing-option label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.beverage-pairing-option label span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.beverage-pairing-option small {
+  color: #777;
+}
+
 
 
 /* =========================================================

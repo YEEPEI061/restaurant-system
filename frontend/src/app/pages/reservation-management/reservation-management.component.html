@@ -488,48 +488,42 @@
                 <td>
                   <div class="package-details">
 
-                    @if (reservation.diningOption === 'alacarte') {
+                    <!-- Set tasting menus -->
+                    @if (reservation.tastingMenus?.length) {
 
-                    <strong>
-                      À La Carte
-                    </strong>
-
-                    @if (hasSelectedDishes(reservation)) {
+                    <strong>Set Tasting Menus</strong>
 
                     <div class="reservation-dishes">
-                      @for (dish of getGroupedReservationDishes(reservation); track dish.name) {
+                      @for (
+                      menu of reservation.tastingMenus;
+                      track menu.name
+                      ) {
                       <span>
-                        {{ dish.name }}{{ dish.quantity > 1 ? ' x' + dish.quantity : '' }}
+                        {{ menu.name }}
+                        {{ menu.quantity > 1 ? ' ×' + menu.quantity : '' }}
                       </span>
                       }
                     </div>
 
-                    } @else {
-
-                    <span>
-                      No dishes selected
-                    </span>
-
                     }
 
-                    } @else if (reservation.diningOption === 'tasting') {
+                    <!-- Hand-picked dishes -->
+                    @if (hasSelectedDishes(reservation)) {
+                    <strong>Hand-Picked Dishes</strong>
 
-                    <strong>
-                      {{ reservation.tastingMenu || reservation.packageName || 'Tasting Menu' }}
-                    </strong>
+                    <div class="reservation-dishes">
+                      @for (dish of getDishSummary(reservation); track $index) {
+                      <span>{{ dish }}</span>
+                      }
+                    </div>
+                    }
 
-                    } @else if (reservation.diningOption === 'table') {
-
-                    <strong>
-                      Table Only
-                    </strong>
-
-                    } @else {
-
-                    <strong>
-                      Dining Reservation
-                    </strong>
-
+                    @if (
+                    !reservation.tastingMenus?.length &&
+                    !hasSelectedDishes(reservation) &&
+                    reservation.diningOption === 'table'
+                    ) {
+                    <strong>Table Only</strong>
                     }
 
                     <span>
@@ -1048,32 +1042,6 @@
 
             </label>
 
-
-            <!-- Dining package -->
-            <label class="form-field full-width">
-
-              <span>
-                Dining Package
-              </span>
-
-              <select name="packageName" [(ngModel)]="form.packageName" [disabled]="!isReservationEditable">
-
-                @for (
-                packageName of packages;
-                track packageName
-                ) {
-
-                <option [value]="packageName">
-                  {{ packageName }}
-                </option>
-
-                }
-
-              </select>
-
-            </label>
-
-
             <!-- Table -->
             <label class="form-field full-width">
               <span>
@@ -1142,13 +1110,46 @@
 
           </div>
 
-
-          @if (form.packageName === 'À La Carte') {
-
-          <!-- À La Carte Orders -->
           <div class="bill-summary">
 
+            <!-- Set tasting menus -->
+
+            @if (form.tastingMenus.length > 0) {
+
+            <div class="bill-category">
+              Set Tasting Menus
+            </div>
+
+            @for (menu of form.tastingMenus; track menu.name) {
+
+            <div class="bill-row">
+
+              <span>
+                {{ menu.name }}
+
+                @if (menu.quantity > 1) {
+                <span class="bill-quantity">
+                  ×{{ menu.quantity }}
+                </span>
+                }
+              </span>
+
+              <strong>
+                RM {{ (menu.price * menu.quantity) | number:'1.2-2' }}
+              </strong>
+
+            </div>
+
+            }
+
+            }
+
+            <!-- Hand-picked dishes -->
             @if (groupedSelectedDishes.length > 0) {
+
+            <div class="bill-category">
+              Hand-Picked Dishes
+            </div>
 
             @for (
             dish of groupedSelectedDishes;
@@ -1169,24 +1170,24 @@
 
               <strong>
                 RM
-                {{
-                dish.price * dish.quantity
-                | number:'1.2-2'
-                }}
+                {{ (dish.price * dish.quantity) | number:'1.2-2' }}
               </strong>
 
             </div>
 
             }
 
-            } @else {
-
-            <div class="bill-empty">
-              No dishes selected.
-            </div>
-
             }
 
+            @if (
+            form.tastingMenus.length === 0 &&
+            groupedSelectedDishes.length === 0
+            ) {
+            <div class="bill-row">
+              <span>Table Only</span>
+              <strong>No package charge</strong>
+            </div>
+            }
 
             <div class="bill-total">
 
@@ -1195,66 +1196,12 @@
               </span>
 
               <strong>
-                RM
-                {{ estimatedTotal | number:'1.2-2' }}
+                RM {{ estimatedTotal | number:'1.2-2' }}
               </strong>
 
             </div>
 
           </div>
-
-          } @else {
-
-          <!-- Tasting / Table Only -->
-          <div class="bill-summary">
-
-            <div class="bill-row">
-
-              <span>
-                {{ form.packageName }}
-              </span>
-
-              <strong>
-                RM
-                {{
-                packagePrice(form.packageName)
-                | number:'1.2-2'
-                }}
-                / guest
-              </strong>
-
-            </div>
-
-
-            <div class="bill-row">
-
-              <span>
-                Guests
-              </span>
-
-              <strong>
-                × {{ form.partySize }}
-              </strong>
-
-            </div>
-
-
-            <div class="bill-total">
-
-              <span>
-                Estimated total
-              </span>
-
-              <strong>
-                RM
-                {{ estimatedTotal | number:'1.2-2' }}
-              </strong>
-
-            </div>
-
-          </div>
-
-          }
 
         </section>
 
@@ -1276,11 +1223,6 @@
 
 
           <label class="form-field request-field">
-
-            <span>
-              Special Requests
-            </span>
-
             <textarea name="specialRequests" [(ngModel)]="form.specialRequests" [disabled]="!isReservationEditable"
               rows="4" placeholder="Celebrations, seating preferences or other requests..."></textarea>
 

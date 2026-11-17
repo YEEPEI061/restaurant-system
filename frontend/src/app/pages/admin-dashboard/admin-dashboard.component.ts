@@ -414,8 +414,7 @@ export class AdminDashboardComponent implements OnInit {
 
     return this.todayReservations.filter(
       reservation =>
-        reservation.diningOption === 'table' ||
-        reservation.packageName === 'Table Only'
+        reservation.diningOption === 'table' 
     ).length;
   }
 
@@ -518,9 +517,7 @@ export class AdminDashboardComponent implements OnInit {
         ? 'guest'
         : 'guests'
       }`,
-      reservation.time,
-      reservation.packageName ||
-      'Dining service'
+      reservation.time
     ].join(' · ');
 
     this.showToast(details);

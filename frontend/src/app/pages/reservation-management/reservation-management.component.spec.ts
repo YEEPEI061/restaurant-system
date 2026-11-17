@@ -40,10 +40,14 @@ describe('ReservationManagementComponent', () => {
             status: 'Confirmed',
             table: 'T01',
             diningOption: 'tasting',
-            tastingMenu: 'Seven Course Odyssey',
-            packageName: 'Seven Course Odyssey',
+            tastingMenus: [
+                {
+                    name: 'Seven Course Odyssey',
+                    quantity: 2,
+                    price: 175
+                }
+            ],
             selectedDishes: [],
-            beveragePairing: false,
             specialRequests: ''
         },
         {
@@ -60,10 +64,8 @@ describe('ReservationManagementComponent', () => {
             status: 'Pending',
             table: '',
             diningOption: 'alacarte',
-            tastingMenu: '',
-            packageName: 'À La Carte',
+            tastingMenus: [],
             selectedDishes: [],
-            beveragePairing: false,
             specialRequests: ''
         },
         {
@@ -80,10 +82,8 @@ describe('ReservationManagementComponent', () => {
             status: 'Seated',
             table: 'T03',
             diningOption: 'table',
-            tastingMenu: '',
-            packageName: 'Table Only',
+            tastingMenus: [],
             selectedDishes: [],
-            beveragePairing: false,
             specialRequests: ''
         },
         {
@@ -100,10 +100,14 @@ describe('ReservationManagementComponent', () => {
             status: 'Cancelled',
             table: '',
             diningOption: 'tasting',
-            tastingMenu: 'Five Course Prelude',
-            packageName: 'Five Course Prelude',
+            tastingMenus: [
+                {
+                    name: 'Five Course Prelude',
+                    quantity: 2,
+                    price: 125
+                }
+            ],
             selectedDishes: [],
-            beveragePairing: false,
             specialRequests: ''
         }
     ];

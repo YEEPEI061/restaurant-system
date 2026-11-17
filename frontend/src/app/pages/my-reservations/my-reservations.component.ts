@@ -39,6 +39,7 @@ export class MyReservationsComponent implements OnInit {
   pageSizeOptions = [10, 50, 100];
 
   reservations: Reservation[] = [];
+  expandedDishes = new Set<string>();
 
   isLoggedIn = false;
 
@@ -56,8 +57,6 @@ export class MyReservationsComponent implements OnInit {
 
   successTimeout?: ReturnType<typeof setTimeout>;
   errorTimeout?: ReturnType<typeof setTimeout>;
-
-  readonly beveragePairingPrice = 56;
 
   constructor(
     private reservationService: ReservationService,
@@ -222,6 +221,15 @@ export class MyReservationsComponent implements OnInit {
     }
   }
 
+
+  toggleDishes(reservationId: string): void {
+    if (this.expandedDishes.has(reservationId)) {
+      this.expandedDishes.delete(reservationId);
+    } else {
+      this.expandedDishes.add(reservationId);
+    }
+  }
+
   // =========================================================
   // SEARCH + SORT
   // =========================================================
@@ -245,8 +253,7 @@ export class MyReservationsComponent implements OnInit {
             reservation.reservationId,
             reservation.date,
             reservation.time,
-            reservation.tastingMenu,
-            reservation.packageName,
+            reservation.tastingMenus,
             reservation.status
           ];
 
@@ -370,24 +377,29 @@ export class MyReservationsComponent implements OnInit {
     reservation: Reservation
   ): string {
 
-    switch (reservation.diningOption) {
+    const hasTastingMenus =
+      reservation.tastingMenus?.length;
 
-      case 'tasting':
-        return (
-          reservation.tastingMenu ||
-          reservation.packageName ||
-          'Tasting Menu'
-        );
+    const hasHandPickedDishes =
+      reservation.selectedDishes?.length;
 
-      case 'alacarte':
-        return 'Hand-Picked Dishes';
-
-      case 'table':
-        return 'Table Reservation';
-
-      default:
-        return 'Dining Reservation';
+    if (hasTastingMenus && hasHandPickedDishes) {
+      return 'Set Tasting Menus + Hand-Pick Dishes';
     }
+
+    if (hasTastingMenus) {
+      return 'Set Tasting Menus';
+    }
+
+    if (hasHandPickedDishes) {
+      return 'Hand-Pick Dishes';
+    }
+
+    if (reservation.diningOption === 'table') {
+      return 'Table Reservation';
+    }
+
+    return 'Dining Reservation';
   }
 
   getDiningDescription(
@@ -484,20 +496,6 @@ export class MyReservationsComponent implements OnInit {
         ) * reservation.partySize;
     }
 
-    /*
-      We currently do not store the tasting-menu
-      price inside the reservation record.
-
-      Therefore, do not invent a price here.
-    */
-
-    if (reservation.beveragePairing) {
-
-      total +=
-        this.beveragePairingPrice *
-        reservation.partySize;
-    }
-
     return total;
   }
 
@@ -506,8 +504,7 @@ export class MyReservationsComponent implements OnInit {
   ): boolean {
 
     return (
-      reservation.diningOption === 'alacarte' ||
-      reservation.beveragePairing
+      reservation.diningOption === 'alacarte'
     );
   }
 

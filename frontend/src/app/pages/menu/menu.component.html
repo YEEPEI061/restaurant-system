@@ -202,7 +202,7 @@
             </span>
 
             <span class="tasting-count">
-              {{ tastingList.length }}
+              {{ tastingItemCount }}
             </span>
 
           </button>
@@ -584,7 +584,7 @@
 
       <div class="tasting-items">
 
-        @if (tastingList.length === 0) {
+        @if (tastingList.length === 0 && selectedReservationMenus.length === 0) {
 
         <p class="empty-tasting">
           Your curation tray is empty.
@@ -594,6 +594,40 @@
 
         }
 
+        <!-- Selected Set Tasting Menus -->
+        @for (menu of selectedReservationMenus; track $index) {
+
+        <div class="tasting-item">
+
+          <div>
+
+            <p>
+              {{ menu.name }}
+
+              @if (menu.quantity > 1) {
+              <span class="quantity">
+                ×{{ menu.quantity }}
+              </span>
+              }
+            </p>
+
+            <span class="item-price">
+              RM {{ (menu.price * menu.quantity).toFixed(2) }}
+            </span>
+
+          </div>
+
+          <button type="button" (click)="openTastingDeleteConfirm(undefined, $index)"
+            aria-label="Remove set tasting menu">
+
+            <span class="material-symbols-outlined">
+              delete
+            </span>
+          </button>
+
+        </div>
+
+        }
 
         @for (item of groupedTastingList; track item.id) {
 
@@ -650,7 +684,7 @@
         Your selection will be synchronized with
         our restaurant team upon table confirmation.
       </p>
-      
+
       <button type="button" class="reserve-link" (click)="proceedToReservation()">
         <span>
           Reserve Your Table

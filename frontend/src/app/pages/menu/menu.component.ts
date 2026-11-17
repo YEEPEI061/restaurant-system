@@ -19,6 +19,7 @@ import { AuthService } from '../../services/auth.service';
 import {
   WebSocketService
 } from '../../services/websocket.service';
+import { TastingMenuSelection } from '../../services/reservation.service';
 
 interface MenuItem {
   _id: string;
@@ -83,6 +84,9 @@ export class MenuComponent implements OnInit {
   successTitle = '';
   successTimeout?: ReturnType<typeof setTimeout>;
 
+  selectedReservationMenus: TastingMenuSelection[] = [];
+  reservationMenuToDeleteIndex: number | null = null;
+
   categories = [
     {
       value: 'all',
@@ -143,6 +147,17 @@ export class MenuComponent implements OnInit {
       this.tastingList = items;
     });
 
+    // Restore selected set menus from reservation draft
+    const savedDraft =
+      sessionStorage.getItem('reservationDraft');
+
+    if (savedDraft) {
+      const reservation = JSON.parse(savedDraft);
+
+      this.selectedReservationMenus =
+        reservation.tastingMenus || [];
+    }
+
     this.loadMenuItems();
 
     this.webSocketService.connect();
@@ -151,19 +166,11 @@ export class MenuComponent implements OnInit {
       .subscribe(message => {
 
         switch (message.type) {
-
           case 'menu.created':
-            this.loadMenuItems();
-            break;
-
           case 'menu.updated':
-            this.loadMenuItems();
-            break;
-
           case 'menu.deleted':
             this.loadMenuItems();
             break;
-
         }
 
       });
@@ -256,10 +263,17 @@ export class MenuComponent implements OnInit {
   }
 
   get tastingTotal(): number {
-    return this.tastingList.reduce(
-      (total, item) => total + item.price,
+    const dishTotal = this.tastingList.reduce(
+      (total, item) => total + item.price * item.quantity,
       0
     );
+
+    const setMenuTotal = this.selectedReservationMenus.reduce(
+      (total, menu) => total + menu.price * menu.quantity,
+      0
+    );
+
+    return dishTotal + setMenuTotal;
   }
 
   selectCategory(category: string): void {
@@ -293,36 +307,67 @@ export class MenuComponent implements OnInit {
     type: '5-course' | '7-course'
   ): void {
 
-    if (type === '5-course') {
-
-      this.tastingService.addItem({
-        name: '5-Course Prelude Tasting Menu',
+    const menu: TastingMenuSelection = type === '5-course'
+      ? {
+        name: 'Five Course Prelude',
         price: 125,
-        id: 'tasting-5-course'
-      });
-
-    } else {
-
-      this.tastingService.addItem({
-        name: '7-Course Odyssey Tasting Menu',
+        quantity: 1
+      }
+      : {
+        name: 'Seven Course Odyssey',
         price: 175,
-        id: 'tasting-7-course'
-      });
+        quantity: 1
+      };
 
+    const existingMenu = this.selectedReservationMenus.find(
+      item => item.name === menu.name
+    );
+
+    if (existingMenu) {
+      existingMenu.quantity++;
+    } else {
+      this.selectedReservationMenus.push(menu);
     }
 
-    this.tastingList =
-      this.tastingService.getItems();
+    // Save selected set menus into reservation draft
+    const savedDraft = sessionStorage.getItem('reservationDraft');
+
+    const reservation = savedDraft
+      ? JSON.parse(savedDraft)
+      : {};
+
+    reservation.tastingMenus = this.selectedReservationMenus;
+    reservation.showTastingMenus = true;
+
+    sessionStorage.setItem(
+      'reservationDraft',
+      JSON.stringify(reservation)
+    );
 
     this.openTastingDrawer();
   }
 
-  removeFromTasting(id: string): void {
+  removeFromTasting(id?: string, menuIndex?: number): void {
 
-    this.tastingService.removeItem(id);
+    if (menuIndex !== undefined) {
+      this.selectedReservationMenus.splice(menuIndex, 1);
 
-    this.tastingList =
-      this.tastingService.getItems();
+      const savedDraft = sessionStorage.getItem('reservationDraft');
+
+      if (savedDraft) {
+        const reservation = JSON.parse(savedDraft);
+
+        reservation.tastingMenus = this.selectedReservationMenus;
+        reservation.showTastingMenus = this.selectedReservationMenus.length > 0;
+
+        sessionStorage.setItem('reservationDraft', JSON.stringify(reservation));
+      }
+
+    } else if (id) {
+      this.tastingService.removeItem(id);
+      this.tastingList = this.tastingService.getItems();
+    }
+
   }
 
   openDietaryModal(item: MenuItem): void {
@@ -343,17 +388,44 @@ export class MenuComponent implements OnInit {
     this.isTastingDrawerOpen = false;
   }
 
-  openTastingDeleteConfirm(item: TastingItem): void {
-    this.tastingItemToDelete = item;
+  openTastingDeleteConfirm(item?: TastingItem, menuIndex?: number): void {
+    this.tastingItemToDelete = item ?? null;
+    this.reservationMenuToDeleteIndex = menuIndex ?? null;
     this.tastingDeleteConfirmOpen = true;
   }
 
   cancelTastingDelete(): void {
     this.tastingDeleteConfirmOpen = false;
     this.tastingItemToDelete = null;
+    this.reservationMenuToDeleteIndex = null;
   }
 
   confirmTastingDelete(): void {
+
+    // Remove selected set menu
+    if (this.reservationMenuToDeleteIndex !== null) {
+
+      const menuName =
+        this.selectedReservationMenus[this.reservationMenuToDeleteIndex]?.name;
+
+      this.removeFromTasting(
+        undefined,
+        this.reservationMenuToDeleteIndex
+      );
+
+      this.cancelTastingDelete();
+
+      this.reservationMenuToDeleteIndex = null;
+
+      this.showSuccess(
+        'Set Menu Removed',
+        `${menuName} has been removed from your tasting list.`
+      );
+
+      return;
+    }
+
+    // Remove hand-picked dish
     if (!this.tastingItemToDelete) return;
 
     const dishName = this.tastingItemToDelete.name;
@@ -443,11 +515,11 @@ export class MenuComponent implements OnInit {
 
     this.closeTastingDrawer();
 
-    const editingReservation =
-      sessionStorage.getItem('editingReservation');
+    const hasReservationDraft =
+      !!sessionStorage.getItem('reservationDraft');
 
-    const destination = editingReservation
-      ? '/reservations?edit=true'
+    const destination = hasReservationDraft
+      ? '/reservations?returnFromMenu=true'
       : '/reservations';
 
     if (this.authService.isLoggedIn()) {
@@ -468,32 +540,22 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  get groupedTastingList(): (TastingItem & { quantity: number })[] {
+  get groupedTastingList(): TastingItem[] {
+    return this.tastingList;
+  }
 
-    const grouped =
-      new Map<string, TastingItem & { quantity: number }>();
+  get tastingItemCount(): number {
+    const dishCount = this.tastingList.reduce(
+      (total, item) => total + item.quantity,
+      0
+    );
 
-    for (const item of this.tastingList) {
+    const setMenuCount = this.selectedReservationMenus.reduce(
+      (total, menu) => total + menu.quantity,
+      0
+    );
 
-      const existing =
-        grouped.get(item.id);
-
-      if (existing) {
-
-        existing.quantity += 1;
-
-      } else {
-
-        grouped.set(item.id, {
-          ...item,
-          quantity: 1
-        });
-
-      }
-
-    }
-
-    return Array.from(grouped.values());
+    return dishCount + setMenuCount;
   }
 
   trackByName(index: number, item: MenuItem): string {

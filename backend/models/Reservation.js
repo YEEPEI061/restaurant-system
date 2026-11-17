@@ -84,29 +84,40 @@ const reservationSchema = new mongoose.Schema(
             type: Number,
             required: true,
             min: 0
+          },
+          quantity: {
+            type: Number,
+            default: 1,
+            min: 1
           }
         }
       ],
       default: []
     },
 
-    tastingMenu: {
-      type: String,
-      default: '',
-      trim: true
+    tastingMenus: {
+      type: [
+        {
+          name: {
+            type: String,
+            required: true,
+            trim: true
+          },
+          quantity: {
+            type: Number,
+            required: true,
+            min: 1
+          },
+          price: {
+            type: Number,
+            required: true,
+            min: 0
+          }
+        }
+      ],
+      default: []
     },
-
-    beveragePairing: {
-      type: Boolean,
-      default: false
-    },
-
-    packageName: {
-      type: String,
-      default: '',
-      trim: true
-    },
-
+    
     table: {
       type: String,
       default: '',

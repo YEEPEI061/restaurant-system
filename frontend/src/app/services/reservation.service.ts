@@ -26,6 +26,13 @@ export interface SelectedDish {
   id: string;
   name: string;
   price: number;
+  quantity: number;
+}
+
+export interface TastingMenuSelection {
+  name: string;
+  quantity: number;
+  price: number;
 }
 
 export interface Reservation {
@@ -51,17 +58,12 @@ export interface Reservation {
   servicePeriod: ServicePeriod;
   diningOption: DiningOption;
 
-  tastingMenu: string;
-
   // =========================
   // SELECTED DISHES
   // =========================
 
   selectedDishes: SelectedDish[];
 
-  beveragePairing: boolean;
-
-  packageName: string;
   table?: string | null;
 
   specialRequests: string;
@@ -70,6 +72,16 @@ export interface Reservation {
 
   createdAt?: string;
   updatedAt?: string;
+
+  tastingMenus?: TastingMenuSelection[];
+  showTastingMenus?: boolean;
+  showHandPickDishes?: boolean;
+  orderAtTable?: boolean;
+
+  alacarteGuests?: number;
+
+  orderAtTableGuests?: number;
+
 }
 
 export interface CreateReservationRequest {
@@ -84,20 +96,24 @@ export interface CreateReservationRequest {
   servicePeriod: ServicePeriod;
   diningOption: DiningOption;
 
-  tastingMenu?: string;
-
   // =========================
   // SELECTED DISHES
   // =========================
 
   selectedDishes?: SelectedDish[];
 
-  beveragePairing?: boolean;
-
-  packageName?: string;
   table?: string;
 
   specialRequests?: string;
+
+  // =========================
+  // DINING SELECTIONS
+  // =========================
+
+  tastingMenus: TastingMenuSelection[];
+  alacarteGuests: number;
+  orderAtTableGuests: number;
+
 }
 
 export interface UpdateReservationRequest {
@@ -112,22 +128,26 @@ export interface UpdateReservationRequest {
   servicePeriod?: ServicePeriod;
   diningOption?: DiningOption;
 
-  tastingMenu?: string;
-
   // =========================
   // SELECTED DISHES
   // =========================
 
   selectedDishes?: SelectedDish[];
 
-  beveragePairing?: boolean;
-
-  packageName?: string;
   table?: string;
 
   specialRequests?: string;
 
   status?: ReservationStatus;
+
+  // =========================
+  // DINING SELECTIONS
+  // =========================
+
+  tastingMenus?: TastingMenuSelection[];
+  alacarteGuests?: number;
+  orderAtTableGuests?: number;
+
 }
 
 export interface ReservationsResponse {

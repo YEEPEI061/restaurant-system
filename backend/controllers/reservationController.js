@@ -475,16 +475,8 @@ async function createReservation(req, res) {
       partySize,
       servicePeriod,
       diningOption,
-      tastingMenu,
-
-      // =========================
-      // SELECTED DISHES
-      // =========================
-
+      tastingMenus,
       selectedDishes,
-
-      beveragePairing,
-      packageName,
       specialRequests
     } = req.body;
 
@@ -539,7 +531,10 @@ async function createReservation(req, res) {
 
         diningOption,
 
-        tastingMenu,
+        tastingMenus:
+          Array.isArray(tastingMenus)
+            ? tastingMenus
+            : [],
 
         // =========================
         // SAVE SELECTED DISHES
@@ -549,10 +544,6 @@ async function createReservation(req, res) {
           Array.isArray(selectedDishes)
             ? selectedDishes
             : [],
-
-        beveragePairing,
-
-        packageName,
 
         table: '',
 
@@ -626,10 +617,8 @@ function getReservationChanges(previous, updated) {
     partySize: 'Party size',
     servicePeriod: 'Service period',
     diningOption: 'Dining option',
-    tastingMenu: 'Tasting menu',
+    tastingMenus: 'Tasting menu',
     selectedDishes: 'Dining selections',
-    beveragePairing: 'Beverage pairing',
-    packageName: 'Package',
     table: 'Table',
     specialRequests: 'Special requests'
   };
@@ -646,10 +635,6 @@ function getReservationChanges(previous, updated) {
 
     if (field === 'table') {
       return `Table ${String(value).replace(/^T/, '')}`;
-    }
-
-    if (field === 'beveragePairing') {
-      return value ? 'Included' : 'Not included';
     }
 
     if (field === 'selectedDishes' && Array.isArray(value)) {
@@ -673,7 +658,7 @@ function getReservationChanges(previous, updated) {
     // when the dining option is Table
     if (
       updated.diningOption === 'table' &&
-      (field === 'tastingMenu' || field === 'packageName')
+      (field === 'tastingMenus')
     ) {
       continue;
     }
@@ -792,7 +777,6 @@ async function updateReservation(req, res) {
     // =========================
 
     const allowedFields = [
-
       'guestName',
       'email',
       'phone',
@@ -801,12 +785,9 @@ async function updateReservation(req, res) {
       'partySize',
       'servicePeriod',
       'diningOption',
-      'tastingMenu',
+      'tastingMenus',
       'selectedDishes',
-      'beveragePairing',
-      'packageName',
       'specialRequests'
-
     ];
 
     // Only admins can assign or change tables.
