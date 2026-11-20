@@ -128,14 +128,6 @@ export class MenuComponent implements OnInit {
       label: 'Dairy-Free [DF]'
     },
     {
-      value: 'SF',
-      label: 'Shellfish-Free [SF]'
-    },
-    {
-      value: 'NF',
-      label: 'Nut-Free [NF]'
-    },
-    {
       value: 'SPECIAL',
       label: 'Chef Special'
     }
