@@ -300,6 +300,11 @@ export class MenuComponent implements OnInit {
       id: item.dishId
     });
 
+    this.tastingList =
+      this.tastingService.getItems();
+
+    this.updateReservationDraftDishes();
+
     this.openTastingDrawer();
   }
 
@@ -364,8 +369,14 @@ export class MenuComponent implements OnInit {
       }
 
     } else if (id) {
+
       this.tastingService.removeItem(id);
-      this.tastingList = this.tastingService.getItems();
+
+      this.tastingList =
+        this.tastingService.getItems();
+
+      this.updateReservationDraftDishes();
+
     }
 
   }
@@ -562,5 +573,29 @@ export class MenuComponent implements OnInit {
     return item.name;
   }
 
+  private updateReservationDraftDishes(): void {
+
+    const savedDraft =
+      sessionStorage.getItem('reservationDraft');
+
+    if (!savedDraft) {
+      return;
+    }
+
+    const reservation = JSON.parse(savedDraft);
+
+    reservation.selectedDishes =
+      this.tastingService.getItems();
+
+    reservation.showHandPickDishes =
+      reservation.selectedDishes.length > 0 ||
+      reservation.showHandPickDishes === true;
+
+    sessionStorage.setItem(
+      'reservationDraft',
+      JSON.stringify(reservation)
+    );
+
+  }
 
 }

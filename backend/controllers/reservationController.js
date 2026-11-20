@@ -1150,18 +1150,18 @@ async function updateReservationStatus(
     }
 
     // =========================
-    // VALIDATE TABLE BEFORE CONFIRMATION
+    // VALIDATE TABLE BEFORE SEATING
     // =========================
 
     if (
       req.user.role === 'admin' &&
-      (status === 'Confirmed' || status === 'Seated')
+      status === 'Seated'
     ) {
 
       if (!reservation.table) {
         return res.status(400).json({
           message:
-            'Please assign a table before confirming or seating this reservation.'
+            'Please assign a table before seating this reservation.'
         });
       }
 

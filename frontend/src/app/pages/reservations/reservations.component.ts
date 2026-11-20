@@ -264,16 +264,28 @@ export class ReservationsComponent implements OnInit {
     const savedDraft = sessionStorage.getItem('reservationDraft');
 
     if (savedDraft) {
-      const reservation = JSON.parse(savedDraft) as ReservationDetails;
-      const updatedDishes = this.tastingService.getItems();
 
+      const reservation =
+        JSON.parse(savedDraft) as ReservationDetails;
+
+      // Get the latest selections from TastingService
+      const updatedDishes =
+        this.tastingService.getItems();
+
+      // Restore reservation details
       this.loadReservationForEditing(reservation);
 
-      if (updatedDishes.length > 0) {
-        this.tastingList = updatedDishes;
-      }
+      // TastingService is the source of truth for hand-picked dishes
+      this.tastingList = updatedDishes;
 
-      this.tastingService.setItems(this.tastingList);
+      // Keep the service and component synchronised
+      this.tastingService.setItems(updatedDishes);
+
+      // Automatically select Hand-Pick Dishes if dishes exist
+      if (updatedDishes.length > 0) {
+        this.showHandPickDishes = true;
+        this.orderAtTable = false;
+      }
 
       return;
     }
@@ -309,14 +321,16 @@ export class ReservationsComponent implements OnInit {
     }
 
     /*
-     * NORMAL NEW RESERVATION
-     */
-    if (
-      this.tastingList.length > 0 &&
-      this.selectedTastingMenus.length === 0 &&
-      this.orderAtTableGuests === 0
-    ) {
+    * NORMAL NEW RESERVATION
+    */
+    if (this.tastingList.length > 0) {
+
+      this.showHandPickDishes = true;
+
+      this.orderAtTable = false;
+
       this.alacarteGuests = this.guestCount;
+
     }
 
   }
@@ -535,21 +549,26 @@ export class ReservationsComponent implements OnInit {
 
     this.errorMessage = '';
 
-    const savedDraft = sessionStorage.getItem('reservationDraft');
+    // Always save the latest set-menu selection
+    const savedDraft =
+      sessionStorage.getItem('reservationDraft');
 
-    if (savedDraft) {
-      const reservation = JSON.parse(savedDraft);
+    const reservation = savedDraft
+      ? JSON.parse(savedDraft)
+      : {};
 
-      reservation.tastingMenus = this.selectedTastingMenus;
-      reservation.showTastingMenus = this.showTastingMenus;
+    reservation.tastingMenus =
+      this.selectedTastingMenus;
 
-      sessionStorage.setItem(
-        'reservationDraft',
-        JSON.stringify(reservation)
-      );
-    }
+    reservation.showTastingMenus =
+      this.showTastingMenus;
+
+    sessionStorage.setItem(
+      'reservationDraft',
+      JSON.stringify(reservation)
+    );
+
   }
-
   get guestCount(): number {
 
     return this.partySize === '7+'
