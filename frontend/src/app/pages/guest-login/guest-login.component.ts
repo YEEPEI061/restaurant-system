@@ -119,7 +119,7 @@ export class GuestLoginComponent {
 
           this.showSuccess(
             'Welcome Back',
-            'You have signed in successfully. Redirecting to your reservations...'
+            'You have signed in successfully. Redirecting...'
           );
 
           setTimeout(() => {

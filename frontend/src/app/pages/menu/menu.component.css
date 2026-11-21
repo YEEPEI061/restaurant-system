@@ -19,19 +19,15 @@
   ========================================================= */
 
 .clear-filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 12px;
+  padding: 5px 0 5px 8px;
   border: none;
-  border-radius: 20px;
   background: transparent;
-  color: #2d3a2c;
+  color: #536251;
+  font-family: inherit;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  margin-right: 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  margin-left: 20px;
 }
 
 .clear-filter-btn:hover {

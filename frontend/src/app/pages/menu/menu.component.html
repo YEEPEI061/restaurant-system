@@ -222,30 +222,33 @@
           </span>
 
           @for (filter of dietaryFilters; track filter.value) {
-
           <button type="button" class="filter-chip" [class.active]="isFilterActive(filter.value)"
             (click)="toggleDietaryFilter(filter.value)">
+
             @if (filter.value === 'SPECIAL') {
-            <span class="material-symbols-outlined">
-              star
-            </span>
+            <span class="material-symbols-outlined">star</span>
             }
 
             {{ filter.label }}
           </button>
-
-          }
-
-          @if (activeFilters.size > 0) {
-          <button type="button" class="clear-filter-btn" (click)="clearDietaryFilters()">
-            Clear Filter
-          </button>
           }
 
         </div>
-        <span class="results-indicator">
-          {{ filteredItems.length }} {{ filteredItems.length === 1 ? 'Item' : 'Items' }}
-        </span>
+
+        <div class="dietary-actions">
+
+          @if (activeFilters.size > 0) {
+          <button type="button" class="clear-filter-btn" (click)="clearDietaryFilters()">
+            Reset filters
+          </button>
+          }
+
+          <span class="results-indicator">
+            {{ filteredItems.length }}
+            {{ filteredItems.length === 1 ? 'Item' : 'Items' }}
+          </span>
+
+        </div>
 
       </div>
 

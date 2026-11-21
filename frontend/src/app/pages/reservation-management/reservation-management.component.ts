@@ -1797,14 +1797,14 @@ export class ReservationManagementComponent
           total + (menu.price * menu.quantity),
         0
       );
-  
+
     const dishTotal =
       this.groupedSelectedDishes.reduce(
         (total, dish) =>
           total + (dish.price * dish.quantity),
         0
       );
-  
+
     return tastingMenuTotal + dishTotal;
   }
 
@@ -2036,16 +2036,16 @@ export class ReservationManagementComponent
     * Return the reservation occupying
     * a table on a particular date.
     */
-  getTableReservations(
-    tableId: string
-  ): Reservation[] {
+  getTableReservations(tableId: string): Reservation[] {
+
+    const today = this.toDateInputValue(new Date());
 
     return this.reservations
-      .filter(
-        reservation =>
-          reservation.table === tableId &&
-          reservation.status !== 'Cancelled' &&
-          reservation.status !== 'Completed'
+      .filter(reservation =>
+        reservation.table === tableId &&
+        reservation.date === today &&
+        reservation.status !== 'Cancelled' &&
+        reservation.status !== 'Completed'
       )
       .sort(
         (a, b) =>

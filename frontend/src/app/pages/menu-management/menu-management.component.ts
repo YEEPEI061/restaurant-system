@@ -72,8 +72,6 @@ export class MenuManagementComponent implements OnInit {
   dietaryOptions: DietaryTag[] = [
     'GF',
     'DF',
-    'SF',
-    'NF',
     'Veg'
   ];
 
@@ -1253,8 +1251,6 @@ export class MenuManagementComponent implements OnInit {
       VG: 'Vegan',
       GF: 'Gluten-Free',
       DF: 'Dairy-Free',
-      NF: 'Nut-Free',
-      SF: 'Seafood-Free'
     };
 
     return dietaryNames[tag] || tag;
