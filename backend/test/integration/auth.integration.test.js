@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const request = require('supertest');
 const { expect } = require('chai');
 const bcrypt = require('bcryptjs');

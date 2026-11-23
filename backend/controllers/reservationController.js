@@ -571,7 +571,7 @@ async function createReservation(req, res) {
       type: 'reservation_created',
       title: 'New reservation',
       message:
-        `${reservation.guestName} created reservation ${reservation.reservationId}.`,
+        `${reservation.guestName} made a reservation (${reservation.reservationId}).`,
       reservationId:
         reservation.reservationId
     });
