@@ -25,11 +25,9 @@ describe('Authentication Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * GUEST SIGNUP
-     * --------------------------------------------------
-     */
+    // =========================
+    // GUEST SIGNUP
+    // =========================
 
     describe('guestSignup', function () {
 
@@ -139,11 +137,9 @@ describe('Authentication Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * GUEST LOGIN
-     * --------------------------------------------------
-     */
+    // =========================
+    // GUEST LOGIN
+    // =========================
 
     describe('guestLogin', function () {
 
@@ -345,11 +341,9 @@ describe('Authentication Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * ADMIN LOGIN
-     * --------------------------------------------------
-     */
+    // =========================
+    // ADMIN LOGIN
+    // =========================
 
     describe('adminLogin', function () {
 
@@ -444,11 +438,9 @@ describe('Authentication Controller', function () {
 
     });
 
-    /*
- * --------------------------------------------------
- * GET CURRENT USER
- * --------------------------------------------------
- */
+    // =========================
+    // GET CURRENT USER
+    // =========================
 
     describe('getCurrentUser', function () {
 

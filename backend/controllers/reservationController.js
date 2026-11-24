@@ -8,11 +8,9 @@ const {
   createNotification
 } = require('../services/notificationService');
 
-/*
- * --------------------------------------------------
- * RESTAURANT TABLE CONFIGURATION
- * --------------------------------------------------
- */
+// =========================
+// RESTAURANT TABLE CONFIGURATION
+// =========================
 
 const RESTAURANT_TABLES = {
   T01: 2,
@@ -32,11 +30,9 @@ const RESTAURANT_CAPACITY = Object.values(
 ).reduce((total, capacity) => total + capacity, 0);
 
 
-/*
- * --------------------------------------------------
- * TIME HELPERS
- * --------------------------------------------------
- */
+// =========================
+// TIME HELPERS
+// =========================
 
 function timeToMinutes(time) {
 
@@ -53,13 +49,6 @@ function timeToMinutes(time) {
 
   return hours * 60 + minutes;
 }
-
-
-/*
- * --------------------------------------------------
- * TABLE ASSIGNMENT VALIDATION
- * --------------------------------------------------
- */
 
 async function validateTableAssignment({
   table,
@@ -159,12 +148,6 @@ async function validateTableAssignment({
 
   return null;
 }
-
-/*
- * --------------------------------------------------
- * RESTAURANT CAPACITY VALIDATION
- * --------------------------------------------------
- */
 
 async function validateRestaurantCapacity({
   date,
@@ -305,12 +288,6 @@ async function validateRestaurantCapacity({
 
   return null;
 }
-
-/*
- * --------------------------------------------------
- * FORMAT RESERVATION END TIME
- * --------------------------------------------------
- */
 
 function formatEndTime(time) {
 
@@ -650,6 +627,47 @@ function getReservationChanges(previous, updated) {
     return String(value);
   }
 
+  function normaliseValue(field, value) {
+
+    if (
+      field === 'selectedDishes' ||
+      field === 'tastingMenus'
+    ) {
+
+      if (!Array.isArray(value)) {
+        return [];
+      }
+
+      const fields = field === 'selectedDishes'
+        ? ['id', 'name', 'price', 'quantity']
+        : ['name', 'quantity', 'price'];
+
+      return value
+        .map(item => {
+
+          const object = typeof item.toObject === 'function'
+            ? item.toObject()
+            : item;
+
+          return Object.fromEntries(
+            fields.map(key => [
+              key,
+              object[key] ?? null
+            ])
+          );
+
+        })
+        .sort((a, b) =>
+          String(a.name || a.id || '')
+            .localeCompare(
+              String(b.name || b.id || '')
+            )
+        );
+    }
+
+    return value;
+  }
+
   const changes = [];
 
   for (const field of Object.keys(fields)) {
@@ -666,9 +684,15 @@ function getReservationChanges(previous, updated) {
     const oldValue = previous[field];
     const newValue = updated[field];
 
+    const oldComparable =
+      normaliseValue(field, oldValue);
+
+    const newComparable =
+      normaliseValue(field, newValue);
+
     if (
-      JSON.stringify(oldValue ?? null) !==
-      JSON.stringify(newValue ?? null)
+      JSON.stringify(oldComparable ?? null) !==
+      JSON.stringify(newComparable ?? null)
     ) {
 
       const oldIsEmpty =

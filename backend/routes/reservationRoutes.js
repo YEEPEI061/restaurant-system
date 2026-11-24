@@ -46,9 +46,7 @@ router.get(
   getMyReservations
 );
 
-/*
- * GET RESERVATION BY ID
- */
+// GET RESERVATION BY ID
 
 router.get(
   '/:id',
@@ -71,9 +69,7 @@ router.post(
   createReservation
 );
 
-/*
- * UPDATE RESERVATION
- */
+// UPDATE RESERVATION
 
 router.put(
   '/:id',

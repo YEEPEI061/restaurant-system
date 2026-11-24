@@ -20,11 +20,9 @@ describe('Menu Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * GET ALL MENU ITEMS
-     * --------------------------------------------------
-     */
+    // =========================
+    // GET ALL MENU ITEMS
+    // =========================
 
     describe('getMenuItems', function () {
 
@@ -78,11 +76,9 @@ describe('Menu Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * GET MENU ITEM BY ID
-     * --------------------------------------------------
-     */
+    // =========================
+    // GET MENU ITEM BY ID
+    // =========================
 
     describe('getMenuItemById', function () {
 
@@ -129,11 +125,9 @@ describe('Menu Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * CREATE MENU ITEM
-     * --------------------------------------------------
-     */
+    // =========================
+    // CREATE MENU ITEM
+    // =========================
 
     describe('createMenuItem', function () {
 
@@ -280,11 +274,9 @@ describe('Menu Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * UPDATE MENU ITEM
-     * --------------------------------------------------
-     */
+    // =========================
+    // UPDATE MENU ITEM
+    // =========================
 
     describe('updateMenuItem', function () {
 
@@ -431,11 +423,9 @@ describe('Menu Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * DELETE MENU ITEM
-     * --------------------------------------------------
-     */
+    // =========================
+    // DELETE MENU ITEM
+    // =========================
 
     describe('deleteMenuItem', function () {
 
@@ -491,11 +481,9 @@ describe('Menu Controller', function () {
 
     });
 
-    /*
-     * --------------------------------------------------
-     * UPDATE AVAILABILITY
-     * --------------------------------------------------
-     */
+    // =========================
+    // UPDATE AVAILABILITY
+    // =========================
 
     describe('updateAvailability', function () {
 

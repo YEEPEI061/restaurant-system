@@ -218,8 +218,11 @@
 
           <button type="button" [class.active]="activeFilter === 'Completed'" (click)="setFilter('Completed')">
             Completed
-          </button>
 
+            <span class="filter-count">
+              {{ completedCount }}
+            </span>
+          </button>
 
           <button type="button" [class.active]="activeFilter === 'Cancelled'" (click)="setFilter('Cancelled')">
             Cancelled
@@ -513,7 +516,7 @@
 
                     <div class="reservation-dishes">
                       @for (dish of getDishSummary(reservation); track $index) {
-                      <span>{{ dish }}</span>
+                      <span> {{ dish }}</span>
                       }
                     </div>
                     }

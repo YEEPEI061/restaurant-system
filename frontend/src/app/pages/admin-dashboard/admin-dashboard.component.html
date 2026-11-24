@@ -249,66 +249,68 @@
 
           } @else {
 
-          <div class="arrival-list">
+          <div class="overview-list-scroll">
+            <div class="arrival-list">
 
-            @for (
-            reservation of upcomingArrivals;
-            track reservation.reservationId
-            ) {
+              @for (
+              reservation of upcomingArrivals;
+              track reservation.reservationId
+              ) {
 
-            <div class="arrival-item">
+              <div class="arrival-item">
 
-              <div class="arrival-time">
-                {{ reservation.time }}
-              </div>
-
-
-              <div class="arrival-details">
-
-                <div class="arrival-name">
-                  {{ reservation.guestName }}
+                <div class="arrival-time">
+                  {{ reservation.time }}
                 </div>
 
-                <div class="arrival-meta">
 
-                  <span>
-                    {{ reservation.partySize }}
-                    {{
-                    reservation.partySize === 1
-                    ? 'guest'
-                    : 'guests'
-                    }}
-                  </span>
+                <div class="arrival-details">
 
-                  <span>
-                    {{ reservation.reservationId }}
-                  </span>
+                  <div class="arrival-name">
+                    {{ reservation.guestName }}
+                  </div>
+
+                  <div class="arrival-meta">
+
+                    <span>
+                      {{ reservation.partySize }}
+                      {{
+                      reservation.partySize === 1
+                      ? 'guest'
+                      : 'guests'
+                      }}
+                    </span>
+
+                    <span>
+                      {{ reservation.reservationId }}
+                    </span>
+
+                  </div>
 
                 </div>
 
-              </div>
 
+                <div class="arrival-status">
 
-              <div class="arrival-status">
-
-                <span class="status-badge" [class.status-confirmed]="
+                  <span class="status-badge" [class.status-confirmed]="
                         reservation.status === 'Confirmed'
                       " [class.status-pending]="
                         reservation.status === 'Pending'
                       ">
 
-                  <span class="status-dot"></span>
+                    <span class="status-dot"></span>
 
-                  {{ reservation.status }}
+                    {{ reservation.status }}
 
-                </span>
+                  </span>
+
+                </div>
 
               </div>
 
+              }
+
             </div>
-
-            }
-
           </div>
 
           }
@@ -375,101 +377,103 @@
 
           } @else {
 
-          <div class="attention-list">
+          <div class="overview-list-scroll">
+            <div class="attention-list">
 
 
-            <!-- PENDING -->
+              <!-- PENDING -->
 
-            @for (
-            reservation of pendingAttention;
-            track reservation.reservationId
-            ) {
+              @for (
+              reservation of pendingAttention;
+              track reservation.reservationId
+              ) {
 
-            <div class="attention-item">
+              <div class="attention-item">
 
-              <span class="material-symbols-outlined attention-icon warning">
-                pending_actions
-              </span>
-
-              <div>
-
-                <strong>
-                  Pending reservation
-                </strong>
-
-                <span>
-                  {{ reservation.guestName }}
-                  · {{ reservation.reservationId }}
+                <span class="material-symbols-outlined attention-icon warning">
+                  pending_actions
                 </span>
+
+                <div>
+
+                  <strong>
+                    Pending reservation
+                  </strong>
+
+                  <span>
+                    {{ reservation.guestName }}
+                    · {{ reservation.reservationId }}
+                  </span>
+
+                </div>
 
               </div>
 
-            </div>
-
-            }
+              }
 
 
-            <!-- SPECIAL REQUEST -->
+              <!-- SPECIAL REQUEST -->
 
-            @for (
-            reservation of specialRequestReservations;
-            track reservation.reservationId
-            ) {
+              @for (
+              reservation of specialRequestReservations;
+              track reservation.reservationId
+              ) {
 
-            <div class="attention-item">
+              <div class="attention-item">
 
-              <span class="material-symbols-outlined attention-icon">
-                notes
-              </span>
-
-              <div>
-
-                <strong>
-                  Guest request
-                </strong>
-
-                <span>
-                  {{ reservation.guestName }}
-                  · {{ reservation.specialRequests }}
+                <span class="material-symbols-outlined attention-icon">
+                  notes
                 </span>
+
+                <div>
+
+                  <strong>
+                    Guest request
+                  </strong>
+
+                  <span>
+                    {{ reservation.guestName }}
+                    · {{ reservation.specialRequests }}
+                  </span>
+
+                </div>
 
               </div>
 
-            </div>
-
-            }
+              }
 
 
-            <!-- UNASSIGNED TABLE -->
+              <!-- UNASSIGNED TABLE -->
 
-            @for (
-            reservation of unassignedReservations;
-            track reservation.reservationId
-            ) {
+              @for (
+              reservation of unassignedReservations;
+              track reservation.reservationId
+              ) {
 
-            <div class="attention-item">
+              <div class="attention-item">
 
-              <span class="material-symbols-outlined attention-icon">
-                table_restaurant
-              </span>
-
-              <div>
-
-                <strong>
-                  Table unassigned
-                </strong>
-
-                <span>
-                  {{ reservation.guestName }}
-                  · {{ reservation.reservationId }}
+                <span class="material-symbols-outlined attention-icon">
+                  table_restaurant
                 </span>
+
+                <div>
+
+                  <strong>
+                    Table unassigned
+                  </strong>
+
+                  <span>
+                    {{ reservation.guestName }}
+                    · {{ reservation.reservationId }}
+                  </span>
+
+                </div>
 
               </div>
 
+              }
+
             </div>
-
-            }
-
           </div>
 
           }
@@ -578,56 +582,52 @@
 
           </div>
 
+          <div class="overview-list-scroll">
+            <div class="assignment-list">
 
-          <div class="assignment-list">
-
-            @if (assignedReservations.length === 0) {
-
-            <div class="overview-empty compact">
-
-              <span class="material-symbols-outlined">
-                table_restaurant
-              </span>
-
-              No table assignments recorded for today.
-
-            </div>
-
-            } @else {
-
-            @for (
-            reservation of assignedReservations.slice(0, 5);
-            track reservation.reservationId
-            ) {
-
-            <div class="assignment-item">
-
-              <div class="assignment-table">
-                {{ reservation.table }}
+              @if (tableAssignmentReservations.length === 0) {
+              <div class="overview-empty compact">
+                <span class="material-symbols-outlined">table_restaurant</span>
+                No table assignments recorded for today.
               </div>
+              } @else {
+              @for (
+              reservation of tableAssignmentReservations.slice(0, 5);
+              track reservation.reservationId
+              ) {
+              <div class="assignment-item">
+                <div class="assignment-table">
+                  @if (reservation.table) {
+                  {{ reservation.table }}
+                  } @else {
+                  <span class="material-symbols-outlined attention-icon warning" title="Unassigned"
+                    aria-label="Unassigned">
+                    event_busy
+                  </span>
+                  }
+                </div>
+
+                <div class="assignment-details">
+
+                  <strong>
+                    {{ reservation.guestName }}
+                  </strong>
+
+                  <span>
+                    {{ reservation.time }}
+                    ·
+                    {{ reservation.partySize }}
+                    {{
+                    reservation.partySize === 1
+                    ? 'guest'
+                    : 'guests'
+                    }}
+                  </span>
+
+                </div>
 
 
-              <div class="assignment-details">
-
-                <strong>
-                  {{ reservation.guestName }}
-                </strong>
-
-                <span>
-                  {{ reservation.time }}
-                  ·
-                  {{ reservation.partySize }}
-                  {{
-                  reservation.partySize === 1
-                  ? 'guest'
-                  : 'guests'
-                  }}
-                </span>
-
-              </div>
-
-
-              <span class="status-badge" [class.status-confirmed]="
+                <span class="status-badge" [class.status-confirmed]="
                       reservation.status === 'Confirmed'
                     " [class.status-pending]="
                       reservation.status === 'Pending'
@@ -635,18 +635,19 @@
                       reservation.status === 'Seated'
                     ">
 
-                <span class="status-dot"></span>
+                  <span class="status-dot"></span>
 
-                {{ reservation.status }}
+                  {{ reservation.status }}
 
-              </span>
+                </span>
+
+              </div>
+
+              }
+
+              }
 
             </div>
-
-            }
-
-            }
-
           </div>
 
         </article>
@@ -742,6 +743,11 @@
           </div>
 
         </div>
+
+        <p class="dining-summary-description">
+          Dining selections across today's reservations.
+          A reservation may include multiple dining options.
+        </p>
 
       </div>
 

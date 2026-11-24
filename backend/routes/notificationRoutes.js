@@ -11,11 +11,9 @@ const authenticateToken = require('../middleware/authMiddleware');
 const router = express.Router();
 
 
-/*
- * --------------------------------------------------
- * GET NOTIFICATIONS
- * --------------------------------------------------
- */
+// =========================
+// GET NOTIFICATIONS
+// =========================
 
 router.get(
     '/',
@@ -24,11 +22,9 @@ router.get(
 );
 
 
-/*
- * --------------------------------------------------
- * MARK ONE NOTIFICATION AS READ
- * --------------------------------------------------
- */
+// =========================
+// MARK ONE NOTIFICATION AS READ
+// =========================
 
 router.patch(
     '/:id/read',
@@ -37,11 +33,9 @@ router.patch(
 );
 
 
-/*
- * --------------------------------------------------
- * MARK ALL NOTIFICATIONS AS READ
- * --------------------------------------------------
- */
+// =========================
+// MARK ALL NOTIFICATIONS AS READ
+// =========================
 
 router.patch(
     '/read-all',

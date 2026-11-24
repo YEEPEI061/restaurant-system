@@ -123,6 +123,11 @@ select:focus-visible {
   height: 7px;
   flex-shrink: 0;
   border-radius: 50%;
+  background: #b08b43;
+}
+
+/* Confirmed: Green dot */
+.status-badge.confirmed .status-dot {
   background: #536251;
 }
 
@@ -419,6 +424,9 @@ select:focus-visible {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+
+  background: #f3e7c8;
+  color: #80652d;
 }
 
 .status-badge.confirmed {

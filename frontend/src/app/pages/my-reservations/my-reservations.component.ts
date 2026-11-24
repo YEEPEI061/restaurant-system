@@ -162,36 +162,59 @@ export class MyReservationsComponent implements OnInit {
   // RESERVATION GROUPS
   // =========================================================
 
+  private getReservationDateTime(
+    reservation: Reservation
+  ): Date {
+    return new Date(
+      `${reservation.date}T${reservation.time}:00`
+    );
+  }
+
   get upcomingReservations(): Reservation[] {
 
-    return this.reservations.filter((reservation) => {
+    const now = new Date();
 
-      return (
-        reservation.status === 'Pending' ||
-        reservation.status === 'Confirmed'
-      );
+    return this.reservations.filter(reservation => {
+
+      if (reservation.status === 'Cancelled') {
+        return false;
+      }
+
+      if (reservation.status === 'Completed') {
+        return false;
+      }
+
+      return this.getReservationDateTime(reservation) >= now;
 
     });
   }
+
 
   get pastReservations(): Reservation[] {
 
-    return this.reservations.filter((reservation) => {
+    const now = new Date();
+
+    return this.reservations.filter(reservation => {
+
+      if (reservation.status === 'Cancelled') {
+        return false;
+      }
 
       return (
         reservation.status === 'Completed' ||
-        reservation.status === 'Seated'
+        this.getReservationDateTime(reservation) < now
       );
 
     });
   }
+
 
   get cancelledReservations(): Reservation[] {
 
     return this.reservations.filter(
-      (reservation) =>
-        reservation.status === 'Cancelled'
+      reservation => reservation.status === 'Cancelled'
     );
+
   }
 
   get upcomingCount(): number {
@@ -472,11 +495,24 @@ export class MyReservationsComponent implements OnInit {
     reservation: Reservation
   ): number {
 
-    return (
-      reservation.selectedDishes ?? []
-    ).reduce(
+    return (reservation.selectedDishes ?? []).reduce(
       (total, dish) =>
-        total + Number(dish.price || 0),
+        total +
+        (Number(dish.price) || 0) *
+        (Number(dish.quantity) || 1),
+      0
+    );
+  }
+
+  getTastingMenusTotal(
+    reservation: Reservation
+  ): number {
+
+    return (reservation.tastingMenus ?? []).reduce(
+      (total, menu) =>
+        total +
+        (Number(menu.price) || 0) *
+        (Number(menu.quantity) || 1),
       0
     );
   }
@@ -485,27 +521,17 @@ export class MyReservationsComponent implements OnInit {
     reservation: Reservation
   ): number {
 
-    let total = 0;
-
-    if (
-      reservation.diningOption === 'alacarte'
-    ) {
-      total +=
-        this.getSelectedDishesTotal(
-          reservation
-        ) * reservation.partySize;
-    }
-
-    return total;
+    return (
+      this.getSelectedDishesTotal(reservation) +
+      this.getTastingMenusTotal(reservation)
+    );
   }
 
   hasEstimatedPrice(
     reservation: Reservation
   ): boolean {
 
-    return (
-      reservation.diningOption === 'alacarte'
-    );
+    return this.getEstimatedTotal(reservation) > 0;
   }
 
   // =========================================================

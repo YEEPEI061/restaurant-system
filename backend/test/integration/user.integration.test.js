@@ -20,12 +20,6 @@ describe('User Management Integration Tests', function () {
     let guestUser;
 
 
-    /*
-     * --------------------------------------------------
-     * DATABASE SETUP
-     * --------------------------------------------------
-     */
-
     before(async function () {
 
         await connectDatabase(
@@ -36,21 +30,9 @@ describe('User Management Integration Tests', function () {
 
     });
 
-
-    /*
-     * --------------------------------------------------
-     * TEST DATA
-     * --------------------------------------------------
-     */
-
     beforeEach(async function () {
 
         await User.deleteMany({});
-
-
-        /*
-         * Create admin
-         */
 
         const adminPassword =
             await bcrypt.hash(
@@ -62,25 +44,15 @@ describe('User Management Integration Tests', function () {
             await User.create({
 
                 firstName: 'Test',
-
                 lastName: 'Admin',
-
                 email: 'admin@test.com',
-
                 password: adminPassword,
-
                 phone: '0123456789',
-
                 role: 'admin',
-
                 active: true
 
             });
 
-
-        /*
-         * Create guest
-         */
 
         const guestPassword =
             await bcrypt.hash(
@@ -92,25 +64,14 @@ describe('User Management Integration Tests', function () {
             await User.create({
 
                 firstName: 'Test',
-
                 lastName: 'Guest',
-
                 email: 'guest@test.com',
-
                 password: guestPassword,
-
                 phone: '0111111111',
-
                 role: 'guest',
-
                 active: true
 
             });
-
-
-        /*
-         * Login admin
-         */
 
         const adminLogin =
             await request(app)
@@ -127,10 +88,6 @@ describe('User Management Integration Tests', function () {
         adminToken =
             adminLogin.body.token;
 
-
-        /*
-         * Login guest
-         */
 
         const guestLogin =
             await request(app)
@@ -150,12 +107,6 @@ describe('User Management Integration Tests', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * CLEANUP
-     * --------------------------------------------------
-     */
-
     after(async function () {
 
         await User.deleteMany({});
@@ -164,12 +115,6 @@ describe('User Management Integration Tests', function () {
 
     });
 
-
-    /*
-     * ==================================================
-     * GET ALL USERS
-     * ==================================================
-     */
 
     it('should allow an admin to retrieve all users', async function () {
 
@@ -217,12 +162,6 @@ describe('User Management Integration Tests', function () {
     });
 
 
-    /*
-     * ==================================================
-     * GET USER BY ID
-     * ==================================================
-     */
-
     it('should allow an admin to retrieve a user by ID', async function () {
 
         const response =
@@ -249,9 +188,7 @@ describe('User Management Integration Tests', function () {
         );
 
 
-        /*
-         * Password must not be returned.
-         */
+        // Password must not be returned.
 
         expect(
             response.body.user
@@ -261,12 +198,6 @@ describe('User Management Integration Tests', function () {
 
     });
 
-
-    /*
-     * ==================================================
-     * CREATE USER
-     * ==================================================
-     */
 
     it('should allow an admin to create a new user', async function () {
 
@@ -280,17 +211,11 @@ describe('User Management Integration Tests', function () {
                 .send({
 
                     firstName: 'New',
-
                     lastName: 'User',
-
                     email: 'newuser@test.com',
-
                     password: 'Password123!',
-
                     phone: '0102222222',
-
                     role: 'guest',
-
                     active: true
 
                 });
@@ -314,21 +239,11 @@ describe('User Management Integration Tests', function () {
             'newuser@test.com'
         );
 
-
-        /*
-         * Password must not be exposed.
-         */
-
         expect(
             response.body.user
         ).to.not.have.property(
             'password'
         );
-
-
-        /*
-         * Confirm user exists in database.
-         */
 
         const createdUser =
             await User.findOne({
@@ -343,12 +258,6 @@ describe('User Management Integration Tests', function () {
     });
 
 
-    /*
-     * ==================================================
-     * DUPLICATE EMAIL
-     * ==================================================
-     */
-
     it('should reject creating a user with an existing email', async function () {
 
         const response =
@@ -361,17 +270,11 @@ describe('User Management Integration Tests', function () {
                 .send({
 
                     firstName: 'Duplicate',
-
                     lastName: 'User',
-
                     email: 'guest@test.com',
-
                     password: 'Password123!',
-
                     phone: '0103333333',
-
                     role: 'guest',
-
                     active: true
 
                 });
@@ -388,12 +291,6 @@ describe('User Management Integration Tests', function () {
     });
 
 
-    /*
-     * ==================================================
-     * UPDATE USER
-     * ==================================================
-     */
-
     it('should allow an admin to update a user', async function () {
 
         const response =
@@ -408,9 +305,7 @@ describe('User Management Integration Tests', function () {
                 .send({
 
                     firstName: 'Updated',
-
                     lastName: 'Guest',
-
                     phone: '0199999999'
 
                 });
@@ -436,11 +331,6 @@ describe('User Management Integration Tests', function () {
             '0199999999'
         );
 
-
-        /*
-         * Confirm database was updated.
-         */
-
         const updatedUser =
             await User.findById(
                 guestUser._id
@@ -455,12 +345,6 @@ describe('User Management Integration Tests', function () {
 
     });
 
-
-    /*
-     * ==================================================
-     * UPDATE USER STATUS
-     * ==================================================
-     */
 
     it('should allow an admin to update a user status', async function () {
 
@@ -494,11 +378,6 @@ describe('User Management Integration Tests', function () {
             false
         );
 
-
-        /*
-         * Confirm database was updated.
-         */
-
         const updatedUser =
             await User.findById(
                 guestUser._id
@@ -513,12 +392,6 @@ describe('User Management Integration Tests', function () {
 
     });
 
-
-    /*
-     * ==================================================
-     * DELETE USER
-     * ==================================================
-     */
 
     it('should allow an admin to delete another user', async function () {
 
@@ -541,11 +414,6 @@ describe('User Management Integration Tests', function () {
             'User deleted successfully'
         );
 
-
-        /*
-         * Confirm user no longer exists.
-         */
-
         const deletedUser =
             await User.findById(
                 guestUser._id
@@ -558,12 +426,6 @@ describe('User Management Integration Tests', function () {
 
     });
 
-
-    /*
-     * ==================================================
-     * SELF DELETE PROTECTION
-     * ==================================================
-     */
 
     it('should prevent an admin from deleting their own account', async function () {
 
@@ -586,11 +448,6 @@ describe('User Management Integration Tests', function () {
             'You cannot delete your own admin account'
         );
 
-
-        /*
-         * Confirm admin still exists.
-         */
-
         const existingAdmin =
             await User.findById(
                 adminUser._id
@@ -603,12 +460,6 @@ describe('User Management Integration Tests', function () {
 
     });
 
-
-    /*
-     * ==================================================
-     * GUEST DELETE PROTECTION
-     * ==================================================
-     */
 
     it('should reject a guest from deleting a user', async function () {
 

@@ -28,7 +28,6 @@ async function generateNextDishId() {
   return `M-${String(maxNumber + 1).padStart(3, '0')}`;
 }
 
-// GET all menu items
 async function getMenuItems(req, res) {
   try {
     const menuItems = await MenuItem.find().sort({
@@ -48,7 +47,6 @@ async function getMenuItems(req, res) {
   }
 }
 
-// GET one menu item
 async function getMenuItemById(req, res) {
   try {
     const menuItem = await MenuItem.findOne({
@@ -73,7 +71,6 @@ async function getMenuItemById(req, res) {
   }
 }
 
-// CREATE a menu item
 async function createMenuItem(req, res) {
   try {
 
@@ -151,7 +148,6 @@ async function createMenuItem(req, res) {
   }
 }
 
-// UPDATE a menu item
 async function updateMenuItem(req, res) {
   try {
     const menuItem = await MenuItem.findOne({
@@ -231,7 +227,6 @@ async function updateMenuItem(req, res) {
   }
 }
 
-// DELETE a menu item
 async function deleteMenuItem(req, res) {
   try {
     const menuItem = await MenuItem.findOne({
@@ -268,7 +263,6 @@ async function deleteMenuItem(req, res) {
   }
 }
 
-// UPDATE menu item availability
 async function updateAvailability(req, res) {
   try {
     const { available } = req.body;

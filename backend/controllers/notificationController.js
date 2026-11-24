@@ -2,13 +2,6 @@ const mongoose = require('mongoose');
 
 const Notification = require('../models/Notification');
 
-
-/*
- * --------------------------------------------------
- * GET NOTIFICATIONS
- * --------------------------------------------------
- */
-
 async function getNotifications(req, res) {
 
     try {
@@ -59,13 +52,6 @@ async function getNotifications(req, res) {
 
     }
 }
-
-
-/*
- * --------------------------------------------------
- * MARK NOTIFICATION AS READ
- * --------------------------------------------------
- */
 
 async function markNotificationAsRead(req, res) {
 
@@ -134,13 +120,6 @@ async function markNotificationAsRead(req, res) {
 
     }
 }
-
-
-/*
- * --------------------------------------------------
- * MARK ALL NOTIFICATIONS AS READ
- * --------------------------------------------------
- */
 
 async function markAllNotificationsAsRead(req, res) {
 

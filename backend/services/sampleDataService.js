@@ -12,11 +12,8 @@ async function initialiseSampleData() {
 
   console.log('Checking sample data...');
 
-  /*
-   * --------------------------------------------------
-   * SAMPLE MENU
-   * --------------------------------------------------
-   */
+
+// SAMPLE MENU
 
   for (const item of menuData) {
 
@@ -35,11 +32,8 @@ async function initialiseSampleData() {
   }
 
 
-  /*
-   * --------------------------------------------------
-   * SAMPLE USERS
-   * --------------------------------------------------
-   */
+
+// SAMPLE USERS
 
   for (const user of userData) {
 
@@ -64,11 +58,8 @@ async function initialiseSampleData() {
   }
 
 
-  /*
-   * --------------------------------------------------
-   * SAMPLE RESERVATIONS
-   * --------------------------------------------------
-   */
+
+// SAMPLE RESERVATIONS
 
   for (const reservation of reservationData) {
 

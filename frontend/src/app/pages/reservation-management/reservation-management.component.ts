@@ -1,7 +1,6 @@
 import {
   Component,
   OnInit, HostListener,
-  OnDestroy
 } from '@angular/core';
 
 import {
@@ -22,7 +21,6 @@ import {
 import {
   WebSocketService
 } from '../../services/websocket.service';
-import { interval, Subscription } from 'rxjs';
 
 
 import { HeaderComponent } from '../../components/header/header.component';
@@ -129,34 +127,28 @@ interface ReservationRequest {
     './reservation-management.component.css'
 })
 export class ReservationManagementComponent
-  implements OnInit, OnDestroy {
+  implements OnInit {
 
-  /*
-   * --------------------------------------------------
-   * DATA
-   * --------------------------------------------------
-   */
+  // =========================
+  // DATA
+  // =========================
 
   reservations: Reservation[] = [];
 
   isLoading = false;
 
-  /*
-   * --------------------------------------------------
-   * SEARCH / FILTER
-   * --------------------------------------------------
-   */
+  // =========================
+  // SEARCH / FILTER
+  // =========================
 
   searchQuery = '';
 
   activeFilter:
     ReservationFilter = 'All';
 
-  /*
-  * --------------------------------------------------
-  * PAGINATION
-  * --------------------------------------------------
-  */
+  // =========================
+  // PAGINATION
+  // =========================
 
   pageSize = 10;
 
@@ -164,11 +156,9 @@ export class ReservationManagementComponent
 
   pageSizeOptions = [10, 50, 100];
 
-  /*
-   * --------------------------------------------------
-   * DRAWER
-   * --------------------------------------------------
-   */
+  // =========================
+  // DRAWER
+  // =========================
 
   drawerOpen = false;
 
@@ -176,21 +166,17 @@ export class ReservationManagementComponent
     DrawerMode = 'create';
 
 
-  /*
-   * --------------------------------------------------
-   * FORM
-   * --------------------------------------------------
-   */
+  // =========================
+  // FORM
+  // =========================
 
   form: ReservationForm =
     this.createEmptyForm();
 
 
-  /*
-   * --------------------------------------------------
-   * TABLES
-   * --------------------------------------------------
-   */
+  // =========================
+  // TABLES
+  // =========================
 
   tables: RestaurantTable[] = [
     { id: 'T01', label: 'Table 01', capacity: 2 },
@@ -205,13 +191,9 @@ export class ReservationManagementComponent
     { id: 'T10', label: 'Table 10', capacity: 8 }
   ];
 
-  private reservationCompletionSubscription?: Subscription;
-
-  /*
- * --------------------------------------------------
- * TABLE CAPACITY VALIDATION
- * --------------------------------------------------
- */
+  // =========================
+  // TABLE CAPACITY VALIDATION
+  // =========================
 
   getTableCapacity(tableId: string): number {
     return this.tables.find(
@@ -232,11 +214,9 @@ export class ReservationManagementComponent
     );
   }
 
-  /*
-   * --------------------------------------------------
-   * RESERVATION STATUSES
-   * --------------------------------------------------
-   */
+  // =========================
+  // RESERVATION STATUSES
+  // =========================
 
   statusOptions:
     ReservationStatus[] = [
@@ -256,11 +236,9 @@ export class ReservationManagementComponent
   sortOption: ReservationSort = 'date-newest';
 
 
-  /*
-  * --------------------------------------------------
-  * MESSAGE MODALS
-  * --------------------------------------------------
-  */
+  // =========================
+  // MESSAGE MODALS
+  // =========================
 
   successMessage = '';
   successTitle = '';
@@ -283,11 +261,9 @@ export class ReservationManagementComponent
 
   reservationToDelete: Reservation | null = null;
 
-  /*
-   * --------------------------------------------------
-   * CONSTRUCTOR
-   * --------------------------------------------------
-   */
+  // =========================
+  // CONSTRUCTOR
+  // =========================
 
   constructor(
     private reservationService:
@@ -296,11 +272,9 @@ export class ReservationManagementComponent
   ) { }
 
 
-  /*
-   * --------------------------------------------------
-   * INITIALISE
-   * --------------------------------------------------
-   */
+  // =========================
+  // INITIALISE
+  // =========================
 
   ngOnInit(): void {
 
@@ -334,25 +308,11 @@ export class ReservationManagementComponent
 
       });
 
-    this.completePastReservations();
-
-    this.reservationCompletionSubscription = interval(10000)
-      .subscribe(() => {
-        this.completePastReservations();
-      });
-
   }
 
-  ngOnDestroy(): void {
-    this.reservationCompletionSubscription?.unsubscribe();
-  }
-
-
-  /*
-   * --------------------------------------------------
-   * LOAD RESERVATIONS
-   * --------------------------------------------------
-   */
+  // =========================
+  // LOAD RESERVATIONS
+  // =========================
 
   loadReservations(): void {
 
@@ -395,11 +355,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * EMPTY FORM
-   * --------------------------------------------------
-   */
+  // =========================
+  // EMPTY FORM
+  // =========================
 
   private createEmptyForm():
     ReservationForm {
@@ -433,11 +391,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * CREATE DRAWER
-   * --------------------------------------------------
-   */
+  // =========================
+  // CREATE DRAWER
+  // =========================
 
   openCreateDrawer(): void {
 
@@ -451,11 +407,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * OPEN EXISTING RESERVATION
-   * --------------------------------------------------
-   */
+  // =========================
+  // OPEN EXISTING RESERVATION
+  // =========================
 
   openReservation(
     reservation: Reservation
@@ -517,11 +471,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * CLOSE DRAWER
-   * --------------------------------------------------
-   */
+  // =========================
+  // CLOSE DRAWER
+  // =========================
 
   closeDrawer(): void {
 
@@ -533,11 +485,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * FILTER
-   * --------------------------------------------------
-   */
+  // =========================
+  // FILTER
+  // =========================
 
   setFilter(filter: ReservationFilter): void {
     this.activeFilter = filter;
@@ -545,11 +495,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * FILTERED RESERVATIONS
-   * --------------------------------------------------
-   */
+  // =========================
+  // FILTERED RESERVATIONS
+  // =========================
 
   get filteredReservations(): Reservation[] {
 
@@ -625,11 +573,9 @@ export class ReservationManagementComponent
 
   }
 
-  /*
- * --------------------------------------------------
- * PAGINATION
- * --------------------------------------------------
- */
+  // =========================
+  // PAGINATION
+  // =========================
 
   get totalPages(): number {
     return Math.max(
@@ -676,11 +622,9 @@ export class ReservationManagementComponent
     this.currentPage = page;
   }
 
-  /*
-   * --------------------------------------------------
-   * COUNTS
-   * --------------------------------------------------
-   */
+  // =========================
+  // COUNTS
+  // =========================
 
   get totalCount(): number {
 
@@ -725,6 +669,16 @@ export class ReservationManagementComponent
 
   }
 
+  get completedCount(): number {
+
+    return this.reservations.filter(
+      reservation =>
+        reservation.status ===
+        'Completed'
+    ).length;
+
+  }
+
 
   get cancelledCount(): number {
 
@@ -737,11 +691,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * STATUS CLASS
-   * --------------------------------------------------
-   */
+  // =========================
+  // STATUS CLASS
+  // =========================
 
   getStatusClass(
     status: ReservationStatus
@@ -771,11 +723,9 @@ export class ReservationManagementComponent
 
   }
 
-  /*
-   * --------------------------------------------------
-   * TABLE ASSIGNMENT
-   * --------------------------------------------------
-   */
+  // =========================
+  // TABLE ASSIGNMENT
+  // =========================
 
   assignTable(
     reservation: Reservation,
@@ -1004,11 +954,9 @@ export class ReservationManagementComponent
     }));
   }
 
-  /*
-   * --------------------------------------------------
-   * UPDATE STATUS
-   * --------------------------------------------------
-   */
+  // =========================
+  // UPDATE STATUS
+  // =========================
 
   updateStatus(
     reservation: Reservation,
@@ -1093,11 +1041,9 @@ export class ReservationManagementComponent
 
   }
 
-  /*
-   * --------------------------------------------------
-   * CANCEL CONFIRMATION
-   * --------------------------------------------------
-   */
+  // =========================
+  // CANCEL CONFIRMATION
+  // =========================
 
   cancelReservation(): void {
 
@@ -1191,11 +1137,9 @@ export class ReservationManagementComponent
 
   }
 
-  /*
-  * --------------------------------------------------
-  * DELETE CONFIRMATION
-  * --------------------------------------------------
-  */
+  // =========================
+  // DELETE CONFIRMATION
+  // =========================
 
   openDeleteConfirmation(
     reservation: Reservation
@@ -1221,11 +1165,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-  * --------------------------------------------------
-  * DELETE RESERVATION
-  * --------------------------------------------------
-  */
+  // =========================
+  // DELETE RESERVATION
+  // =========================
 
   deleteReservation(): void {
 
@@ -1324,11 +1266,9 @@ export class ReservationManagementComponent
     }
   }
 
-  /*
-   * --------------------------------------------------
-   * SUCCESS MESSAGE
-   * --------------------------------------------------
-   */
+  // =========================
+  // SUCCESS MESSAGE
+  // =========================
 
 
   showSuccess(
@@ -1471,11 +1411,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * STATUS SUCCESS TITLE
-   * --------------------------------------------------
-   */
+  // =========================
+  // STATUS SUCCESS TITLE
+  // =========================
 
   private getStatusSuccessTitle(
     status: ReservationStatus
@@ -1503,11 +1441,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * STATUS SUCCESS MESSAGE
-   * --------------------------------------------------
-   */
+  // =========================
+  // STATUS SUCCESS MESSAGE
+  // =========================
 
   private getStatusSuccessMessage(
     reservationId: string,
@@ -1535,11 +1471,9 @@ export class ReservationManagementComponent
 
   }
 
-  /*
-   * --------------------------------------------------
-   * SAVE RESERVATION
-   * --------------------------------------------------
-   */
+  // =========================
+  // SAVE RESERVATION
+  // =========================
 
   saveReservation(): void {
 
@@ -1751,11 +1685,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * PACKAGE PRICES
-   * --------------------------------------------------
-   */
+  // =========================
+  // PACKAGE PRICES
+  // =========================
 
   packagePrice(
     packageName: string
@@ -1783,11 +1715,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * ESTIMATED TOTAL
-   * --------------------------------------------------
-   */
+  // =========================
+  // ESTIMATED TOTAL
+  // =========================
 
   get estimatedTotal(): number {
 
@@ -1809,16 +1739,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * AMOUNT DUE
-   * --------------------------------------------------
-   *
-   * Currently uses the same estimated amount.
-   * This can later be changed if Aurelia
-   * introduces deposits/payments.
-   * --------------------------------------------------
-   */
+  // =========================
+  // AMOUNT DUE
+  // =========================
 
   get amountDue(): number {
 
@@ -1831,11 +1754,9 @@ export class ReservationManagementComponent
     return (reservation.selectedDishes?.length ?? 0) > 0;
   }
 
-  /*
-  * --------------------------------------------------
-  * FLOOR MATRIX / TABLE AVAILABILITY
-  * --------------------------------------------------
-  */
+  // =========================
+  // FLOOR MATRIX / TABLE AVAILABILITY
+  // =========================
 
   hasSeatedReservation(
     tableId: string
@@ -2077,11 +1998,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * DATE HELPERS
-   * --------------------------------------------------
-   */
+  // =========================
+  // DATE HELPERS
+  // =========================
 
   private toDateInputValue(
     date: Date
@@ -2159,11 +2078,9 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-   * --------------------------------------------------
-   * SERVICE DATE
-   * --------------------------------------------------
-   */
+  // =========================
+  // SERVICE DATE
+  // =========================
 
   get serviceDate(): string {
 

@@ -63,7 +63,14 @@ describe('AdminDashboardComponent', () => {
             servicePeriod: 'dinner',
             diningOption: 'alacarte',
             tastingMenus: [],
-            selectedDishes: [],
+            selectedDishes: [
+                {
+                    id: 'M-002',
+                    name: 'Smoked Birch Potato Mousseline',
+                    quantity: 1,
+                    price: 20
+                }
+            ],
             table: '',
             specialRequests: 'Vegetarian preference',
             status: 'Pending'

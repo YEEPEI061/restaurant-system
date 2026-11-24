@@ -345,6 +345,12 @@ export class AdminDashboardComponent implements OnInit {
       .slice(0, 5);
   }
 
+  get tableAssignmentReservations(): Reservation[] {
+    return this.todayReservations.filter(
+      reservation => reservation.status !== 'Cancelled'
+    );
+  }
+
 
   // =========================
   // TABLE / SEATING OVERVIEW
@@ -378,12 +384,11 @@ export class AdminDashboardComponent implements OnInit {
     ).length;
   }
 
-
   get pendingTables(): number {
-
-    return this.assignedReservations.filter(
+    return this.todayReservations.filter(
       reservation =>
-        reservation.status === 'Pending'
+        reservation.status === 'Pending' &&
+        !!reservation.table?.trim()
     ).length;
   }
 
@@ -396,7 +401,7 @@ export class AdminDashboardComponent implements OnInit {
 
     return this.todayReservations.filter(
       reservation =>
-        reservation.diningOption === 'tasting'
+        !!reservation.tastingMenus?.length
     ).length;
   }
 
@@ -405,7 +410,7 @@ export class AdminDashboardComponent implements OnInit {
 
     return this.todayReservations.filter(
       reservation =>
-        reservation.diningOption === 'alacarte'
+        !!reservation.selectedDishes?.length
     ).length;
   }
 
@@ -414,7 +419,9 @@ export class AdminDashboardComponent implements OnInit {
 
     return this.todayReservations.filter(
       reservation =>
-        reservation.diningOption === 'table' 
+        !reservation.tastingMenus?.length &&
+        !reservation.selectedDishes?.length &&
+        reservation.diningOption === 'table'
     ).length;
   }
 
@@ -485,14 +492,6 @@ export class AdminDashboardComponent implements OnInit {
 
       return;
     }
-
-    /*
-     * Walk-in creation is currently kept
-     * as a dashboard UI action.
-     *
-     * A backend walk-in endpoint can be
-     * connected later if required.
-     */
 
     this.showWalkInModal = false;
 

@@ -170,7 +170,17 @@ export class ReservationsComponent implements OnInit {
       disabled: false
     },
     {
+      time: '19:00',
+      label: 'Popular',
+      disabled: false
+    },
+    {
       time: '19:15',
+      label: 'Popular',
+      disabled: false
+    },
+    {
+      time: '19:30',
       label: 'Popular',
       disabled: false
     },
@@ -180,17 +190,17 @@ export class ReservationsComponent implements OnInit {
       disabled: false
     },
     {
-      time: '20:45',
+      time: '20:30',
       label: 'Available',
       disabled: false
     },
     {
-      time: '21:15',
+      time: '21:00',
       label: 'Available',
       disabled: false
     },
     {
-      time: '21:45',
+      time: '21:30',
       label: 'Unavailable',
       disabled: true
     }
@@ -798,11 +808,21 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
+    const previousTime = this.selectedTime;
+
     this.selectedDate = new Date(day.date);
 
-    this.selectedTime = '';
+    const matchingTime = this.currentTimes.find(
+      slot =>
+        slot.time === previousTime &&
+        !slot.disabled
+    );
 
-    this.selectFirstAvailableTime();
+    if (matchingTime) {
+      this.selectedTime = matchingTime.time;
+    } else {
+      this.selectFirstAvailableTime();
+    }
 
     this.errorMessage = '';
   }
@@ -1125,9 +1145,11 @@ export class ReservationsComponent implements OnInit {
               ? 'brunch'
               : 'dinner';
 
-          // Start from the next available date
-          this.selectedDate =
-            this.findNextAvailableDate(this.today);
+          if (reservation.date) {
+            this.selectedDate = new Date(
+              reservation.date + 'T00:00:00'
+            );
+          }
 
           this.displayedMonth = new Date(
             this.selectedDate.getFullYear(),
@@ -1137,7 +1159,6 @@ export class ReservationsComponent implements OnInit {
 
           this.rebuildCalendar();
 
-          // Restore time if available
           const matchingTime = this.currentTimes.find(
             slot =>
               slot.time === reservation.time &&

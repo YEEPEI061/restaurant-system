@@ -11,6 +11,10 @@ const {
 } = require('./services/sampleDataService');
 
 const {
+  startReservationStatusScheduler
+} = require('./services/reservationStatusScheduler');
+
+const {
   initializeWebSocket,
   closeWebSocket
 } = require('./services/websocketService');
@@ -26,6 +30,8 @@ async function startServer() {
     await connectDatabase();
 
     await initialiseSampleData();
+
+    startReservationStatusScheduler();
 
     server.listen(PORT, () => {
       console.log(

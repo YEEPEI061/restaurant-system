@@ -852,7 +852,6 @@ describe('Reservation Integration Tests', function () {
 
         const adminToken = adminLoginResponse.body.token;
 
-        // Assign a table before confirming the reservation
         const assignTableResponse = await request(app)
             .put(`/api/reservations/${reservationId}`)
             .set('Authorization', `Bearer ${adminToken}`)
@@ -862,7 +861,6 @@ describe('Reservation Integration Tests', function () {
 
         expect(assignTableResponse.status).to.equal(200);
 
-        // Confirm the reservation
         const response = await request(app)
             .patch(`/api/reservations/${reservationId}/status`)
             .set('Authorization', `Bearer ${adminToken}`)

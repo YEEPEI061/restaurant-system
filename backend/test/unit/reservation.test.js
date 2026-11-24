@@ -29,11 +29,9 @@ describe('Reservation Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * GET ALL RESERVATIONS
-     * --------------------------------------------------
-     */
+    // =========================
+    // GET ALL RESERVATIONS
+    // =========================
 
     describe('getReservations', function () {
 
@@ -92,11 +90,9 @@ describe('Reservation Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * GET RESERVATION BY ID
-     * --------------------------------------------------
-     */
+    // =========================
+    // GET RESERVATION BY ID
+    // =========================
 
     describe('getReservationById', function () {
 
@@ -255,11 +251,9 @@ describe('Reservation Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * GET MY RESERVATIONS
-     * --------------------------------------------------
-     */
+    // =========================
+    // GET MY RESERVATIONS
+    // =========================
 
     describe('getMyReservations', function () {
 
@@ -318,11 +312,9 @@ describe('Reservation Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * CREATE RESERVATION
-     * --------------------------------------------------
-     */
+    // =========================
+    // CREATE RESERVATION
+    // =========================
 
     describe('createReservation', function () {
 
@@ -470,11 +462,9 @@ describe('Reservation Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * UPDATE RESERVATION
-     * --------------------------------------------------
-     */
+    // =========================
+    // UPDATE RESERVATION
+    // =========================
 
     describe('updateReservation', function () {
 
@@ -678,11 +668,9 @@ describe('Reservation Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * DELETE RESERVATION
-     * --------------------------------------------------
-     */
+    // =========================
+    // DELETE RESERVATION
+    // =========================
 
     describe('deleteReservation', function () {
 
@@ -741,11 +729,9 @@ describe('Reservation Controller', function () {
     });
 
 
-    /*
-     * --------------------------------------------------
-     * UPDATE RESERVATION STATUS
-     * --------------------------------------------------
-     */
+    // =========================
+    // UPDATE RESERVATION STATUS
+    // =========================
 
     describe('updateReservationStatus', function () {
 
