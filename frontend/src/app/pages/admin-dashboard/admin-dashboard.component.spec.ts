@@ -279,7 +279,7 @@ describe('AdminDashboardComponent', () => {
 
         expect(component.occupiedTables).toBe(1);
         expect(component.reservedTables).toBe(1);
-        expect(component.pendingTables).toBe(0);
+        expect(component.pendingTables).toBe(1);
 
         expect(component.tastingBookings).toBe(1);
         expect(component.aLaCarteBookings).toBe(1);

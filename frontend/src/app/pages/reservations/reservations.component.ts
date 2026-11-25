@@ -268,9 +268,10 @@ export class ReservationsComponent implements OnInit {
     this.tastingList =
       this.tastingService.getItems();
 
-    /*
-    * RETURN FROM MENU
-    */
+    // =========================
+    // RETURN FROM MENU
+    // =========================
+
     const savedDraft = sessionStorage.getItem('reservationDraft');
 
     if (savedDraft) {
@@ -300,9 +301,9 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
-    /*
-     * MODIFY EXISTING RESERVATION
-     */
+    // =========================
+    // MODIFY EXISTING RESERVATION
+    // =========================
     const reservation =
       history.state?.reservation;
 
@@ -317,9 +318,9 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
-    /*
-     * RE-BOOK PREVIOUS RESERVATION
-     */
+    // =========================
+    // RE-BOOK PREVIOUS RESERVATION
+    // =========================
     const rebookId =
       this.route.snapshot.queryParamMap.get('rebook');
 
@@ -330,9 +331,9 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
-    /*
-    * NORMAL NEW RESERVATION
-    */
+    // =========================
+    // NORMAL NEW RESERVATION
+    // =========================
     if (this.tastingList.length > 0) {
 
       this.showHandPickDishes = true;

@@ -21,10 +21,10 @@ const validateRequest = require('../middleware/validationMiddleware');
 
 const router = express.Router();
 
-/*
- * ALL USER MANAGEMENT ROUTES
- * ADMIN ONLY
- */
+// =========================
+// ALL USER MANAGEMENT ROUTES
+// ADMIN ONLY
+// =========================
 
 router.get(
   '/',

@@ -107,9 +107,9 @@ export class MyReservationsComponent implements OnInit {
   }
 
 
-  // =========================================================
+  // =========================
   // LOAD RESERVATIONS FROM DATABASE
-  // =========================================================
+  // =========================
 
   loadReservations(): void {
 
@@ -158,9 +158,9 @@ export class MyReservationsComponent implements OnInit {
     });
   }
 
-  // =========================================================
+  // =========================
   // RESERVATION GROUPS
-  // =========================================================
+  // =========================
 
   private getReservationDateTime(
     reservation: Reservation
@@ -253,9 +253,9 @@ export class MyReservationsComponent implements OnInit {
     }
   }
 
-  // =========================================================
+  // =========================
   // SEARCH + SORT
-  // =========================================================
+  // =========================
 
   get filteredReservations(): Reservation[] {
 
@@ -303,9 +303,9 @@ export class MyReservationsComponent implements OnInit {
     });
   }
 
-  // =========================================================
+  // =========================
   // PAST RESERVATIONS PAGINATION
-  // =========================================================
+  // =========================
 
   get totalPages(): number {
     return Math.max(
@@ -372,9 +372,9 @@ export class MyReservationsComponent implements OnInit {
       !this.sortNewestFirst;
   }
 
-  // =========================================================
+  // =========================
   // DISPLAY HELPERS
-  // =========================================================
+  // =========================
 
   formatReservationDate(date: string): string {
 
@@ -487,9 +487,9 @@ export class MyReservationsComponent implements OnInit {
     );
   }
 
-  // =========================================================
+  // =========================
   // PRICE
-  // =========================================================
+  // =========================
 
   getSelectedDishesTotal(
     reservation: Reservation
@@ -534,9 +534,9 @@ export class MyReservationsComponent implements OnInit {
     return this.getEstimatedTotal(reservation) > 0;
   }
 
-  // =========================================================
+  // =========================
   // ACTIONS
-  // =========================================================
+  // =========================
 
   goToLogin(): void {
     void this.router.navigate(['/guest-login']);
@@ -574,9 +574,9 @@ export class MyReservationsComponent implements OnInit {
     );
   }
 
-  // =========================================================
+  // =========================
   // CANCELLATION
-  // =========================================================
+  // =========================
 
   openCancelModal(
     reservation: Reservation

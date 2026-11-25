@@ -199,15 +199,6 @@ async function validateRestaurantCapacity({
       'reservationId time partySize status'
     );
 
-  /*
-   * Calculate occupancy throughout the requested
-   * one-hour period.
-   *
-   * Negative changes (departures) are processed
-   * before positive changes (arrivals) at the
-   * same time, allowing back-to-back reservations.
-   */
-
   const events = [];
 
   for (const existing of existingReservations) {
@@ -346,12 +337,13 @@ async function getReservationById(req, res) {
       });
     }
 
-    /*
-     * GUEST PERMISSION CHECK
-     *
-     * Admin can view any reservation.
-     * Guest can only view their own reservation.
-     */
+    // =========================
+    // GUEST PERMISSION CHECK
+    //
+    // Admin can view any reservation.
+    // Guest can only view their own reservation.
+    // =========================
+
     if (req.user.role === 'guest') {
 
       const guestId =
@@ -1100,9 +1092,6 @@ async function updateReservationStatus(
 
     }
 
-    /*
-     * GUEST PERMISSION CHECK
-     */
     if (req.user.role === 'guest') {
 
       // Guest can only modify their own reservation

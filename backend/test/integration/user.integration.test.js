@@ -477,9 +477,7 @@ describe('User Management Integration Tests', function () {
         expect(response.status).to.equal(403);
 
 
-        /*
-         * Confirm admin still exists.
-         */
+        // Confirm admin still exists.
 
         const existingAdmin =
             await User.findById(

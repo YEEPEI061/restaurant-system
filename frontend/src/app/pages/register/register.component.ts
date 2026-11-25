@@ -72,9 +72,6 @@ export class RegisterComponent {
     this.clearError();
     this.clearSuccess();
 
-    /*
-     * REQUIRED FIELDS
-     */
     if (
       !this.firstName.trim() ||
       !this.lastName.trim() ||
@@ -91,9 +88,6 @@ export class RegisterComponent {
       return;
     }
 
-    /*
-     * PASSWORD LENGTH
-     */
     if (this.password.length < 8) {
 
       this.showError(
@@ -104,9 +98,6 @@ export class RegisterComponent {
       return;
     }
 
-    /*
-     * PASSWORD MATCH
-     */
     if (
       this.password !==
       this.confirmPassword
@@ -120,9 +111,6 @@ export class RegisterComponent {
       return;
     }
 
-    /*
-     * TERMS AND PRIVACY
-     */
     if (!this.agreeToTerms) {
 
       this.showError(
@@ -135,9 +123,6 @@ export class RegisterComponent {
 
     this.isCreatingAccount = true;
 
-    /*
-     * CREATE GUEST ACCOUNT
-     */
     this.authService
       .guestSignup({
         firstName:

@@ -22,10 +22,10 @@ const validateRequest = require('../middleware/validationMiddleware');
 
 const router = express.Router();
 
-/*
- * GET ALL RESERVATIONS
- * Admin only
- */
+// =========================
+// GET ALL RESERVATIONS
+// Admin only
+// =========================
 
 router.get(
   '/',
@@ -34,10 +34,10 @@ router.get(
   getReservations
 );
 
-/*
- * GET MY RESERVATIONS
- * Guest only
- */
+// =========================
+// GET MY RESERVATIONS
+// Guest only
+// =========================
 
 router.get(
   '/my',
@@ -55,10 +55,10 @@ router.get(
   getReservationById
 );
 
-/*
- * CREATE RESERVATION
- * Guest only
- */
+// =========================
+// CREATE RESERVATION
+// Guest only
+// =========================
 
 router.post(
   '/',
@@ -80,11 +80,11 @@ router.put(
   updateReservation
 );
 
-/*
- * UPDATE RESERVATION STATUS
- * Admin: can update any reservation status
- * Guest: can only cancel their own Pending/Confirmed reservation
- */
+// =========================
+// UPDATE RESERVATION STATUS
+// Admin: can update any reservation status
+// Guest: can only cancel their own Pending/Confirmed reservation
+// =========================
 
 router.patch(
   '/:id/status',
@@ -93,10 +93,10 @@ router.patch(
   updateReservationStatus
 );
 
-/*
- * DELETE RESERVATION
- * Admin only
- */
+// =========================
+// DELETE RESERVATION
+// Admin only
+// =========================
 
 router.delete(
   '/:id',

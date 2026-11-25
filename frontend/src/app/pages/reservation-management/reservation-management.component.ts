@@ -735,16 +735,16 @@ export class ReservationManagementComponent
     const previousTable = reservation.table || '';
     const previousStatus = reservation.status;
 
-    /*
-     * Restore the original selection when validation fails.
-     */
+
+    // Restore the original selection when validation fails.
+
     const restoreTable = (): void => {
       reservation.table = previousTable;
     };
 
-    /*
-     * Check table capacity.
-     */
+
+    // Check table capacity.
+
     if (
       tableId &&
       !this.isTableCapacitySuitable(
@@ -763,9 +763,8 @@ export class ReservationManagementComponent
       return;
     }
 
-    /*
-     * Check table availability.
-     */
+    // Check table availability.
+
     if (
       tableId &&
       tableId !== previousTable &&
@@ -787,9 +786,8 @@ export class ReservationManagementComponent
       return;
     }
 
-    /*
-     * Update table assignment.
-     */
+    // Update table assignment.
+
     this.reservationService
       .updateReservation(
         reservation.reservationId,
@@ -801,10 +799,8 @@ export class ReservationManagementComponent
 
         next: (tableResponse) => {
 
-          /*
-           * Pending reservation:
-           * Assign table, then confirm.
-           */
+          // Pending reservation: Assign table, then confirm.
+
           if (
             previousStatus === 'Pending' &&
             tableId
@@ -847,9 +843,9 @@ export class ReservationManagementComponent
                     error
                   );
 
-                  /*
-                   * Restore previous table assignment.
-                   */
+
+                  // Restore previous table assignment.
+
                   this.reservationService
                     .updateReservation(
                       reservation.reservationId,
@@ -884,10 +880,8 @@ export class ReservationManagementComponent
             return;
           }
 
-          /*
-           * Other reservation statuses:
-           * Update table only.
-           */
+          // Other reservation statuses: Update table only.
+
           const updated =
             tableResponse.reservation;
 
@@ -963,9 +957,6 @@ export class ReservationManagementComponent
     status: ReservationStatus
   ): void {
 
-    /*
-     * Cancellation requires confirmation.
-     */
     if (status === 'Cancelled') {
 
       this.reservationToCancel =
@@ -976,12 +967,6 @@ export class ReservationManagementComponent
 
       return;
     }
-
-
-    /*
-     * All other status changes can
-     * happen immediately.
-     */
 
     this.reservationService
       .updateReservationStatus(
@@ -1188,10 +1173,8 @@ export class ReservationManagementComponent
 
         next: (response) => {
 
-          /*
-           * Remove the deleted reservation
-           * from the current list immediately.
-           */
+          // Remove the deleted reservation
+
           this.reservations =
             this.reservations.filter(
               item =>
@@ -1477,10 +1460,6 @@ export class ReservationManagementComponent
 
   saveReservation(): void {
 
-    /*
-     * Basic validation
-     */
-
     if (
       !this.form.guestName.trim() ||
       !this.form.phone.trim() ||
@@ -1498,9 +1477,8 @@ export class ReservationManagementComponent
 
     }
 
-    /*
-    * Table capacity validation
-    */
+    // Table capacity validation
+
 
     if (
       this.form.table &&
@@ -1518,9 +1496,8 @@ export class ReservationManagementComponent
       return;
     }
 
-    /*
-     * Table availability validation
-     */
+    // Table availability validation
+
 
     if (
       this.form.table &&
@@ -1536,9 +1513,8 @@ export class ReservationManagementComponent
     }
 
 
-    /*
-     * CREATE
-     */
+    // CREATE
+
 
     if (this.drawerMode === 'create') {
 
@@ -1609,9 +1585,9 @@ export class ReservationManagementComponent
 
       return;
     }
-    /*
-     * UPDATE
-     */
+
+    // UPDATE
+
 
     const update: Partial<ReservationRequest> = {
       guestName: this.form.guestName.trim(),
@@ -1781,10 +1757,11 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-  * Check whether a table has an overlapping
-  * reservation on a specific date.
-  */
+  // =========================
+  // Check whether a table has an overlapping
+  // reservation on a specific date.
+  // =========================
+
   isTableOccupied(
     tableId: string,
     date: string,
@@ -1826,10 +1803,11 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-    * Check whether a table can be assigned
-    * to the current drawer form.
-    */
+  // =========================
+  // Check whether a table can be assigned
+  // to the current drawer form.
+  // =========================
+
   isTableAvailable(
     tableId: string
   ): boolean {
@@ -1852,11 +1830,11 @@ export class ReservationManagementComponent
 
   }
 
+  // =========================
+  // Get the reservation currently occupying
+  // a table at a specific date/time.
+  // =========================
 
-  /*
-    * Get the reservation currently occupying
-    * a table at a specific date/time.
-    */
   getTableReservationAtTime(
     tableId: string,
     date: string,
@@ -1904,9 +1882,8 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-    * Convert HH:mm to minutes.
-    */
+  // Convert HH:mm to minutes.
+
   private timeToMinutes(
     time: string
   ): number {
@@ -1930,9 +1907,8 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-    * Add one hour to a reservation time.
-    */
+  // Add one hour to a reservation time.
+
   getEndTime(
     time: string
   ): string {
@@ -1953,10 +1929,11 @@ export class ReservationManagementComponent
   }
 
 
-  /*
-    * Return the reservation occupying
-    * a table on a particular date.
-    */
+  // =========================
+  // Return the reservation occupying
+  // a table on a particular date.
+  // =========================
+
   getTableReservations(tableId: string): Reservation[] {
 
     const today = this.toDateInputValue(new Date());
@@ -2040,11 +2017,6 @@ export class ReservationManagementComponent
       return '';
 
     }
-
-
-    /*
-     * Already YYYY-MM-DD
-     */
 
     if (
       /^\d{4}-\d{2}-\d{2}$/

@@ -16,9 +16,9 @@ const validateRequest = require('../middleware/validationMiddleware');
 
 const router = express.Router();
 
-/*
- * PUBLIC MENU
- */
+// =========================
+// PUBLIC MENU
+// =========================
 
 // Get all menu items
 router.get('/', getMenuItems);
@@ -27,19 +27,19 @@ router.get('/', getMenuItems);
 router.get('/:id', getMenuItemById);
 
 
-/*
- * ADMIN MENU MANAGEMENT
- */
+// =========================
+// ADMIN MENU MANAGEMENT
+// =========================
 
 // Create menu item
 router.post(
-    '/',
-    authenticateToken,
-    authorizeRoles('admin'),
-    menuItemValidator,
-    validateRequest,
-    createMenuItem
-  );
+  '/',
+  authenticateToken,
+  authorizeRoles('admin'),
+  menuItemValidator,
+  validateRequest,
+  createMenuItem
+);
 
 // Update menu item
 router.put(

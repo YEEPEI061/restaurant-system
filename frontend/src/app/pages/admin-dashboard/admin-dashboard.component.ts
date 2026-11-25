@@ -388,10 +388,9 @@ export class AdminDashboardComponent implements OnInit {
     return this.todayReservations.filter(
       reservation =>
         reservation.status === 'Pending' &&
-        !!reservation.table?.trim()
+        !reservation.table?.trim()
     ).length;
   }
-
 
   // =========================
   // DINING OPTIONS
