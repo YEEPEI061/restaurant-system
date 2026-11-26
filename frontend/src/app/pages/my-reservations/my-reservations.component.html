@@ -108,19 +108,23 @@
 
 
         <button type="button" class="sort-button" (click)="toggleSort()" [attr.aria-label]="
-            sortNewestFirst
-              ? 'Sort oldest first'
-              : 'Sort newest first'
-          ">
+    activeTab === 'upcoming'
+      ? (sortUpcomingEarliestFirst
+          ? 'Sort farthest first'
+          : 'Sort nearest first')
+      : (sortNewestFirst
+          ? 'Sort oldest first'
+          : 'Sort newest first')
+  ">
           <span class="material-symbols-outlined">
             swap_vert
           </span>
 
           <span>
             {{
-            sortNewestFirst
-            ? 'Newest first'
-            : 'Oldest first'
+            activeTab === 'upcoming'
+            ? (sortUpcomingEarliestFirst ? 'Nearest first' : 'Farthest first')
+            : (sortNewestFirst ? 'Newest first' : 'Oldest first')
             }}
           </span>
         </button>
@@ -844,8 +848,7 @@
         </h2>
 
         <p>
-          Revisit your previous dining experiences
-          at Aurelia.
+          View your past reservations and dining history at Aurelia.
         </p>
 
       </div>
@@ -930,10 +933,10 @@
             {{ getDiningLabel(reservation) }}
           </strong>
 
-          <span class="completed-label">
+          <span class="completed-label" [ngClass]="getStatusClass(reservation.status)">
 
             <span class="material-symbols-outlined">
-              done_all
+              {{ reservation.status === 'Expired' ? 'event_busy' : 'done_all' }}
             </span>
 
             {{ reservation.status }}

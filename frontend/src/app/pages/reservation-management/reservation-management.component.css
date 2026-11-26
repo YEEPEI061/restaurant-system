@@ -49,7 +49,6 @@
 }
 
 .page-heading p {
-  max-width: 670px;
   margin: 12px 0 0;
   color: #62675f;
   font-size: 13px;
@@ -832,6 +831,10 @@ tr:focus-visible {
   background: #a36b6b;
 }
 
+.status-dot.status-expired {
+  background: #b0a49a;
+}
+
 .status-pill[data-status="Pending"] {
   color: #80500e;
   background: #ffedce;
@@ -855,6 +858,11 @@ tr:focus-visible {
 .status-pill[data-status="Cancelled"] {
   color: #8a5b5b;
   background: #f5e8e8;
+}
+
+.status-pill[data-status="Expired"] {
+  color: #806b60;
+  background: #f0e9e4;
 }
 
 
@@ -3096,7 +3104,6 @@ input[type="search"]::-webkit-search-cancel-button {
   display: block;
   font-size: 12px;
   color: #888;
-  margin-top: 4px;
 }
 
 /* Sort control */

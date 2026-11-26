@@ -117,7 +117,7 @@ const reservationSchema = new mongoose.Schema(
       ],
       default: []
     },
-    
+
     table: {
       type: String,
       default: '',
@@ -138,7 +138,8 @@ const reservationSchema = new mongoose.Schema(
         'Confirmed',
         'Seated',
         'Completed',
-        'Cancelled'
+        'Cancelled',
+        'Expired'
       ],
       default: 'Pending'
     }

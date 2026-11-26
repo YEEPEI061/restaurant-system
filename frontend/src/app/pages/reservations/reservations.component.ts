@@ -1357,6 +1357,23 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
+    // =========================
+    // VALIDATE EMAIL FORMAT
+    // =========================
+
+    const emailPattern =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(this.guestEmail.trim())) {
+
+      this.errorTitle = 'Invalid Email Address';
+
+      this.errorMessage =
+        'Please enter a valid email address.';
+
+      return;
+    }
+
     if (
       this.showHandPickDishes &&
       this.tastingList.length === 0

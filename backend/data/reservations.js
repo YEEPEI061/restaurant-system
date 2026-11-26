@@ -8,7 +8,7 @@ const reservationData = [
     email: "sofiachen@gmail.com",
     phone: "0125678901",
 
-    date: "2026-12-02",
+    date: "2026-11-12",
     time: "17:30",
 
     partySize: 3,
@@ -35,7 +35,7 @@ const reservationData = [
     table: "T04",
     specialRequests: "",
 
-    status: "Pending"
+    status: "Completed"
   },
 
   {
@@ -82,7 +82,7 @@ const reservationData = [
     table: "T06",
     specialRequests: "",
 
-    status: "Completed"
+    status: "Confirmed"
   }
 ];
 

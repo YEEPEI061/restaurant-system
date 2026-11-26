@@ -232,6 +232,14 @@
             </span>
           </button>
 
+          <button type="button" [class.active]="activeFilter === 'Expired'" (click)="setFilter('Expired')">
+            Expired
+
+            <span class="filter-count">
+              {{ expiredCount }}
+            </span>
+          </button>
+
           <!-- Sort reservations -->
           <label class="sort-control">
 
@@ -243,12 +251,12 @@
 
             <select [(ngModel)]="sortOption" [ngModelOptions]="{ standalone: true }" aria-label="Sort reservations">
 
-              <option value="date-newest">
-                Newest Date
+              <option value="date-nearest">
+                Nearest Date
               </option>
 
-              <option value="date-oldest">
-                Oldest Date
+              <option value="date-farthest">
+                Farthest Date
               </option>
 
               <option value="id-ascending">
@@ -436,12 +444,12 @@
 
 
                 <!-- Table -->
-                <!-- Table -->
                 <td (click)="$event.stopPropagation()">
                   <select class="table-select" [ngModel]="reservation.table" [ngModelOptions]="{ standalone: true }"
                     [disabled]="
                     reservation.status === 'Completed' ||
-                    reservation.status === 'Cancelled'
+                    reservation.status === 'Cancelled' ||
+                    reservation.status === 'Expired'
                   " [attr.aria-label]="'Assign table for ' + reservation.reservationId"
                     (ngModelChange)="assignTable(reservation, $event)">
 
@@ -552,7 +560,9 @@
                           reservation.status === 'Completed'
                         " [class.status-cancelled]="
                           reservation.status === 'Cancelled'
-                        "></i>
+                        " [class.status-expired]="
+                        reservation.status === 'Expired'
+                      "></i>
 
                     {{ reservation.status }}
 
@@ -632,7 +642,8 @@
                     <!-- Delete cancelled or completed reservation -->
                     @if (
                     reservation.status === 'Cancelled' ||
-                    reservation.status === 'Completed'
+                    reservation.status === 'Completed'||
+                    reservation.status === 'Expired'
                     ) {
 
                     <button class="icon-button icon-delete" type="button" title="Delete reservation"

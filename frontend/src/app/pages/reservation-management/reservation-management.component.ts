@@ -32,11 +32,12 @@ type ReservationFilter =
   | 'Confirmed'
   | 'Seated'
   | 'Completed'
-  | 'Cancelled';
+  | 'Cancelled'
+  | 'Expired';
 
 type ReservationSort =
-  | 'date-newest'
-  | 'date-oldest'
+  | 'date-nearest'
+  | 'date-farthest'
   | 'id-ascending'
   | 'id-descending';
 
@@ -222,18 +223,15 @@ export class ReservationManagementComponent
     ReservationStatus[] = [
 
       'Pending',
-
       'Confirmed',
-
       'Seated',
-
       'Completed',
-
-      'Cancelled'
+      'Cancelled',
+      'Expired'
 
     ];
 
-  sortOption: ReservationSort = 'date-newest';
+  sortOption: ReservationSort = 'date-nearest';
 
 
   // =========================
@@ -328,8 +326,6 @@ export class ReservationManagementComponent
 
           this.reservations =
             response.reservations || [];
-
-          this.completePastReservations();
 
           this.isLoading = false;
 
@@ -494,6 +490,15 @@ export class ReservationManagementComponent
     this.currentPage = 1;
   }
 
+  private getReservationDateTime(
+    reservation: Reservation
+  ): number {
+
+    const date = reservation.date.split('T')[0];
+    const time = reservation.time || '00:00';
+
+    return new Date(`${date}T${time}:00`).getTime();
+  }
 
   // =========================
   // FILTERED RESERVATIONS
@@ -538,17 +543,34 @@ export class ReservationManagementComponent
     );
 
     // Sorting
+    const now = new Date().getTime();
+
     return filtered.sort((a, b) => {
+
+      const first = this.getReservationDateTime(a);
+      const second = this.getReservationDateTime(b);
 
       switch (this.sortOption) {
 
-        case 'date-newest':
-          return new Date(b.date).getTime() -
-            new Date(a.date).getTime();
+        case 'date-nearest': {
 
-        case 'date-oldest':
-          return new Date(a.date).getTime() -
-            new Date(b.date).getTime();
+          const firstIsUpcoming = first >= now;
+          const secondIsUpcoming = second >= now;
+
+          // Upcoming reservations appear before past reservations.
+          if (firstIsUpcoming !== secondIsUpcoming) {
+            return firstIsUpcoming ? -1 : 1;
+          }
+
+          // Upcoming: nearest first.
+          // Past: most recent first.
+          return firstIsUpcoming
+            ? first - second
+            : second - first;
+        }
+
+        case 'date-farthest':
+          return second - first;
 
         case 'id-ascending':
           return a.reservationId.localeCompare(
@@ -566,7 +588,6 @@ export class ReservationManagementComponent
 
         default:
           return 0;
-
       }
 
     });
@@ -690,6 +711,13 @@ export class ReservationManagementComponent
 
   }
 
+  get expiredCount(): number {
+    return this.reservations.filter(
+      reservation =>
+        reservation.status === 'Expired'
+    ).length;
+  }
+
 
   // =========================
   // STATUS CLASS
@@ -715,6 +743,9 @@ export class ReservationManagementComponent
 
       case 'Cancelled':
         return 'status-cancelled';
+
+      case 'Expired':
+        return 'status-expired';
 
       default:
         return '';
@@ -1782,7 +1813,8 @@ export class ReservationManagementComponent
         reservation.table !== tableId ||
         reservation.date !== date ||
         reservation.status === 'Cancelled' ||
-        reservation.status === 'Completed'
+        reservation.status === 'Completed' ||
+        reservation.status === 'Expired'
       ) {
         return false;
       }
@@ -1861,7 +1893,8 @@ export class ReservationManagementComponent
 
         if (
           reservation.status === 'Cancelled' ||
-          reservation.status === 'Completed'
+          reservation.status === 'Completed' ||
+          reservation.status === 'Expired'
         ) {
           return false;
         }
@@ -1943,7 +1976,8 @@ export class ReservationManagementComponent
         reservation.table === tableId &&
         reservation.date === today &&
         reservation.status !== 'Cancelled' &&
-        reservation.status !== 'Completed'
+        reservation.status !== 'Completed' &&
+        reservation.status !== 'Expired'
       )
       .sort(
         (a, b) =>
@@ -1960,7 +1994,8 @@ export class ReservationManagementComponent
         reservation =>
           reservation.table === tableId &&
           reservation.status !== 'Cancelled' &&
-          reservation.status !== 'Completed'
+          reservation.status !== 'Completed' &&
+          reservation.status !== 'Expired'
       );
 
     if (!reservation) {
@@ -2170,84 +2205,6 @@ export class ReservationManagementComponent
   get isReservationEditable(): boolean {
 
     return this.form.status === 'Pending';
-
-  }
-
-
-  private completePastReservations(): void {
-
-    const now = new Date();
-
-    const currentDate = this.toDateInputValue(now);
-
-    const currentMinutes =
-      now.getHours() * 60 + now.getMinutes();
-
-    const seatedReservations =
-      this.reservations.filter(reservation => {
-
-        if (reservation.status !== 'Seated') {
-          return false;
-        }
-
-        // Only process today's and past reservations.
-        if (reservation.date > currentDate) {
-          return false;
-        }
-
-        // Reservations from previous dates are overdue.
-        if (reservation.date < currentDate) {
-          return true;
-        }
-
-        // Calculate the scheduled end time (1 hour).
-        const [hours, minutes] =
-          reservation.time.split(':').map(Number);
-
-        const reservationEndMinutes =
-          hours * 60 + minutes + 60;
-
-        return currentMinutes >= reservationEndMinutes;
-
-      });
-
-    for (const reservation of seatedReservations) {
-
-      this.reservationService
-        .updateReservationStatus(
-          reservation.reservationId,
-          'Completed'
-        )
-        .subscribe({
-
-          next: (response) => {
-
-            const index =
-              this.reservations.findIndex(
-                item =>
-                  item.reservationId ===
-                  reservation.reservationId
-              );
-
-            if (index !== -1) {
-              this.reservations[index] =
-                response.reservation;
-            }
-
-          },
-
-          error: (error) => {
-
-            console.error(
-              `Failed to complete reservation ${reservation.reservationId}:`,
-              error
-            );
-
-          }
-
-        });
-
-    }
 
   }
 

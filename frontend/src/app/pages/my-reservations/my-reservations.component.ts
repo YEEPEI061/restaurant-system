@@ -33,6 +33,7 @@ export class MyReservationsComponent implements OnInit {
 
   searchTerm = '';
   sortNewestFirst = true;
+  sortUpcomingEarliestFirst = true;
 
   pageSize = 10;
   currentPage = 1;
@@ -106,7 +107,6 @@ export class MyReservationsComponent implements OnInit {
       });
   }
 
-
   // =========================
   // LOAD RESERVATIONS FROM DATABASE
   // =========================
@@ -176,11 +176,11 @@ export class MyReservationsComponent implements OnInit {
 
     return this.reservations.filter(reservation => {
 
-      if (reservation.status === 'Cancelled') {
-        return false;
-      }
-
-      if (reservation.status === 'Completed') {
+      if (
+        reservation.status === 'Cancelled' ||
+        reservation.status === 'Completed' ||
+        reservation.status === 'Expired'
+      ) {
         return false;
       }
 
@@ -202,6 +202,7 @@ export class MyReservationsComponent implements OnInit {
 
       return (
         reservation.status === 'Completed' ||
+        reservation.status === 'Expired' ||
         this.getReservationDateTime(reservation) < now
       );
 
@@ -290,17 +291,20 @@ export class MyReservationsComponent implements OnInit {
       );
 
     return [...results].sort((a, b) => {
+      const first = this.getReservationDateTime(a).getTime();
+      const second = this.getReservationDateTime(b).getTime();
 
-      const first =
-        new Date(`${a.date}T${a.time}`).getTime();
-
-      const second =
-        new Date(`${b.date}T${b.time}`).getTime();
+      if (this.activeTab === 'upcoming') {
+        return this.sortUpcomingEarliestFirst
+          ? first - second
+          : second - first;
+      }
 
       return this.sortNewestFirst
         ? second - first
         : first - second;
     });
+
   }
 
   // =========================
@@ -365,11 +369,18 @@ export class MyReservationsComponent implements OnInit {
     this.currentPage = 1;
 
     this.clearError();
+
+    window.scrollTo(0, 0);
   }
 
   toggleSort(): void {
-    this.sortNewestFirst =
-      !this.sortNewestFirst;
+    if (this.activeTab === 'upcoming') {
+      this.sortUpcomingEarliestFirst =
+        !this.sortUpcomingEarliestFirst;
+      return;
+    }
+
+    this.sortNewestFirst = !this.sortNewestFirst;
   }
 
   // =========================
@@ -471,6 +482,10 @@ export class MyReservationsComponent implements OnInit {
 
       case 'Cancelled':
         return 'cancelled';
+
+      case 'Expired':
+        return 'expired';
+
 
       default:
         return '';
@@ -655,8 +670,7 @@ export class MyReservationsComponent implements OnInit {
           // Move to Cancelled tab after success message
           setTimeout(() => {
 
-            this.activeTab = 'cancelled';
-            this.searchTerm = '';
+            this.setActiveTab('cancelled');
 
             this.loadReservations();
 

@@ -1059,7 +1059,8 @@ async function updateReservationStatus(
       'Confirmed',
       'Seated',
       'Completed',
-      'Cancelled'
+      'Cancelled',
+      'Expired'
     ];
 
     // Check if status is valid

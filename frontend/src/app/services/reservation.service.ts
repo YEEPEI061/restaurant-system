@@ -16,7 +16,8 @@ export type ReservationStatus =
   | 'Confirmed'
   | 'Seated'
   | 'Completed'
-  | 'Cancelled';
+  | 'Cancelled'
+  | 'Expired';
 
 // =========================
 // SELECTED DISH

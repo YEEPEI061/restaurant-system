@@ -67,19 +67,6 @@ async function updateAutomaticStatus(
         }
     });
 
-    await createNotification({
-        recipient: updatedReservation.guest,
-        recipientRole: 'guest',
-        type: 'reservation_updated',
-        title: 'Reservation status updated',
-        message:
-            `Your reservation ${updatedReservation.reservationId} is now ${newStatus}.`,
-        reservationId: updatedReservation.reservationId
-    });
-
-    console.log(
-        `${updatedReservation.reservationId}: ${reservation.status} → ${newStatus}`
-    );
 }
 
 // =========================
@@ -100,7 +87,7 @@ async function checkReservationStatuses() {
 
         const reservations = await Reservation.find({
             status: {
-                $in: ['Confirmed', 'Seated']
+                $in: ['Pending', 'Confirmed', 'Seated']
             }
         });
 
@@ -110,6 +97,20 @@ async function checkReservationStatuses() {
                 getReservationDateTime(reservation);
 
             if (!reservationDateTime) {
+                continue;
+            }
+
+            // Pending → Expired
+            // Expire unconfirmed reservations after their scheduled time.
+            if (
+                reservation.status === 'Pending' &&
+                reservationDateTime <= now
+            ) {
+                await updateAutomaticStatus(
+                    reservation,
+                    'Expired'
+                );
+
                 continue;
             }
 
