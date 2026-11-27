@@ -22,7 +22,7 @@
 
   min-height: calc(100vh - 80px);
 
-  padding: 110px 24px;
+  padding: 88px 24px;
 
   overflow: hidden;
 
@@ -568,7 +568,7 @@
 .password-hint {
   color: #747871;
 
-  font-size: 9px;
+  font-size: 11px;
 
   font-weight: 600;
 
@@ -704,7 +704,7 @@
 
   color: #444842;
 
-  font-size: 11px;
+  font-size: 12px;
 
   line-height: 1.5;
 
@@ -914,7 +914,7 @@
 
   color: #747871;
 
-  font-size: 11px;
+  font-size: 12px;
 
   line-height: 1.6;
 }

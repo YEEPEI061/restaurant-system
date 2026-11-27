@@ -11,7 +11,7 @@
 
 .admin-page {
   min-height: 100vh;
-  padding: 64px 24px 44px;
+  padding: 64px 24px 88px;
   box-sizing: border-box;
   background:
     radial-gradient(circle at 8% 5%,
@@ -90,10 +90,6 @@
 .shift-divider {
   color: #747871;
   font-size: 12px;
-}
-
-.dashboard-content {
-  padding-bottom: 46px;
 }
 
 
@@ -1507,7 +1503,6 @@
 
   .dashboard-content {
     padding-top: 26px;
-    padding-bottom: 45px;
   }
 
   .page-heading {
