@@ -283,12 +283,12 @@ select:focus-visible {
 }
 
 .tab-button.active {
-  background: #ffffff;
-  color: #182418;
+  background: #182418;
+  color: #ffffff;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-.tab-count {
+/* .tab-count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -299,11 +299,16 @@ select:focus-visible {
   background: #eae7eb;
   color: #536251;
   font-size: 12px;
+} */
+
+.tab-count {
+  opacity:0.75;
+  font-size: 12px;
 }
 
-.tab-button.active .tab-count {
+/* .tab-button.active .tab-count {
   background: #f0edf1;
-}
+} */
 
 .search-controls {
   display: flex;

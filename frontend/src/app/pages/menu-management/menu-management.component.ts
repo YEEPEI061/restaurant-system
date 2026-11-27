@@ -1136,7 +1136,7 @@ export class MenuManagementComponent implements OnInit {
         this.successTimeout =
           undefined;
 
-      }, 1400);
+      }, 1600);
   }
 
   // =========================

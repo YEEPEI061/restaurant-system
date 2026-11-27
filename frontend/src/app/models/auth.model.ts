@@ -37,3 +37,15 @@ export interface SignupResponse {
 export interface CurrentUserResponse {
     user: AuthUser;
 }
+
+export interface UpdateProfileData {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+}
+
+export interface ChangePasswordData {
+    currentPassword: string;
+    newPassword: string;
+}

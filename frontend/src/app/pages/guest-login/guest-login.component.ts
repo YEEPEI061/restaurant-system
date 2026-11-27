@@ -135,7 +135,7 @@ export class GuestLoginComponent {
               returnUrl || '/menu'
             );
 
-          }, 1400);
+          }, 1600);
 
           // Retrieve saved notifications immediately after login.
           this.notificationService

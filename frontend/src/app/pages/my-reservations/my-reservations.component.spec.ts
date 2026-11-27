@@ -239,7 +239,7 @@ describe('MyReservationsComponent', () => {
         expect(component.showCancelModal).toBeFalse();
         expect(component.successTitle).toBe('Reservation Cancelled');
 
-        tick(1400);
+        tick(1600);
 
         expect(component.activeTab).toBe('cancelled');
         expect(reservationService.getMyReservations).toHaveBeenCalledTimes(2);

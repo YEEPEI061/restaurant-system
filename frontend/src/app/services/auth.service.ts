@@ -10,7 +10,9 @@ import {
   AuthUser,
   AuthResponse,
   SignupResponse,
-  CurrentUserResponse
+  CurrentUserResponse,
+  UpdateProfileData,
+  ChangePasswordData
 } from '../models/auth.model';
 
 @Injectable({
@@ -77,6 +79,35 @@ export class AuthService {
   getCurrentUser(): Observable<CurrentUserResponse> {
     return this.http.get<CurrentUserResponse>(
       `${this.api.baseUrl}${this.endpoint}/me`
+    );
+  }
+
+  // =========================
+  // UPDATE PROFILE
+  // =========================
+
+  updateProfile(data: UpdateProfileData): Observable<CurrentUserResponse> {
+    return this.http.put<CurrentUserResponse>(
+      `${this.api.baseUrl}${this.endpoint}/profile`,
+      data
+    ).pipe(
+      tap(response => {
+        localStorage.setItem(
+          'aurelia_user',
+          JSON.stringify(response.user)
+        );
+      })
+    );
+  }
+
+  // =========================
+  // CHANGE PASSWORD
+  // =========================
+
+  changePassword(data: ChangePasswordData): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(
+      `${this.api.baseUrl}${this.endpoint}/change-password`,
+      data
     );
   }
 

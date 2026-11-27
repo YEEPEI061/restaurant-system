@@ -887,7 +887,7 @@ export class UserManagementComponent implements OnInit {
         this.successTitle =
           '';
 
-      }, 1400);
+      }, 1600);
   }
 
   // =========================

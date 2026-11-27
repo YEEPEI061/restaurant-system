@@ -1,0 +1,514 @@
+<app-header></app-header>
+
+<main class="profile-page">
+
+    <div class="profile-container">
+
+        <!-- Page Heading -->
+        <div class="page-heading">
+
+            <div class="heading-copy">
+
+                <div class="hero-eyebrow">
+                    <span class="material-symbols-outlined">
+                        account_circle
+                    </span>
+
+                    <span>
+                        ACCOUNT SETTINGS
+                    </span>
+                </div>
+
+                <h1>My Profile</h1>
+
+                <p>
+                    Manage your personal information and account security.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Loading -->
+        @if (isLoading) {
+
+        <div class="loading-state">
+            <span class="material-symbols-outlined">
+                progress_activity
+            </span>
+
+            <p>Loading your profile...</p>
+        </div>
+
+        } @else {
+
+        @if (user) {
+
+        <!-- Account Summary -->
+        <section class="account-summary">
+
+            <div class="avatar">
+                <span class="material-symbols-outlined">
+                    person
+                </span>
+            </div>
+
+            <div class="account-details">
+
+                <h2>
+                    {{ user.firstName }} {{ user.lastName }}
+                </h2>
+
+                <p>{{ user.email }}</p>
+
+            </div>
+
+            <div class="account-badges">
+
+                <span class="role-badge">
+                    {{ user.role === 'admin' ? 'Admin' : 'Guest' }}
+                </span>
+
+                <span class="status-badge" [class.inactive]="user.active === false">
+
+                    {{ user.active === false ? 'Inactive' : 'Active' }}
+
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- Personal Information -->
+        <section class="profile-card">
+
+            <div class="card-heading">
+
+                <div class="card-icon">
+                    <span class="material-symbols-outlined">
+                        person
+                    </span>
+                </div>
+
+                <div>
+                    <h2>Personal Information</h2>
+
+                    <p>
+                        Update your name and contact details.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form (ngSubmit)="saveProfile()" #profileForm="ngForm">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="firstName">
+                            First Name
+                        </label>
+
+                        <input id="firstName" type="text" name="firstName" [(ngModel)]="profileData.firstName" required
+                            maxlength="50" placeholder="Enter your first name">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="lastName">
+                            Last Name
+                        </label>
+
+                        <input id="lastName" type="text" name="lastName" [(ngModel)]="profileData.lastName" required
+                            maxlength="50" placeholder="Enter your last name">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input id="email" type="email" name="email" [(ngModel)]="profileData.email" required email
+                            placeholder="Enter your email address">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="phone">
+                            Phone Number
+                        </label>
+
+                        <input id="phone" type="tel" name="phone" [(ngModel)]="profileData.phone"
+                            placeholder="Enter your phone number">
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button type="submit" class="primary-button" [disabled]="isSavingProfile || profileForm.invalid">
+
+                        <span class="material-symbols-outlined">
+                            save
+                        </span>
+
+                        {{ isSavingProfile ? 'Saving...' : 'Save Changes' }}
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- Account Information -->
+        <section class="profile-card">
+
+            <div class="card-heading">
+
+                <div class="card-icon">
+                    <span class="material-symbols-outlined">
+                        verified_user
+                    </span>
+                </div>
+
+                <div>
+                    <h2>Account Information</h2>
+
+                    <p>
+                        View your account details.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="account-info-grid">
+
+                <div class="info-item">
+                    <span>Account Role</span>
+
+                    <strong>
+                        {{ user.role === 'admin' ? 'Administrator' : 'Guest' }}
+                    </strong>
+                </div>
+
+                <div class="info-item">
+                    <span>Account Status</span>
+
+                    <strong>
+                        {{ user.active === false ? 'Inactive' : 'Active' }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Change Password -->
+        <section class="profile-card">
+
+            <div class="card-heading">
+
+                <div class="card-icon">
+                    <span class="material-symbols-outlined">
+                        lock
+                    </span>
+                </div>
+
+                <div>
+                    <h2>Change Password</h2>
+
+                    <p>
+                        Keep your account secure by updating your password.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form (ngSubmit)="changePassword()" #passwordForm="ngForm">
+
+                <div class="password-fields">
+
+                    <div class="form-group">
+                        <div class="input-wrapper">
+
+                            <input id="currentPassword" name="currentPassword"
+                                [(ngModel)]="passwordData.currentPassword"
+                                [type]="showCurrentPassword ? 'text' : 'password'" required
+                                placeholder="Enter current password" autocomplete="current-password" />
+
+                            <button type="button" class="password-toggle"
+                                aria-label="Toggle current password visibility" (click)="toggleCurrentPassword()">
+                                <span class="material-symbols-outlined">
+                                    {{ showCurrentPassword ? 'visibility_off' : 'visibility' }}
+                                </span>
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-wrapper">
+
+                            <input id="newPassword" name="newPassword" [(ngModel)]="passwordData.newPassword"
+                                [type]="showNewPassword ? 'text' : 'password'" required placeholder="Enter new password"
+                                autocomplete="new-password" />
+
+                            <button type="button" class="password-toggle" aria-label="Toggle new password visibility"
+                                (click)="toggleNewPassword()">
+                                <span class="material-symbols-outlined">
+                                    {{ showNewPassword ? 'visibility_off' : 'visibility' }}
+                                </span>
+                            </button>
+
+                        </div>
+                        <small>Minimum 6 characters.</small>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <div class="input-wrapper">
+
+                            <input id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword"
+                                [type]="showConfirmPassword ? 'text' : 'password'" required
+                                placeholder="Re-enter new password" autocomplete="new-password" />
+
+                            <button type="button" class="password-toggle"
+                                aria-label="Toggle confirm password visibility" (click)="toggleConfirmPassword()">
+                                <span class="material-symbols-outlined">
+                                    {{ showConfirmPassword ? 'visibility_off' : 'visibility' }}
+                                </span>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button type="button" class="secondary-button" (click)="resetPasswordForm()">
+
+                        Cancel
+
+                    </button>
+
+                    <button type="submit" class="primary-button"
+                        [disabled]="isChangingPassword || passwordForm.invalid">
+                        <span class="material-symbols-outlined">
+                            lock_reset
+                        </span>
+
+                        {{ isChangingPassword ? 'Updating...' : 'Update Password' }}
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+        }
+
+        }
+
+    </div>
+
+</main>
+
+<!-- =====================================================
+SUCCESS MESSAGE
+===================================================== -->
+
+@if (profileSuccess) {
+
+<div class="message-modal-backdrop success-backdrop" role="status">
+
+    <div class="message-card success-card">
+
+        <div class="success-animation">
+
+            <svg class="success-svg" viewBox="0 0 52 52" aria-hidden="true">
+
+                <circle class="success-circle" cx="26" cy="26" r="24" fill="none"></circle>
+
+                <path class="success-check" fill="none" d="M14 27 L22 35 L39 18"></path>
+
+            </svg>
+
+        </div>
+
+        <div class="message-copy">
+
+            <span class="message-eyebrow success-eyebrow">
+                SUCCESS
+            </span>
+
+            <h2>
+                Profile Updated
+            </h2>
+
+            <p>
+                {{ profileSuccess }}
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+}
+
+
+<!-- =====================================================
+ERROR MESSAGE
+===================================================== -->
+
+@if (profileError) {
+
+<div class="message-modal-backdrop error-backdrop" role="presentation">
+
+    <div class="message-card error-card">
+
+        <div class="error-icon">
+
+            <span class="material-symbols-outlined">
+                error
+            </span>
+
+        </div>
+
+        <div class="message-copy">
+
+            <span class="message-eyebrow error-eyebrow">
+                ATTENTION
+            </span>
+
+            <h2>
+                Unable to Update Profile
+            </h2>
+
+            <p>
+                {{ profileError }}
+            </p>
+
+        </div>
+
+        <button type="button" class="button button-light error-close-button" (click)="profileError = ''">
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+}
+
+<!-- =====================================================
+PASSWORD ERROR MESSAGE
+===================================================== -->
+
+@if (passwordError) {
+
+<div class="message-modal-backdrop error-backdrop" role="presentation">
+
+    <div class="message-card error-card">
+
+        <div class="error-icon">
+
+            <span class="material-symbols-outlined">
+                error
+            </span>
+
+        </div>
+
+        <div class="message-copy">
+
+            <span class="message-eyebrow error-eyebrow">
+                ATTENTION
+            </span>
+
+            <h2>
+                Unable to Update Password
+            </h2>
+
+            <p>
+                {{ passwordError }}
+            </p>
+
+        </div>
+
+        <button type="button" class="button button-light error-close-button" (click)="passwordError = ''">
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+}
+
+@if (passwordSuccess) {
+
+<div class="message-modal-backdrop success-backdrop" role="status">
+
+    <div class="message-card success-card">
+
+        <div class="success-animation">
+
+            <svg class="success-svg" viewBox="0 0 52 52" aria-hidden="true">
+
+                <circle class="success-circle" cx="26" cy="26" r="24" fill="none"></circle>
+
+                <path class="success-check" fill="none" d="M14 27 L22 35 L39 18"></path>
+
+            </svg>
+
+        </div>
+
+        <div class="message-copy">
+
+            <span class="message-eyebrow success-eyebrow">
+                SUCCESS
+            </span>
+
+            <h2>
+                Password Updated
+            </h2>
+
+            <p>
+                {{ passwordSuccess }}
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+}
+<app-footer></app-footer>

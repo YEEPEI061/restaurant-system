@@ -10,6 +10,7 @@ import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard
 import { MenuManagementComponent } from './pages/menu-management/menu-management.component';
 import { UserManagementComponent } from './pages/user-management/user-management.component';
 import { ReservationManagementComponent } from './pages/reservation-management/reservation-management.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 import {
   guestGuard
@@ -74,6 +75,11 @@ export const routes: Routes = [
     canActivate: [guestGuard]
   },
 
+  {
+    path: 'guest-profile',
+    component: ProfileComponent,
+    canActivate: [guestGuard]
+  },
 
   // =========================
   // ADMIN ROUTES
@@ -103,6 +109,11 @@ export const routes: Routes = [
     canActivate: [adminGuard]
   },
 
+  {
+    path: 'admin-profile',
+    component: ProfileComponent,
+    canActivate: [adminGuard]
+  },
 
   // =========================
   // UNKNOWN ROUTE

@@ -1315,7 +1315,7 @@ export class ReservationManagementComponent
         this.successTitle =
           '';
 
-      }, 1400);
+      }, 1600);
   }
 
   // =========================

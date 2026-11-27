@@ -133,7 +133,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       '/admin-dashboard',
       '/reservation-management',
       '/user-management',
-      '/menu-management'
+      '/menu-management',
+      '/admin-profile'
     ];
 
     return staffRoutes.some(

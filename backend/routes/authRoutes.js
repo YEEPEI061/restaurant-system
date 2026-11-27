@@ -4,13 +4,17 @@ const {
   guestSignup,
   guestLogin,
   adminLogin,
-  getCurrentUser
+  getCurrentUser,
+  updateProfile,
+  changePassword
 } = require('../controllers/authController');
 
 const {
   guestSignupValidator,
   guestLoginValidator,
-  adminLoginValidator
+  adminLoginValidator,
+  updateProfileValidator,
+  changePasswordValidator
 } = require('../validators/authValidator');
 
 const validateRequest = require('../middleware/validationMiddleware');
@@ -49,5 +53,22 @@ router.get(
   getCurrentUser
 );
 
+// Update current user's profile
+router.put(
+  '/profile',
+  authenticateToken,
+  updateProfileValidator,
+  validateRequest,
+  updateProfile
+);
+
+// Change current user's password
+router.put(
+  '/change-password',
+  authenticateToken,
+  changePasswordValidator,
+  validateRequest,
+  changePassword
+);
 
 module.exports = router;

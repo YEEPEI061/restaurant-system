@@ -488,7 +488,7 @@ export class MenuComponent implements OnInit {
         this.successTitle =
           '';
 
-      }, 1400);
+      }, 1600);
   }
 
   // =========================

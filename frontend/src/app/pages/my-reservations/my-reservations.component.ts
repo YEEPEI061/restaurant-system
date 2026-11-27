@@ -674,7 +674,7 @@ export class MyReservationsComponent implements OnInit {
 
             this.loadReservations();
 
-          }, 1400);
+          }, 1600);
         },
 
         error: (error) => {
@@ -773,7 +773,7 @@ export class MyReservationsComponent implements OnInit {
         this.successTitle =
           '';
 
-      }, 1400);
+      }, 1600);
   }
 
   // =========================

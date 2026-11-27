@@ -225,9 +225,122 @@ async function getCurrentUser(req, res) {
   }
 }
 
+async function updateProfile(req, res) {
+  try {
+    const {
+      firstName,
+      lastName,
+      email,
+      phone
+    } = req.body;
+
+    const userId = req.user.userId;
+
+    // Check whether another account already uses this email
+    const existingUser = await User.findOne({
+      email,
+      _id: { $ne: userId }
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        message: 'An account with this email already exists'
+      });
+    }
+
+    // Update profile information
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        firstName,
+        lastName,
+        email,
+        phone
+      },
+      {
+        new: true,
+        runValidators: true
+      }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found'
+      });
+    }
+
+    res.status(200).json({
+      message: 'Profile updated successfully',
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        active: user.active
+      }
+    });
+
+  } catch (error) {
+    console.error('Update profile error:', error);
+
+    res.status(500).json({
+      message: 'Failed to update profile'
+    });
+  }
+}
+
+async function changePassword(req, res) {
+  try {
+    const {
+      currentPassword,
+      newPassword
+    } = req.body;
+
+    const user = await User.findById(req.user.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found'
+      });
+    }
+
+    // Verify current password
+    const passwordMatch = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+
+    if (!passwordMatch) {
+      return res.status(400).json({
+        message: 'Current password is incorrect'
+      });
+    }
+
+    // Hash and save new password
+    user.password = await bcrypt.hash(newPassword, 12);
+
+    await user.save();
+
+    res.status(200).json({
+      message: 'Password changed successfully'
+    });
+
+  } catch (error) {
+    console.error('Change password error:', error);
+
+    res.status(500).json({
+      message: 'Failed to change password'
+    });
+  }
+}
+
 module.exports = {
   guestSignup,
   guestLogin,
   adminLogin,
-  getCurrentUser
+  getCurrentUser,
+  updateProfile,
+  changePassword
 };

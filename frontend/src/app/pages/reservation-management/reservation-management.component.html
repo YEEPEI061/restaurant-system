@@ -52,7 +52,7 @@
         </div>
 
         <div class="stat-foot">
-          Excluding cancelled
+          Excluding inactive bookings
         </div>
 
       </article>
@@ -176,69 +176,72 @@
       <!-- Search and filters -->
       <section class="filter-panel">
 
-        <!-- Status filters -->
-        <div class="filter-tabs" aria-label="Filter reservations by status">
+        <div class="filter-tabs-row">
+          <!-- Status filters -->
+          <div class="filter-tabs" aria-label="Filter reservations by status">
 
-          <button type="button" [class.active]="activeFilter === 'All'" (click)="setFilter('All')">
-            All Bookings
+            <button type="button" [class.active]="activeFilter === 'All'" (click)="setFilter('All')">
+              All Bookings
 
-            <span class="filter-count">
-              {{ reservations.length }}
-            </span>
-          </button>
-
-
-          <button type="button" class="pending-tab" [class.active]="activeFilter === 'Pending'"
-            (click)="setFilter('Pending')">
-            Pending
-
-            <span class="filter-count">
-              {{ pendingCount }}
-            </span>
-          </button>
+              <span class="filter-count">
+                {{ reservations.length }}
+              </span>
+            </button>
 
 
-          <button type="button" [class.active]="activeFilter === 'Confirmed'" (click)="setFilter('Confirmed')">
-            Confirmed
+            <button type="button" class="pending-tab" [class.active]="activeFilter === 'Pending'"
+              (click)="setFilter('Pending')">
+              Pending
 
-            <span class="filter-count">
-              {{ confirmedCount }}
-            </span>
-          </button>
-
-
-          <button type="button" [class.active]="activeFilter === 'Seated'" (click)="setFilter('Seated')">
-            Seated
-
-            <span class="filter-count">
-              {{ seatedCount }}
-            </span>
-          </button>
+              <span class="filter-count">
+                {{ pendingCount }}
+              </span>
+            </button>
 
 
-          <button type="button" [class.active]="activeFilter === 'Completed'" (click)="setFilter('Completed')">
-            Completed
+            <button type="button" [class.active]="activeFilter === 'Confirmed'" (click)="setFilter('Confirmed')">
+              Confirmed
 
-            <span class="filter-count">
-              {{ completedCount }}
-            </span>
-          </button>
+              <span class="filter-count">
+                {{ confirmedCount }}
+              </span>
+            </button>
 
-          <button type="button" [class.active]="activeFilter === 'Cancelled'" (click)="setFilter('Cancelled')">
-            Cancelled
 
-            <span class="filter-count">
-              {{ cancelledCount }}
-            </span>
-          </button>
+            <button type="button" [class.active]="activeFilter === 'Seated'" (click)="setFilter('Seated')">
+              Seated
 
-          <button type="button" [class.active]="activeFilter === 'Expired'" (click)="setFilter('Expired')">
-            Expired
+              <span class="filter-count">
+                {{ seatedCount }}
+              </span>
+            </button>
 
-            <span class="filter-count">
-              {{ expiredCount }}
-            </span>
-          </button>
+
+            <button type="button" [class.active]="activeFilter === 'Completed'" (click)="setFilter('Completed')">
+              Completed
+
+              <span class="filter-count">
+                {{ completedCount }}
+              </span>
+            </button>
+
+            <button type="button" [class.active]="activeFilter === 'Cancelled'" (click)="setFilter('Cancelled')">
+              Cancelled
+
+              <span class="filter-count">
+                {{ cancelledCount }}
+              </span>
+            </button>
+
+            <button type="button" [class.active]="activeFilter === 'Expired'" (click)="setFilter('Expired')">
+              Expired
+
+              <span class="filter-count">
+                {{ expiredCount }}
+              </span>
+            </button>
+
+          </div>
 
           <!-- Sort reservations -->
           <label class="sort-control">
@@ -251,21 +254,10 @@
 
             <select [(ngModel)]="sortOption" [ngModelOptions]="{ standalone: true }" aria-label="Sort reservations">
 
-              <option value="date-nearest">
-                Nearest Date
-              </option>
-
-              <option value="date-farthest">
-                Farthest Date
-              </option>
-
-              <option value="id-ascending">
-                Booking ID (A–Z)
-              </option>
-
-              <option value="id-descending">
-                Booking ID (Z–A)
-              </option>
+              <option value="date-nearest">Nearest Date</option>
+              <option value="date-farthest">Farthest Date</option>
+              <option value="id-ascending">Booking ID (A–Z)</option>
+              <option value="id-descending">Booking ID (Z–A)</option>
 
             </select>
 
@@ -669,7 +661,8 @@
                     <!-- Cancel -->
                     @if (
                     reservation.status !== 'Cancelled' &&
-                    reservation.status !== 'Completed'
+                    reservation.status !== 'Completed'&&
+                    reservation.status !== 'Expired'
                     ) {
 
                     <button class="icon-button icon-cancel" type="button" title="Cancel reservation"

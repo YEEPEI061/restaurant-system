@@ -198,12 +198,12 @@
           </div>
 
 
-          <a routerLink="/my-reservations" (click)="closeProfileMenu()">
+          <a routerLink="/guest-profile" (click)="closeProfileMenu()">
             <span class="material-symbols-outlined">
-              calendar_month
+              person
             </span>
 
-            My Reservations
+            My Profile
           </a>
 
 
@@ -217,14 +217,19 @@
 
           } @else {
 
-          <a routerLink="/my-reservations" (click)="closeProfileMenu()">
-            <span class="material-symbols-outlined">
-              calendar_month
+          <div class="dropdown-heading">
+            Guest Access
+          </div>
+
+          <div class="dropdown-user">
+            <strong>
+              Please log in
+            </strong>
+
+            <span>
+              Guest login needed.
             </span>
-
-            My Reservations
-          </a>
-
+          </div>
 
           <a routerLink="/guest-login" (click)="closeProfileMenu()">
             <span class="material-symbols-outlined">
@@ -259,13 +264,14 @@
 
           </div>
 
-          <a routerLink="/admin-dashboard" (click)="closeProfileMenu()">
+          <a routerLink="/admin-profile" (click)="closeProfileMenu()">
             <span class="material-symbols-outlined">
-              dashboard
+              person
             </span>
 
-            Operations Dashboard
+            My Profile
           </a>
+
           <button type="button" class="dropdown-action" (click)="openLogoutConfirmation('staff')">
             <span class="material-symbols-outlined">
               logout

@@ -4,10 +4,6 @@ const {
     broadcast
 } = require('./websocketService');
 
-const {
-    createNotification
-} = require('./notificationService');
-
 // =========================
 // RESERVATION STATUS SCHEDULER
 // =========================

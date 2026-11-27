@@ -166,7 +166,7 @@ describe('AdminLoginComponent', () => {
         expect(notificationService.loadNotifications).toHaveBeenCalled();
         expect(notificationService.connectWebSocket).toHaveBeenCalled();
 
-        tick(1400);
+        tick(1600);
 
         expect(router.navigate).toHaveBeenCalledWith([
             '/admin-dashboard'

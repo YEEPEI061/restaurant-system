@@ -347,7 +347,10 @@ export class AdminDashboardComponent implements OnInit {
 
   get tableAssignmentReservations(): Reservation[] {
     return this.todayReservations.filter(
-      reservation => reservation.status !== 'Cancelled'
+      reservation =>
+        !['Cancelled', 'Completed', 'Expired'].includes(
+          reservation.status
+        )
     );
   }
 

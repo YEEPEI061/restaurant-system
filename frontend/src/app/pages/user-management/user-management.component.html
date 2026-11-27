@@ -151,7 +151,6 @@
           <button type="button" class="user-tab" [class.active]="roleFilter === 'all'"
             (click)="roleFilter = 'all'; currentPage = 1">
 
-            <span class="material-symbols-outlined">group</span>
             All Users
             <span>{{ users.length }}</span>
 
@@ -160,7 +159,6 @@
           <button type="button" class="user-tab" [class.active]="roleFilter === 'guest'"
             (click)="roleFilter = 'guest'; currentPage = 1">
 
-            <span class="material-symbols-outlined">person</span>
             Guests
             <span>{{ guestCount }}</span>
 
@@ -168,10 +166,6 @@
 
           <button type="button" class="user-tab" [class.active]="roleFilter === 'admin'"
             (click)="roleFilter = 'admin'; currentPage = 1">
-
-            <span class="material-symbols-outlined">
-              admin_panel_settings
-            </span>
 
             Admins
 

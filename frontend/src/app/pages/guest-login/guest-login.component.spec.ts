@@ -178,7 +178,7 @@ describe('GuestLoginComponent', () => {
         expect(notificationService.loadNotifications).toHaveBeenCalled();
         expect(notificationService.connectWebSocket).toHaveBeenCalled();
 
-        tick(1400);
+        tick(1600);
 
         expect(router.navigateByUrl).toHaveBeenCalledWith('/menu');
 

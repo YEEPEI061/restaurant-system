@@ -1610,7 +1610,7 @@ export class ReservationsComponent implements OnInit {
             '/my-reservations'
           ]);
 
-        }, 3000);
+        }, 1600);
 
       },
 
