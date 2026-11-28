@@ -301,4 +301,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.showConfirmPassword = !this.showConfirmPassword;
     }
 
+    hasProfileChanges(): boolean {
+        return (
+            this.profileData.firstName !== this.user?.firstName ||
+            this.profileData.lastName !== this.user?.lastName ||
+            this.profileData.email !== this.user?.email ||
+            this.profileData.phone !== this.user?.phone
+        );
+    }
+
 }

@@ -835,27 +835,6 @@
 
   <section class="past-section">
 
-    <div class="section-heading">
-
-      <div>
-
-        <span class="step-label">
-          YOUR DINING HISTORY
-        </span>
-
-        <h2>
-          Past Dining Experiences
-        </h2>
-
-        <p>
-          View your past reservations and dining history at Aurelia.
-        </p>
-
-      </div>
-
-    </div>
-
-
     @if (isLoading) {
 
     <div class="empty-state">
@@ -880,25 +859,14 @@
 
 
       <!-- Table headings -->
+      @if (filteredReservations.length > 0) {
       <div class="past-table-header">
-
-        <span>
-          DATE
-        </span>
-
-        <span>
-          EXPERIENCE &amp; MENU
-        </span>
-
-        <span>
-          PARTY &amp; AREA
-        </span>
-
-        <span class="align-right">
-          ACTIONS
-        </span>
-
+        <span>DATE</span>
+        <span>EXPERIENCE &amp; MENU</span>
+        <span>PARTY &amp; AREA</span>
+        <span class="align-right">ACTIONS</span>
       </div>
+      }
 
 
       <!-- Past reservations -->
@@ -1075,26 +1043,6 @@
   @if (activeTab === 'cancelled') {
 
   <section class="cancelled-section">
-
-    <div class="section-heading">
-
-      <div>
-
-        <span class="step-label">
-          RESERVATION RECORDS
-        </span>
-
-        <h2>
-          Cancelled Reservations
-        </h2>
-
-        <p>
-          View reservations that have been cancelled.
-        </p>
-
-      </div>
-
-    </div>
 
 
     @if (isLoading) {

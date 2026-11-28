@@ -142,6 +142,11 @@ tr:focus-visible {
   background: #2d3a2c;
 }
 
+.form-field>span i {
+  color: #a34b36;
+  font-style: normal;
+}
+
 /* Service banner */
 
 .service-banner {
@@ -425,7 +430,7 @@ tr:focus-visible {
   gap: 7px;
   overflow-x: auto;
   padding: 0 22px 18px;
-  
+
 }
 
 .filter-tabs button {
@@ -3148,7 +3153,7 @@ input[type="search"]::-webkit-search-cancel-button {
   font-weight: 800;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color:#182418;
+  color: #182418;
 }
 
 .bill-category:first-child {
